@@ -1,0 +1,16 @@
+/.direnv/
+/result
+/result-*
+.DS_Store
+.env
+.env.*
+*.key
+*.kubeconfig
+*.p12
+*.pem
+*.pfx
+*.swo
+*.swp
+*.tmp
+.idea/
+.vscode/

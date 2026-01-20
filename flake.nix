@@ -15,6 +15,7 @@
         in
         rec {
           common-store = stores.common;
+          python-store = stores.python;
           default = stores.common;
         };
     in

@@ -7,24 +7,18 @@
 
   outputs = { self, nixpkgs }:
     let
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-      configStore = pkgs: pkgs.callPackage ./nix/packages/config-store.nix {};
-    in
-    {
-      packages = forAllSystems (system:
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+      mkPackages = system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          store = configStore pkgs;
+          stores = import ./nix/lib/stores.nix { inherit pkgs; };
         in
-        {
-          config-store = store;
-          default = store;
-        });
+        rec {
+          common-store = stores.common;
+          default = stores.common;
+        };
+    in
+    {
+      packages = forAllSystems mkPackages;
     };
 }

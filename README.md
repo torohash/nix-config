@@ -19,6 +19,7 @@
 
 ### experimental-features の有効化
 
+※ echoは複数回実行すると複数行追加されてしまう点に注意。
 ```bash
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf

@@ -13,7 +13,7 @@
 
 ## 前提条件
 
-- Nix（2.4+ もしくは `experimental-features = nix-command flakes` を有効化）をインストールすること: https://nixos.org/download/
+- Nix（2.4+ かつ `experimental-features = nix-command flakes` を有効化）をインストールすること: https://nixos.org/download/
 - direnv をインストールすること: https://direnv.net/
 - nix-direnv をインストールすること: https://github.com/nix-community/nix-direnv
 
@@ -41,6 +41,20 @@ eval "$(direnv hook zsh)"
 
 ```bash
 source "$HOME/.nix-profile/share/nix-direnv/direnvrc"
+```
+
+### devShell の自動適用（direnv）
+
+リポジトリのルートに `.envrc` を作成し、以下を記載します。
+
+```bash
+use flake
+```
+
+初回のみ許可します。
+
+```bash
+direnv allow
 ```
 
 ## 基本的な使い方
@@ -75,6 +89,12 @@ nix develop .#python
 
 ```bash
 nix develop
+```
+
+### flake.lock の更新
+
+```bash
+nix flake update
 ```
 
 ## システム対応

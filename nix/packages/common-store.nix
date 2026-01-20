@@ -1,4 +1,4 @@
-{ buildEnv, htop, cloc, tmux }:
+{ buildEnv, htop, cloc, tmux, git, curl, websocat, jq, tree, unzip, bash-completion, nixd }:
 
 buildEnv {
   name = "common-store";
@@ -6,5 +6,13 @@ buildEnv {
     htop
     cloc
     tmux
+    git
+    curl
+    websocat
+    jq
+    tree
+    unzip
+    bash-completion
+    nixd
   ];
 }

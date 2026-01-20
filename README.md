@@ -17,6 +17,13 @@
 - direnv をインストールすること: https://direnv.net/
 - nix-direnv をインストールすること: https://github.com/nix-community/nix-direnv
 
+### experimental-features の有効化
+
+```bash
+mkdir -p ~/.config/nix
+echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+```
+
 ### インストール例（Nix）
 
 ```bash

@@ -15,11 +15,21 @@
         in
         rec {
           common-store = stores.common;
-          python-store = stores.python;
           default = stores.common;
+        };
+      mkDevShells = system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          devshells = import ./nix/lib/devshells.nix { inherit pkgs; };
+          pythonShell = devshells.python;
+        in
+        {
+          python = pythonShell;
+          default = pythonShell;
         };
     in
     {
       packages = forAllSystems mkPackages;
+      devShells = forAllSystems mkDevShells;
     };
 }

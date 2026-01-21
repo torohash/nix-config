@@ -13,3 +13,4 @@
 - unzip: ZIP 展開ツール。
 - bash-completion: bash の補完定義。
 - nixd: Nix の LSP サーバ。
+- xclip: X11 クリップボード操作ツール。

@@ -10,48 +10,62 @@
 
 - `docs/packages.md`: packages の内容と各ツールの説明。
 - `docs/devShells.md`: devShells の内容と各ツールの説明。
+- `docs/home-manager-versioning.md`: Home Manager のバージョン更新と `home.stateVersion` の扱い。
 
-## 前提条件
+## セットアップ
 
-- Nix（2.4+ かつ `experimental-features = nix-command flakes` を有効化）をインストールすること: https://nixos.org/download/
-- direnv をインストールすること: https://direnv.net/
-- nix-direnv をインストールすること: https://github.com/nix-community/nix-direnv
+### 前提条件
 
-### experimental-features の有効化
+Nix（2.4+）をインストールし、flakes を有効化してください。
 
-※ echoは複数回実行すると複数行追加されてしまう点に注意。
+#### Nix のインストール
+
+https://nixos.org/download/ に従って Nix をインストールします。
+
+インストールコマンド例:
+
+```bash
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+```
+
+#### flakes の有効化
+
 ```bash
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
-### インストール例（Nix）
+※ 複数回実行すると設定が重複するため、ファイルの内容を確認してください。
+
+### Home Manager の設定
+
+このリポジトリには Home Manager 設定が含まれています。Home Manager は以下を管理します：
+
+- `.bashrc`（bash と direnv/nix-direnv 用の設定を含む）
+- direnv / nix-direnv の設定と有効化
+
+#### 設定ファイルの編集
+
+`nix/home/config.nix` を環境に合わせて変更してください：
+
+- `username`: ユーザー名（初期値: `torohash`）
+- `homeDirectory`: ホームディレクトリ（初期値: `/home/torohash`）
+- `system`: システムタイプ（WSL の場合は `x86_64-linux`）
+
+#### Home Manager のインストールと適用
+
+Home Manager の案内: https://nix-community.github.io/home-manager/
+
+Home Manager のインストールコマンド例:
 
 ```bash
-nix profile install nixpkgs#direnv nixpkgs#nix-direnv
+nix profile install nixpkgs#home-manager
+home-manager switch --flake .#<username>
 ```
 
-### direnv の有効化
+`<username>` は `nix/home/config.nix` の `username` に合わせてください。
 
-使用しているシェルにフックを追加してください。
-
-```bash
-eval "$(direnv hook bash)"
-```
-
-```bash
-eval "$(direnv hook zsh)"
-```
-
-### nix-direnv の有効化
-
-`~/.config/direnv/direnvrc`（または `~/.direnvrc`）に以下を追加してください。
-
-```bash
-source "$HOME/.nix-profile/share/nix-direnv/direnvrc"
-```
-
-### devShell の自動適用（direnv）
+### devShell の自動適用
 
 リポジトリのルートに `.envrc` を作成し、以下を記載します。
 
@@ -64,6 +78,8 @@ use flake
 ```bash
 direnv allow
 ```
+
+これで、このディレクトリに移動すると自動的に devShell が有効化されます。
 
 ## 基本的な使い方
 

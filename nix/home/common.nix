@@ -7,6 +7,11 @@
     enable = true;
     enableCompletion = true;
     promptInit = ''
+      if [ -r /etc/skel/.bashrc ]; then
+        . /etc/skel/.bashrc
+        __SKEL_BASHRC_LOADED=1
+      fi
+
       if [ -f "${pkgs.git}/share/git/contrib/completion/git-prompt.sh" ]; then
         . "${pkgs.git}/share/git/contrib/completion/git-prompt.sh"
       fi
@@ -33,7 +38,7 @@
       PS1='\[\e[38;5;40m\]\u@\h\[\e[0m\]:\[\e[38;5;39m\]\w\[\e[38;5;214m\]${PS1_CMD1}\[\e[0m\]\$ '
     '';
     bashrcExtra = ''
-      if [ -f "$HOME/.bash_aliases" ]; then
+      if [ -z "${__SKEL_BASHRC_LOADED:-}" ] && [ -f "$HOME/.bash_aliases" ]; then
         . "$HOME/.bash_aliases"
       fi
     '';

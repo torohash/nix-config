@@ -11,6 +11,7 @@
 - `docs/packages.md`: packages の内容と各ツールの説明。
 - `docs/devShells.md`: devShells の内容と各ツールの説明。
 - `docs/home-manager-versioning.md`: Home Manager のバージョン更新と `home.stateVersion` の扱い。
+- `docs/ai-cli.md`: AI 開発支援 CLI ツールの導入方針とインストール。
 
 ## セットアップ
 
@@ -71,25 +72,11 @@ home-manager switch --flake .#<username>
 
 `<username>` は `nix/home/config.nix` の `username` に合わせてください。
 
-### devShell の自動適用
-
-リポジトリのルートに `.envrc` を作成し、以下を記載します。
-
-```bash
-use flake
-```
-
-初回のみ許可します。
-
-```bash
-direnv allow
-```
-
-これで、このディレクトリに移動すると自動的に devShell が有効化されます。
-
 ## 基本的な使い方
 
 ### パッケージのビルド
+
+packages の一覧と内容は `docs/packages.md` を参照してください。
 
 #### common-store
 
@@ -113,6 +100,8 @@ nix profile install .#common-store
 
 Python 向けの開発シェルを提供しています。
 
+devShells の一覧と内容は `docs/devShells.md` を参照してください。
+
 ```bash
 nix develop .#python
 ```
@@ -121,11 +110,37 @@ nix develop .#python
 nix develop
 ```
 
+### devShell の自動適用
+
+リポジトリのルートに `.envrc` を作成し、以下を記載します。
+
+```bash
+use flake
+```
+
+特定の devShell を使いたい場合は、名前を指定してください。
+
+```bash
+use flake .#python
+```
+
+初回のみ許可します。
+
+```bash
+direnv allow
+```
+
+これで、このディレクトリに移動すると自動的に devShell が有効化されます。
+
 ### flake.lock の更新
 
 ```bash
 nix flake update
 ```
+
+## AI ツールの追加
+
+AI 開発支援 CLI ツールの導入方針とインストール手順は `docs/ai-cli.md` を参照してください。
 
 ## システム対応
 

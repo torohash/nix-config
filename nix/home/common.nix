@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   programs.home-manager.enable = true;
+  xdg.enable = true;
 
   programs.bash = {
     enable = true;
@@ -47,4 +48,15 @@
   programs.direnv.enable = true;
   programs.direnv.enableBashIntegration = true;
   programs.direnv.nix-direnv.enable = true;
+
+  home.file.".claude/skills" = {
+    source = ../../skills/.claude;
+    recursive = true;
+    force = true;
+  };
+
+  xdg.configFile."opencode/AGENTS.md" = {
+    source = ../../opencode/AGENTS.md;
+    force = true;
+  };
 }

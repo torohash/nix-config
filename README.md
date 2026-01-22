@@ -43,6 +43,7 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
 - `.bashrc`（bash と direnv/nix-direnv 用の設定を含む）
 - direnv / nix-direnv の設定と有効化
+- Git 設定（プロンプトのブランチ表示と userName/userEmail）
 
 #### 設定ファイルの編集
 
@@ -51,6 +52,11 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 - `username`: ユーザー名（初期値: `torohash`）
 - `homeDirectory`: ホームディレクトリ（初期値: `/home/torohash`）
 - `system`: システムタイプ（WSL の場合は `x86_64-linux`）
+
+`nix/home/common.nix` の Git 設定も環境に合わせて変更してください：
+
+- `programs.git.userName`: Git のユーザー名
+- `programs.git.userEmail`: Git のメールアドレス
 
 #### Home Manager のインストールと適用
 

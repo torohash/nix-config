@@ -11,6 +11,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - bufferline-nvim
   - バッファのタブラインを提供
   - https://github.com/akinsho/bufferline.nvim
+- bufdelete-nvim
+  - バッファ削除時にウィンドウレイアウトを維持
+  - https://github.com/famiu/bufdelete.nvim
 - neo-tree-nvim
   - ファイルエクスプローラー
   - https://github.com/nvim-neo-tree/neo-tree.nvim

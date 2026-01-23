@@ -6,6 +6,7 @@
       nvim-web-devicons
       lualine-nvim
       bufferline-nvim
+      bufdelete-nvim
       neo-tree-nvim
       neogit
       diffview-nvim
@@ -55,6 +56,20 @@
           end
         end,
       })
+      vim.cmd([[cnoreabbrev <expr> bd ((getcmdtype() == ":" and getcmdline():match("^bd([! ]|$)")) and getcmdline():gsub("^bd", "Bdelete") or "bd")]])
+      vim.cmd([[cnoreabbrev <expr> bdelete ((getcmdtype() == ":" and getcmdline():match("^bdelete([! ]|$)")) and getcmdline():gsub("^bdelete", "Bdelete") or "bdelete")]])
+      vim.api.nvim_create_user_command("Bonly", function()
+        local ok_bufdelete, bufdelete = pcall(require, "bufdelete")
+        if not ok_bufdelete then
+          return
+        end
+        local current = vim.api.nvim_get_current_buf()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+          if buf ~= current and vim.api.nvim_buf_is_loaded(buf) and vim.fn.buflisted(buf) == 1 then
+            bufdelete.bufdelete(buf)
+          end
+        end
+      end, {})
     '';
   };
 }

@@ -10,8 +10,25 @@ in
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [
+      nvim-web-devicons
+      lualine-nvim
+      bufferline-nvim
+      neo-tree-nvim
+      plenary-nvim
+      nui-nvim
       nvim-treesitter.withAllGrammars
     ];
+    extraLuaConfig = ''
+      vim.opt.termguicolors = true
+      local ok_lualine, lualine = pcall(require, "lualine")
+      if ok_lualine then
+        lualine.setup()
+      end
+      local ok_bufferline, bufferline = pcall(require, "bufferline")
+      if ok_bufferline then
+        bufferline.setup()
+      end
+    '';
   };
 
   programs.home-manager.enable = true;

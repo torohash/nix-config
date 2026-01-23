@@ -1,2 +1,3 @@
 - nixの一般的なベストプラクティスに沿った実装を行うこと
 - package/devShellの追加・変更時は `docs/packages.md` または `docs/devShells.md` を更新すること
+- vimPluginsの追加・変更時は `docs/vimPlugins.md` を更新すること

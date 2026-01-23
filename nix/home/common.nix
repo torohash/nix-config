@@ -5,8 +5,14 @@ in
 {
   home.packages = [
     stores.common
-    stores.neovim
   ];
+
+  programs.neovim = {
+    enable = true;
+    plugins = with pkgs.vimPlugins; [
+      nvim-treesitter.withAllGrammars
+    ];
+  };
 
   programs.home-manager.enable = true;
   xdg.enable = true;

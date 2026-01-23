@@ -63,7 +63,7 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
 Home Manager の案内: https://nix-community.github.io/home-manager/
 
-このリポジトリでは `nix profile install nixpkgs#home-manager` は使わず、
+このリポジトリでは Home Manager を `nix profile` でインストールせず、
 `nix run` で Home Manager を実行する方法を推奨します（プロファイル衝突の回避）。
 
 根拠:

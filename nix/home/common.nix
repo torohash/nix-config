@@ -55,13 +55,13 @@
   programs.direnv.nix-direnv.enable = true;
 
   home.file.".claude/skills" = {
-    source = ../../skills/.claude;
+    source = ../../dotfiles/claude/skills;
     recursive = true;
     force = true;
   };
 
   xdg.configFile."opencode/AGENTS.md" = {
-    source = ../../opencode/AGENTS.md;
+    source = ../../dotfiles/opencode/AGENTS.md;
     force = true;
   };
 }

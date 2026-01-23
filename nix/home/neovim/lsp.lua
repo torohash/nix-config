@@ -11,6 +11,17 @@ if ok_cmp then
   capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 end
 
+local function build_config(config)
+  local merged = vim.tbl_deep_extend("force", {}, config or {})
+  merged.capabilities = vim.tbl_deep_extend(
+    "force",
+    {},
+    capabilities,
+    merged.capabilities or {}
+  )
+  return merged
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(event)
     local ok_telescope, telescope_builtin = pcall(require, "telescope.builtin")
@@ -28,13 +39,36 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-if type(vim.lsp) == "table" and type(vim.lsp.enable) == "function" then
+local use_lspconfig = {}
+local can_use_new_api = type(vim.lsp) == "table"
+  and type(vim.lsp.enable) == "function"
+  and type(vim.lsp.config) == "function"
+
+if can_use_new_api then
   for _, server in ipairs(servers) do
     if vim.fn.executable(server.bin) == 1 then
-      pcall(vim.lsp.config, server.name, { capabilities = capabilities })
-      pcall(vim.lsp.enable, server.name)
+      local ok_config = pcall(vim.lsp.config, server.name, build_config(server.config))
+      local ok_enable = ok_config and pcall(vim.lsp.enable, server.name)
+      use_lspconfig[server.name] = not ok_enable
+    else
+      use_lspconfig[server.name] = true
     end
   end
+else
+  for _, server in ipairs(servers) do
+    use_lspconfig[server.name] = true
+  end
+end
+
+local need_lspconfig = false
+for _, server in ipairs(servers) do
+  if use_lspconfig[server.name] and vim.fn.executable(server.bin) == 1 then
+    need_lspconfig = true
+    break
+  end
+end
+
+if not need_lspconfig then
   return
 end
 
@@ -44,7 +78,10 @@ if not ok_lspconfig then
 end
 
 for _, server in ipairs(servers) do
-  if vim.fn.executable(server.bin) == 1 and lspconfig[server.name] then
-    lspconfig[server.name].setup({ capabilities = capabilities })
+  if use_lspconfig[server.name]
+    and vim.fn.executable(server.bin) == 1
+    and lspconfig[server.name]
+  then
+    lspconfig[server.name].setup(build_config(server.config))
   end
 end

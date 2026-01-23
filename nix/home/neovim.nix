@@ -9,9 +9,11 @@
       bufdelete-nvim
       nvim-scrollbar
       neo-tree-nvim
+      telescope-nvim
       neogit
       diffview-nvim
       nvim-cmp
+      cmp-nvim-lsp
       nvim-lspconfig
       plenary-nvim
       nui-nvim
@@ -20,9 +22,27 @@
     extraLuaConfig = ''
       vim.opt.termguicolors = true
       vim.opt.autoread = true
+      vim.opt.clipboard = "unnamedplus"
       vim.opt.grepprg = "rg --vimgrep --smart-case"
       vim.opt.grepformat = "%f:%l:%c:%m"
       pcall(require, "lsp")
+      local ok_cmp, cmp = pcall(require, "cmp")
+      if ok_cmp then
+        local has_snippet = vim.snippet and type(vim.snippet.expand) == "function"
+        local setup = {
+          sources = {
+            { name = "nvim_lsp" },
+          },
+        }
+        if has_snippet then
+          setup.snippet = {
+            expand = function(args)
+              vim.snippet.expand(args.body)
+            end,
+          }
+        end
+        cmp.setup(setup)
+      end
       local ok_lualine, lualine = pcall(require, "lualine")
       if ok_lualine then
         lualine.setup()

@@ -20,6 +20,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - neo-tree-nvim
   - ファイルエクスプローラー
   - https://github.com/nvim-neo-tree/neo-tree.nvim
+- telescope-nvim
+  - ファジーファインダー
+  - https://github.com/nvim-telescope/telescope.nvim
 - diffview-nvim
   - Git の差分ビュー
   - https://github.com/sindrets/diffview.nvim
@@ -29,6 +32,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - nvim-cmp
   - 補完エンジン
   - https://github.com/hrsh7th/nvim-cmp
+- cmp-nvim-lsp
+  - nvim-cmp の LSP ソース
+  - https://github.com/hrsh7th/cmp-nvim-lsp
 - nvim-lspconfig
   - Neovim 組み込み LSP の設定補助
   - https://github.com/neovim/nvim-lspconfig

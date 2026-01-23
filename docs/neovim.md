@@ -5,5 +5,9 @@
 - H: BufferLine の前のバッファへ移動
 - L: BufferLine の次のバッファへ移動
 - q: Diffview の画面を閉じる
+- gd: 定義へジャンプ
+- gi: 実装へジャンプ
+- gr: 参照一覧
+- K: ホバー（説明・型情報）
 - :bd / :bdelete: Bdelete に置換（ウィンドウレイアウト維持）
 - :Bonly: 現在のバッファ以外を閉じる（保存確認あり）

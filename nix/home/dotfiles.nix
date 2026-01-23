@@ -91,4 +91,9 @@ in
     source = ../../dotfiles/opencode/AGENTS.md;
     force = true;
   };
+
+  xdg.configFile."opencode/oh-my-opencode.json" = {
+    source = ../../dotfiles/opencode/oh-my-opencode.json;
+    force = true;
+  };
 }

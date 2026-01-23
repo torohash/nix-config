@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "agents": {
+    "Sisyphus": {
+      "model": "openai/gpt-5.2-codex"
+    },
+    "oracle": {
+      "model": "openai/gpt-5.2-codex"
+    },
+    "frontend-ui-ux-engineer": {
+      "model": "zai-coding-plan/glm-4.7"
+    },
+    "librarian": {
+      "model": "zai-coding-plan/glm-4.7"
+    },
+    "explore": {
+      "model": "zai-coding-plan/glm-4.7"
+    },
+    "document-writer": {
+      "model": "zai-coding-plan/glm-4.7"
+    }
+  }
+}

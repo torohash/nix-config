@@ -89,18 +89,6 @@ packages の一覧と内容は `docs/packages.md` を参照してください。
 nix build .#common-store
 ```
 
-### プロファイルへのインストール
-
-ユーザープロファイルにインストールしてコマンドを永続的に利用するには:
-
-#### common-store
-
-```bash
-nix profile install .#common-store
-```
-
-インストール後はシェルを再起動してください。反映されない場合は `~/.nix-profile/bin` が PATH に含まれているか確認してください。
-
 ### 開発シェル（nix develop）
 
 Python 向けの開発シェルを提供しています。
@@ -150,3 +138,5 @@ AI 開発支援 CLI ツールの導入方針とインストール手順は `docs
 ## システム対応
 
 この flake は `nixpkgs.lib.systems.flakeExposed` で定義されたシステムをサポートしています。
+
+注: store の profile install は Home Manager と競合するため実施非推奨です。

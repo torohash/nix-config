@@ -15,3 +15,7 @@
 - nixd: Nix の LSP サーバ。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。
+
+## neovim-store
+
+- neovim: Vim 互換の高機能エディタ。

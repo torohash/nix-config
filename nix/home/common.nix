@@ -5,6 +5,7 @@ in
 {
   home.packages = [
     stores.common
+    stores.neovim
   ];
 
   programs.home-manager.enable = true;

@@ -24,6 +24,7 @@
         in
         rec {
           common-store = stores.common;
+          neovim-store = stores.neovim;
           default = stores.common;
         };
       mkDevShells = system:

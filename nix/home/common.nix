@@ -6,7 +6,7 @@
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    promptInit = ''
+    initExtra = ''
       if [ -r /etc/skel/.bashrc ]; then
         . /etc/skel/.bashrc
         __SKEL_BASHRC_LOADED=1
@@ -18,7 +18,7 @@
 
       update_ps1_cmd1() {
         if type __git_ps1 >/dev/null 2>&1; then
-          PS1_CMD1="$(__git_ps1 \" (%s)\")"
+          PS1_CMD1="$(__git_ps1 ' (%s)')"
         else
           PS1_CMD1=""
         fi
@@ -44,10 +44,15 @@
     '';
   };
 
+  home.file.".bashrc".force = true;
+  home.file.".profile".force = true;
+
   programs.git = {
     enable = true;
-    userName = "torohash";
-    userEmail = "123091263+torohash@users.noreply.github.com";
+    settings.user = {
+      name = "torohash";
+      email = "123091263+torohash@users.noreply.github.com";
+    };
   };
 
   programs.direnv.enable = true;

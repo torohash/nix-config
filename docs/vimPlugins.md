@@ -29,6 +29,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - nvim-cmp
   - 補完エンジン
   - https://github.com/hrsh7th/nvim-cmp
+- nvim-lspconfig
+  - Neovim 組み込み LSP の設定補助
+  - https://github.com/neovim/nvim-lspconfig
 - plenary-nvim
   - Neo-tree の必須依存ユーティリティ
   - https://github.com/nvim-lua/plenary.nvim

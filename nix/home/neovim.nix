@@ -12,6 +12,7 @@
       neogit
       diffview-nvim
       nvim-cmp
+      nvim-lspconfig
       plenary-nvim
       nui-nvim
       nvim-treesitter.withAllGrammars

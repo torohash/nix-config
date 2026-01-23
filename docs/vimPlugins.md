@@ -14,6 +14,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - neo-tree-nvim
   - ファイルエクスプローラー
   - https://github.com/nvim-neo-tree/neo-tree.nvim
+- diffview-nvim
+  - Git の差分ビュー
+  - https://github.com/sindrets/diffview.nvim
 - neogit
   - Git の操作 UI
   - https://github.com/NeogitOrg/neogit

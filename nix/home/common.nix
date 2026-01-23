@@ -15,6 +15,7 @@ in
       bufferline-nvim
       neo-tree-nvim
       neogit
+      diffview-nvim
       nvim-cmp
       plenary-nvim
       nui-nvim
@@ -33,6 +34,34 @@ in
       end
       vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
       vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
+      local function map_diffview_q(bufnr)
+        if vim.b[bufnr].diffview_q_mapped then
+          return
+        end
+        vim.b[bufnr].diffview_q_mapped = true
+        local cmd = vim.fn.exists(":DiffviewClose") == 2 and "<Cmd>DiffviewClose<CR>" or "<Cmd>q<CR>"
+        vim.keymap.set("n", "q", cmd, { buffer = bufnr, silent = true })
+      end
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "Diffview*",
+        callback = function(event)
+          map_diffview_q(event.buf)
+        end,
+      })
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "diffview://*",
+        callback = function(event)
+          map_diffview_q(event.buf)
+        end,
+      })
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+          local ok_neotree, neotree = pcall(require, "neo-tree.command")
+          if ok_neotree then
+            neotree.execute({ action = "show", source = "filesystem" })
+          end
+        end,
+      })
     '';
   };
 
@@ -95,6 +124,15 @@ in
 
   home.file.".bashrc".force = true;
   home.file.".profile".force = true;
+  home.file.".tmux.conf" = {
+    text = ''
+      bind h select-pane -L
+      bind j select-pane -D
+      bind k select-pane -U
+      bind l select-pane -R
+    '';
+    force = true;
+  };
 
   programs.git = {
     enable = true;

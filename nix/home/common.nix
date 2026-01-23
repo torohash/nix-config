@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   stores = import ../lib/stores.nix { inherit pkgs; };
 in
@@ -17,9 +17,22 @@ in
   programs.home-manager.enable = true;
   xdg.enable = true;
 
+  home.sessionPath = [
+    "${config.home.homeDirectory}/.opencode/bin"
+  ];
+
   programs.bash = {
     enable = true;
     enableCompletion = true;
+    profileExtra = ''
+      if [ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      elif [ -r /nix/var/nix/profiles/default/etc/profile.d/nix.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+      elif [ -r "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+        . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+      fi
+    '';
     initExtra = ''
       if [ -r /etc/skel/.bashrc ]; then
         . /etc/skel/.bashrc

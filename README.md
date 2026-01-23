@@ -46,6 +46,16 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 - direnv / nix-direnv の設定と有効化
 - Git 設定（プロンプトのブランチ表示と userName/userEmail）
 
+#### Home Manager のインストール
+
+Home Manager の案内: https://nix-community.github.io/home-manager/
+
+Home Manager のインストールコマンド例:
+
+```bash
+nix profile install nixpkgs#home-manager
+```
+
 #### 設定ファイルの編集
 
 `nix/home/config.nix` を環境に合わせて変更してください：
@@ -59,14 +69,9 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 - `programs.git.userName`: Git のユーザー名
 - `programs.git.userEmail`: Git のメールアドレス
 
-#### Home Manager のインストールと適用
-
-Home Manager の案内: https://nix-community.github.io/home-manager/
-
-Home Manager のインストールコマンド例:
+#### Home Manager の適用
 
 ```bash
-nix profile install nixpkgs#home-manager
 home-manager switch --flake .#<username>
 ```
 

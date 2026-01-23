@@ -24,21 +24,21 @@
         fi
       }
 
-      case ";${PROMPT_COMMAND};" in
+      case ";''${PROMPT_COMMAND};" in
         *";update_ps1_cmd1;"*)
           ;;
         *)
           if [ -n "$PROMPT_COMMAND" ]; then
-            PROMPT_COMMAND="${PROMPT_COMMAND};update_ps1_cmd1"
+            PROMPT_COMMAND="''${PROMPT_COMMAND};update_ps1_cmd1"
           else
             PROMPT_COMMAND="update_ps1_cmd1"
           fi
           ;;
       esac
-      PS1='\[\e[38;5;40m\]\u@\h\[\e[0m\]:\[\e[38;5;39m\]\w\[\e[38;5;214m\]${PS1_CMD1}\[\e[0m\]\$ '
+      PS1='\[\e[38;5;40m\]\u@\h\[\e[0m\]:\[\e[38;5;39m\]\w\[\e[38;5;214m\]''${PS1_CMD1}\[\e[0m\]\$ '
     '';
     bashrcExtra = ''
-      if [ -z "${__SKEL_BASHRC_LOADED:-}" ] && [ -f "$HOME/.bash_aliases" ]; then
+      if [ -z "''${__SKEL_BASHRC_LOADED:-}" ] && [ -f "$HOME/.bash_aliases" ]; then
         . "$HOME/.bash_aliases"
       fi
     '';

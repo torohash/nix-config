@@ -20,6 +20,8 @@
     extraLuaConfig = ''
       vim.opt.termguicolors = true
       vim.opt.autoread = true
+      vim.opt.grepprg = "rg --vimgrep --smart-case"
+      vim.opt.grepformat = "%f:%l:%c:%m"
       pcall(require, "lsp")
       local ok_lualine, lualine = pcall(require, "lualine")
       if ok_lualine then

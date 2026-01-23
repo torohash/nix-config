@@ -1,20 +1,26 @@
+local servers = {
+  { name = "nixd", bin = "nixd" },
+  { name = "marksman", bin = "marksman" },
+  { name = "basedpyright", bin = "basedpyright" },
+  { name = "lua_ls", bin = "lua-language-server" },
+}
+
+if type(vim.lsp) == "table" and type(vim.lsp.enable) == "function" then
+  for _, server in ipairs(servers) do
+    if vim.fn.executable(server.bin) == 1 then
+      pcall(vim.lsp.enable, server.name)
+    end
+  end
+  return
+end
+
 local ok_lspconfig, lspconfig = pcall(require, "lspconfig")
 if not ok_lspconfig then
   return
 end
 
-if vim.fn.executable("nixd") == 1 and lspconfig.nixd then
-  lspconfig.nixd.setup({})
-end
-
-if vim.fn.executable("marksman") == 1 and lspconfig.marksman then
-  lspconfig.marksman.setup({})
-end
-
-if vim.fn.executable("basedpyright") == 1 and lspconfig.basedpyright then
-  lspconfig.basedpyright.setup({})
-end
-
-if vim.fn.executable("lua-language-server") == 1 and lspconfig.lua_ls then
-  lspconfig.lua_ls.setup({})
+for _, server in ipairs(servers) do
+  if vim.fn.executable(server.bin) == 1 and lspconfig[server.name] then
+    lspconfig[server.name].setup({})
+  end
 end

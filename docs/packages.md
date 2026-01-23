@@ -12,6 +12,7 @@
 - tree: ディレクトリ構造表示ツール。
 - unzip: ZIP 展開ツール。
 - bash-completion: bash の補完定義。
+- ripgrep: 高速な検索ツール（rg）。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。
 

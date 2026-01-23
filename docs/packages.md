@@ -15,3 +15,4 @@
 - nixd: Nix の LSP サーバ。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。
+- marksman: Markdown 向けの LSP サーバ。

@@ -12,7 +12,13 @@
 - tree: ディレクトリ構造表示ツール。
 - unzip: ZIP 展開ツール。
 - bash-completion: bash の補完定義。
-- nixd: Nix の LSP サーバ。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。
+
+## lsp-store
+
+- nixd: Nix の LSP サーバ。
 - marksman: Markdown 向けの LSP サーバ。
+- pyright: Python の LSP サーバ。
+- basedpyright: Pyright の拡張版 LSP サーバ。
+- lua-language-server: Lua の LSP サーバ。

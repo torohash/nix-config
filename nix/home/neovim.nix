@@ -20,6 +20,7 @@
     extraLuaConfig = ''
       vim.opt.termguicolors = true
       vim.opt.autoread = true
+      pcall(require, "lsp")
       local ok_lualine, lualine = pcall(require, "lualine")
       if ok_lualine then
         lualine.setup()
@@ -78,4 +79,6 @@
       end, {})
     '';
   };
+
+  xdg.configFile."nvim/lua/lsp.lua".source = ./neovim/lsp.lua;
 }

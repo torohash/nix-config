@@ -24,6 +24,7 @@
         in
         rec {
           common-store = stores.common;
+          lsp-store = stores.lsp;
           default = stores.common;
         };
       mkDevShells = system:

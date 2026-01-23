@@ -5,6 +5,7 @@ in
 {
   home.packages = [
     stores.common
+    stores.lsp
   ];
 
   programs.home-manager.enable = true;

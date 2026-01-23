@@ -14,6 +14,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - bufdelete-nvim
   - バッファ削除時にウィンドウレイアウトを維持
   - https://github.com/famiu/bufdelete.nvim
+- nvim-scrollbar
+  - スクロールバー表示
+  - https://github.com/petertriho/nvim-scrollbar
 - neo-tree-nvim
   - ファイルエクスプローラー
   - https://github.com/nvim-neo-tree/neo-tree.nvim

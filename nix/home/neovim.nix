@@ -7,6 +7,7 @@
       lualine-nvim
       bufferline-nvim
       bufdelete-nvim
+      nvim-scrollbar
       neo-tree-nvim
       neogit
       diffview-nvim
@@ -25,6 +26,10 @@
       local ok_bufferline, bufferline = pcall(require, "bufferline")
       if ok_bufferline then
         bufferline.setup()
+      end
+      local ok_scrollbar, scrollbar = pcall(require, "scrollbar")
+      if ok_scrollbar then
+        scrollbar.setup()
       end
       vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
       vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
@@ -56,8 +61,8 @@
           end
         end,
       })
-      vim.cmd([[cnoreabbrev <expr> bd ((getcmdtype() == ":" and getcmdline():match("^bd([! ]|$)")) and getcmdline():gsub("^bd", "Bdelete") or "bd")]])
-      vim.cmd([[cnoreabbrev <expr> bdelete ((getcmdtype() == ":" and getcmdline():match("^bdelete([! ]|$)")) and getcmdline():gsub("^bdelete", "Bdelete") or "bdelete")]])
+      vim.cmd([[cnoreabbrev <expr> bd (getcmdtype() == ':' ? (getcmdline() ==# 'bd' ? 'Bdelete' : (getcmdline() =~# '^bd[! ]' ? substitute(getcmdline(), '^bd', 'Bdelete', "") : 'bd')) : 'bd')]])
+      vim.cmd([[cnoreabbrev <expr> bdelete (getcmdtype() == ':' ? (getcmdline() ==# 'bdelete' ? 'Bdelete' : (getcmdline() =~# '^bdelete[! ]' ? substitute(getcmdline(), '^bdelete', 'Bdelete', "") : 'bdelete')) : 'bdelete')]])
       vim.api.nvim_create_user_command("Bonly", function()
         local ok_bufdelete, bufdelete = pcall(require, "bufdelete")
         if not ok_bufdelete then

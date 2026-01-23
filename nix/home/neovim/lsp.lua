@@ -52,9 +52,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+local lsp_config = vim.lsp.config
 local can_use_new_api = type(vim.lsp) == "table"
   and type(vim.lsp.enable) == "function"
-  and type(vim.lsp.config) == "function"
+  and lsp_config ~= nil
+  and (type(lsp_config) == "function" or type(lsp_config) == "table")
 
 if not can_use_new_api then
   setup_with_lspconfig(servers)

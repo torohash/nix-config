@@ -28,6 +28,8 @@ in
       if ok_bufferline then
         bufferline.setup()
       end
+      vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
+      vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
     '';
   };
 

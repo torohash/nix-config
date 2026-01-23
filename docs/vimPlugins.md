@@ -14,6 +14,12 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - neo-tree-nvim
   - ファイルエクスプローラー
   - https://github.com/nvim-neo-tree/neo-tree.nvim
+- neogit
+  - Git の操作 UI
+  - https://github.com/NeogitOrg/neogit
+- nvim-cmp
+  - 補完エンジン
+  - https://github.com/hrsh7th/nvim-cmp
 - plenary-nvim
   - Neo-tree の必須依存ユーティリティ
   - https://github.com/nvim-lua/plenary.nvim

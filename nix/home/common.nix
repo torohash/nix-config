@@ -14,12 +14,15 @@ in
       lualine-nvim
       bufferline-nvim
       neo-tree-nvim
+      neogit
+      nvim-cmp
       plenary-nvim
       nui-nvim
       nvim-treesitter.withAllGrammars
     ];
     extraLuaConfig = ''
       vim.opt.termguicolors = true
+      vim.opt.autoread = true
       local ok_lualine, lualine = pcall(require, "lualine")
       if ok_lualine then
         lualine.setup()

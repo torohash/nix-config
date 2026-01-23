@@ -46,16 +46,6 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 - direnv / nix-direnv の設定と有効化
 - Git 設定（プロンプトのブランチ表示と userName/userEmail）
 
-#### Home Manager のインストール
-
-Home Manager の案内: https://nix-community.github.io/home-manager/
-
-Home Manager のインストールコマンド例:
-
-```bash
-nix profile install nixpkgs#home-manager
-```
-
 #### 設定ファイルの編集
 
 `nix/home/config.nix` を環境に合わせて変更してください：
@@ -71,8 +61,18 @@ nix profile install nixpkgs#home-manager
 
 #### Home Manager の適用
 
+Home Manager の案内: https://nix-community.github.io/home-manager/
+
+このリポジトリでは `nix profile install nixpkgs#home-manager` は使わず、
+`nix run` で Home Manager を実行する方法を推奨します（プロファイル衝突の回避）。
+
+根拠:
+- https://nix-community.github.io/home-manager/#ch-nix-flakes
+- https://github.com/nix-community/home-manager/issues/2848
+- https://stackoverflow.com/questions/78047885/nix-profile-install-always-results-in-conflict-with-home-manager
+
 ```bash
-home-manager switch --flake .#<username>
+nix run github:nix-community/home-manager -- switch --flake .#<username>
 ```
 
 `<username>` は `nix/home/config.nix` の `username` に合わせてください。

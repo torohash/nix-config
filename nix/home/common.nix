@@ -1,5 +1,12 @@
 { pkgs, ... }:
+let
+  stores = import ../lib/stores.nix { inherit pkgs; };
+in
 {
+  home.packages = [
+    stores.common
+  ];
+
   programs.home-manager.enable = true;
   xdg.enable = true;
 

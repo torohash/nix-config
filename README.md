@@ -48,10 +48,10 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 - `homeDirectory`: ホームディレクトリ（初期値: `/home/torohash`）
 - `system`: システムタイプ（WSL の場合は `x86_64-linux`）
 
-`nix/home/common.nix` の Git 設定も環境に合わせて変更してください：
+`nix/home/git.nix` の Git 設定も環境に合わせて変更してください：
 
-- `programs.git.userName`: Git のユーザー名
-- `programs.git.userEmail`: Git のメールアドレス
+- `programs.git.settings.user.name`: Git のユーザー名
+- `programs.git.settings.user.email`: Git のメールアドレス
 
 ### 4. Home Manager の適用
 

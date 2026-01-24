@@ -6,10 +6,12 @@ in
   home.packages = [
     stores.common
     stores.lsp
+    (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   ];
 
   programs.home-manager.enable = true;
   xdg.enable = true;
+  fonts.fontconfig.enable = true;
 
   home.sessionPath = [
     "${config.home.homeDirectory}/.opencode/bin"

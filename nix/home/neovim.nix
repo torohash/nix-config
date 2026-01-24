@@ -46,6 +46,10 @@
         end
         cmp.setup(setup)
       end
+      local ok_devicons, devicons = pcall(require, "nvim-web-devicons")
+      if ok_devicons then
+        devicons.setup({ default = true })
+      end
       local ok_lualine, lualine = pcall(require, "lualine")
       if ok_lualine then
         lualine.setup()

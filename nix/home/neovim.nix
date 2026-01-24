@@ -3,7 +3,9 @@
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [
+      catppuccin-nvim
       nvim-web-devicons
+      vim-tmux-navigator
       lualine-nvim
       bufferline-nvim
       bufdelete-nvim
@@ -55,8 +57,14 @@
       if ok_scrollbar then
         scrollbar.setup()
       end
+      vim.g.tmux_navigator_no_mappings = 1
+      vim.cmd.colorscheme("catppuccin-mocha")
       vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
       vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
+      vim.keymap.set("n", "<C-h>", "<Cmd><C-U>TmuxNavigateLeft<CR>", { silent = true })
+      vim.keymap.set("n", "<C-j>", "<Cmd><C-U>TmuxNavigateDown<CR>", { silent = true })
+      vim.keymap.set("n", "<C-k>", "<Cmd><C-U>TmuxNavigateUp<CR>", { silent = true })
+      vim.keymap.set("n", "<C-l>", "<Cmd><C-U>TmuxNavigateRight<CR>", { silent = true })
       local function map_diffview_q(bufnr)
         if vim.b[bufnr].diffview_q_mapped then
           return

@@ -47,3 +47,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - nvim-web-devicons
   - アイコン表示（Neo-tree や lualine で使用）
   - https://github.com/nvim-tree/nvim-web-devicons
+- vim-tmux-navigator
+  - tmux と Neovim のペイン/ウィンドウ移動を統合
+  - https://github.com/christoomey/vim-tmux-navigator
+- catppuccin-nvim
+  - Catppuccin テーマ
+  - https://github.com/catppuccin/nvim

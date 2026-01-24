@@ -5,6 +5,7 @@
 - H: BufferLine の前のバッファへ移動
 - L: BufferLine の次のバッファへ移動
 - q: Diffview の画面を閉じる
+- Ctrl+h/j/k/l: tmux と Neovim のペイン/ウィンドウを移動
 - gd: 定義へジャンプ
 - gi: 実装へジャンプ
 - gr: 参照一覧

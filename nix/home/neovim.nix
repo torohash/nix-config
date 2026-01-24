@@ -10,6 +10,7 @@
       bufferline-nvim
       bufdelete-nvim
       nvim-scrollbar
+      indent-blankline-nvim
       neo-tree-nvim
       telescope-nvim
       neogit

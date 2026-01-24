@@ -17,6 +17,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - nvim-scrollbar
   - スクロールバー表示
   - https://github.com/petertriho/nvim-scrollbar
+- indent-blankline-nvim
+  - インデントガイド表示
+  - https://github.com/lukas-reineke/indent-blankline.nvim
 - neo-tree-nvim
   - ファイルエクスプローラー
   - https://github.com/nvim-neo-tree/neo-tree.nvim

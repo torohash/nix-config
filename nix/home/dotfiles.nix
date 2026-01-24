@@ -83,9 +83,6 @@ in
       bind-key -T copy-mode-vi C-k select-pane -U
       bind-key -T copy-mode-vi C-l select-pane -R
 
-      set -g focus-events on
-      set-hook -g pane-focus-in 'select-pane -P "default"'
-      set-hook -g pane-focus-out 'select-pane -P "bg=colour236,fg=colour245"'
     '';
     force = true;
   };

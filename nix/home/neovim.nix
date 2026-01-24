@@ -61,10 +61,10 @@
       vim.cmd.colorscheme("catppuccin-mocha")
       vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
       vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
-      vim.keymap.set("n", "<C-h>", "<Cmd><C-U>TmuxNavigateLeft<CR>", { silent = true })
-      vim.keymap.set("n", "<C-j>", "<Cmd><C-U>TmuxNavigateDown<CR>", { silent = true })
-      vim.keymap.set("n", "<C-k>", "<Cmd><C-U>TmuxNavigateUp<CR>", { silent = true })
-      vim.keymap.set("n", "<C-l>", "<Cmd><C-U>TmuxNavigateRight<CR>", { silent = true })
+      vim.keymap.set("n", "<C-h>", "<Cmd>TmuxNavigateLeft<CR>", { silent = true })
+      vim.keymap.set("n", "<C-j>", "<Cmd>TmuxNavigateDown<CR>", { silent = true })
+      vim.keymap.set("n", "<C-k>", "<Cmd>TmuxNavigateUp<CR>", { silent = true })
+      vim.keymap.set("n", "<C-l>", "<Cmd>TmuxNavigateRight<CR>", { silent = true })
       local function map_diffview_q(bufnr)
         if vim.b[bufnr].diffview_q_mapped then
           return

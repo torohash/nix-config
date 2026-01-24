@@ -1,4 +1,4 @@
-{ buildEnv, htop, cloc, tmux, git, curl, websocat, jq, tree, unzip, bash-completion, xclip, nodejs, ripgrep }:
+{ buildEnv, htop, cloc, tmux, git, curl, websocat, jq, tree, unzip, bash-completion, xclip, nodejs, ripgrep, terraform-ls }:
 
 buildEnv {
   name = "common-store";
@@ -16,5 +16,6 @@ buildEnv {
     ripgrep
     xclip
     nodejs
+    terraform-ls
   ];
 }

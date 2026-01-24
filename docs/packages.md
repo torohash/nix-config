@@ -15,6 +15,7 @@
 - ripgrep: 高速な検索ツール（rg）。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。
+- terraform-ls: Terraform の LSP サーバ。
 
 ## lsp-store
 

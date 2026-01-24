@@ -1,6 +1,7 @@
 local servers = {
   { name = "nixd", bin = "nixd" },
   { name = "marksman", bin = "marksman" },
+  { name = "terraformls", bin = "terraform-ls" },
   {
     name = "basedpyright",
     bin = "basedpyright",

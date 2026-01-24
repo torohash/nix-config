@@ -19,5 +19,15 @@
     "document-writer": {
       "model": "zai-coding-plan/glm-4.7"
     }
+  },
+  "lsp": {
+    "markdown": {
+      "command": ["marksman", "server"],
+      "extensions": [".md"]
+    },
+    "bash": {
+      "command": ["bash-language-server", "start"],
+      "extensions": [".sh", ".tftpl"]
+    }
   }
 }

@@ -1,7 +1,33 @@
 local servers = {
   { name = "nixd", bin = "nixd" },
   { name = "marksman", bin = "marksman" },
-  { name = "basedpyright", bin = "basedpyright" },
+  {
+    name = "basedpyright",
+    bin = "basedpyright",
+    config = {
+      settings = {
+        basedpyright = {
+          analysis = {
+            diagnosticMode = "openFilesOnly",
+            exclude = {
+              "**/.direnv",
+              "**/.git",
+              "**/.mypy_cache",
+              "**/.pytest_cache",
+              "**/.venv",
+              "**/__pycache__",
+              "**/build",
+              "**/dist",
+              "**/node_modules",
+              "**/result",
+              "**/result-*",
+              "**/venv",
+            },
+          },
+        },
+      },
+    },
+  },
   { name = "lua_ls", bin = "lua-language-server" },
 }
 

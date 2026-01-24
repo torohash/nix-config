@@ -3,6 +3,13 @@ let
   stores = import ../lib/stores.nix { inherit pkgs; };
 in
 {
+  # unfree は再配布や利用形態に制限があるライセンスのパッケージ。
+  # Nix は既定で unfree を拒否するため、許可する対象を明示する必要がある。
+  # 本プロジェクトではビルド成果物の再配布は行わないため許可する。
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+    "terraform"
+  ];
+
   home.packages = [
     stores.common
     stores.lsp

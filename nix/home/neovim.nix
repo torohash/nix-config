@@ -22,6 +22,7 @@
       nvim-treesitter.withAllGrammars
     ];
     extraLuaConfig = ''
+      vim.g.mapleader = " "
       vim.opt.termguicolors = true
       vim.opt.autoread = true
       vim.opt.clipboard = "unnamedplus"
@@ -59,6 +60,14 @@
       end
       vim.g.tmux_navigator_no_mappings = 1
       vim.cmd.colorscheme("catppuccin-mocha")
+      local ok_telescope, telescope_builtin = pcall(require, "telescope.builtin")
+      if ok_telescope then
+        vim.keymap.set("n", "<leader>ff", telescope_builtin.find_files, { desc = "Find files" })
+        vim.keymap.set("n", "<leader>fg", telescope_builtin.live_grep, { desc = "Live grep" })
+        vim.keymap.set("n", "<leader>fb", telescope_builtin.buffers, { desc = "Buffers" })
+        vim.keymap.set("n", "<leader>fo", telescope_builtin.oldfiles, { desc = "Old files" })
+        vim.keymap.set("n", "<leader>fh", telescope_builtin.help_tags, { desc = "Help tags" })
+      end
       vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
       vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
       vim.keymap.set("n", "<C-h>", "<Cmd>TmuxNavigateLeft<CR>", { silent = true })

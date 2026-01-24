@@ -62,6 +62,7 @@ in
       if [ -z "''${__SKEL_BASHRC_LOADED:-}" ] && [ -f "$HOME/.bash_aliases" ]; then
         . "$HOME/.bash_aliases"
       fi
+      alias clip='xclip -selection clipboard'
     '';
   };
 

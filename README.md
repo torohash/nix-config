@@ -54,7 +54,20 @@ nix registry add nixcfg path:/home/torohash/nix-config
 
 以降のコマンド例は `nixcfg` の登録を前提にしています。
 
-### 4. Home Manager の設定ファイルの編集
+### 4. ユーザーの作成（root 環境の場合）
+
+初期セットアップで root でログインしており、通常ユーザーが存在しない場合は Home Manager 設定用のユーザーを作成する必要があります。
+
+ユーザー作成コマンド例（汎用 Linux）:
+
+```bash
+sudo useradd -m -s /bin/bash alice
+sudo usermod -aG sudo alice
+```
+
+`sudo` グループが存在しない環境では `wheel` 等に読み替えてください。`alice` は実際のユーザー名に置き換えてください。Home Manager の適用は作成したユーザーでログインして行います。
+
+### 5. Home Manager の設定ファイルの編集
 
 `nix/home/config.nix` を環境に合わせて変更してください：
 
@@ -67,7 +80,7 @@ nix registry add nixcfg path:/home/torohash/nix-config
 - `programs.git.settings.user.name`: Git のユーザー名
 - `programs.git.settings.user.email`: Git のメールアドレス
 
-### 5. Home Manager の適用
+### 6. Home Manager の適用
 
 初回と2回目以降で実行するコマンドが異なります。
 

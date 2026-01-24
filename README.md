@@ -40,7 +40,21 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
 ※ 複数回実行すると設定が重複するため、ファイルの内容を確認してください。既に `experimental-features = nix-command flakes` がある場合は置き換えてください。
 
-### 3. Home Manager の設定ファイルの編集
+### 3. Nix registry への登録
+
+本リポジトリを `nix registry` に登録します。
+
+```bash
+nix registry add nixcfg path:/home/torohash/nix-config
+```
+
+`/home/torohash/nix-config` は環境に合わせて置き換えてください。
+
+既に `nixcfg` が登録されている場合は、`nix registry remove nixcfg` を実行してから追加してください。
+
+以降のコマンド例は `nixcfg` の登録を前提にしています。
+
+### 4. Home Manager の設定ファイルの編集
 
 `nix/home/config.nix` を環境に合わせて変更してください：
 
@@ -53,7 +67,7 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 - `programs.git.settings.user.name`: Git のユーザー名
 - `programs.git.settings.user.email`: Git のメールアドレス
 
-### 4. Home Manager の適用
+### 5. Home Manager の適用
 
 初回と2回目以降で実行するコマンドが異なります。
 
@@ -78,7 +92,7 @@ Home Manager の案内: https://nix-community.github.io/home-manager/
 初回は以下のコマンドを実行してください：
 
 ```bash
-nix run github:nix-community/home-manager -- switch --flake .#<username>
+nix run github:nix-community/home-manager -- switch --flake nixcfg#<username>
 ```
 
 `<username>` は `nix/home/config.nix` の `username` に合わせてください。
@@ -87,14 +101,14 @@ nix run github:nix-community/home-manager -- switch --flake .#<username>
 `home-manager` コマンドが使用可能になります。
 
 必要に応じて新しいシェルを開くか、`source ~/.profile` を実行してください。
-`home-manager` が見つからない場合は、初回と同じ `nix run github:nix-community/home-manager -- switch --flake .#<username>` を使用できます。
+`home-manager` が見つからない場合は、初回と同じ `nix run github:nix-community/home-manager -- switch --flake nixcfg#<username>` を使用できます。
 
 #### 2回目以降
 
 2回目以降は以下のコマンドを使用してください：
 
 ```bash
-home-manager switch --flake .#<username>
+home-manager switch --flake nixcfg#<username>
 ```
 
 Neovim のアイコン表示には Nerd Font が必要です。
@@ -108,7 +122,7 @@ packages の一覧と内容は `docs/packages.md` を参照してください。
 #### common-store
 
 ```bash
-nix build .#common-store
+nix build nixcfg#common-store
 ```
 
 ### 開発シェル（nix develop）
@@ -118,13 +132,13 @@ Python 向けの開発シェルを提供しています。
 devShells の一覧と内容は `docs/devShells.md` を参照してください。
 
 ```bash
-nix develop .#python
+nix develop nixcfg#python
 ```
 
 または、デフォルトの devShell を使用する場合：
 
 ```bash
-nix develop
+nix develop nixcfg
 ```
 
 ### devShell の自動適用
@@ -132,13 +146,13 @@ nix develop
 リポジトリのルートに `.envrc` を作成し、以下を記載します。
 
 ```bash
-use flake
+use flake "nixcfg"
 ```
 
 特定の devShell を使いたい場合は、名前を指定してください。
 
 ```bash
-use flake .#python
+use flake "nixcfg#python"
 ```
 
 初回のみ許可します。

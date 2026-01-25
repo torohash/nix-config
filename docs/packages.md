@@ -22,6 +22,4 @@
 
 - nixd: Nix の LSP サーバ。
 - marksman: Markdown 向けの LSP サーバ。
-- pyright: Python の LSP サーバ。
-- basedpyright: Pyright の拡張版 LSP サーバ。
 - lua-language-server: Lua の LSP サーバ。

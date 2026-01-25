@@ -53,6 +53,3 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - vim-tmux-navigator
   - tmux と Neovim のペイン/ウィンドウ移動を統合
   - https://github.com/christoomey/vim-tmux-navigator
-- catppuccin-nvim
-  - Catppuccin テーマ
-  - https://github.com/catppuccin/nvim

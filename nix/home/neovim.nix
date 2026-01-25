@@ -3,7 +3,6 @@
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [
-      catppuccin-nvim
       nvim-web-devicons
       vim-tmux-navigator
       lualine-nvim
@@ -64,7 +63,6 @@
         scrollbar.setup()
       end
       vim.g.tmux_navigator_no_mappings = 1
-      vim.cmd.colorscheme("catppuccin-mocha")
       local ok_telescope, telescope_builtin = pcall(require, "telescope.builtin")
       if ok_telescope then
         vim.keymap.set("n", "<leader>ff", telescope_builtin.find_files, { desc = "Find files" })

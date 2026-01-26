@@ -3,6 +3,7 @@
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [
+      catppuccin-nvim
       nvim-web-devicons
       vim-tmux-navigator
       lualine-nvim
@@ -28,6 +29,25 @@
       vim.opt.clipboard = "unnamedplus"
       vim.opt.grepprg = "rg --vimgrep --smart-case"
       vim.opt.grepformat = "%f:%l:%c:%m"
+      local ok_catppuccin, catppuccin = pcall(require, "catppuccin")
+      if ok_catppuccin then
+        catppuccin.setup({
+          flavour = "mocha",
+          integrations = {
+            diffview = false,
+          },
+        })
+        vim.cmd.colorscheme("catppuccin")
+        local colors = require("catppuccin.utils.colors")
+        local palette = require("catppuccin.palettes").get_palette("mocha")
+        local bg_base = colors.blend(palette.base, palette.mantle, 0.80)
+        local add_bg = colors.blend(palette.green, bg_base, 0.50)
+        local del_bg = colors.blend(palette.red, bg_base, 0.40)
+        vim.api.nvim_set_hl(0, "DiffviewDiffAdd", { fg = palette.text, bg = add_bg })
+        vim.api.nvim_set_hl(0, "DiffviewDiffDelete", { fg = palette.text, bg = del_bg })
+        vim.api.nvim_set_hl(0, "DiffviewDiffChange", { link = "DiffChange" })
+        vim.api.nvim_set_hl(0, "DiffviewDiffText", { link = "DiffText" })
+      end
       pcall(require, "lsp")
       local ok_cmp, cmp = pcall(require, "cmp")
       if ok_cmp then

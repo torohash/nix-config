@@ -5,6 +5,9 @@ Home Manager の `programs.neovim.plugins` で管理しているプラグイン�
 - nvim-treesitter.withAllGrammars
   - Treesitter のパーサ一式と構文解析
   - https://github.com/nvim-treesitter/nvim-treesitter
+- catppuccin-nvim
+  - Catppuccin カラースキーム
+  - https://github.com/catppuccin/nvim
 - lualine-nvim
   - ステータスラインを提供
   - https://github.com/nvim-lualine/lualine.nvim

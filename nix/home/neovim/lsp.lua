@@ -29,6 +29,17 @@ local servers = {
       },
     },
   },
+  {
+    name = "vtsls",
+    bin = "vtsls",
+    config = {
+      settings = {
+        vtsls = {
+          autoUseWorkspaceTsdk = true,
+        },
+      },
+    },
+  },
   { name = "lua_ls", bin = "lua-language-server" },
 }
 

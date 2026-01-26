@@ -32,9 +32,11 @@
           pkgs = nixpkgs.legacyPackages.${system};
           devshells = import ./nix/lib/devshells.nix { inherit pkgs; };
           pythonShell = devshells.python;
+          typescriptShell = devshells.typescript;
         in
         {
           python = pythonShell;
+          typescript = typescriptShell;
           default = pythonShell;
         };
     in

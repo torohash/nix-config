@@ -77,6 +77,10 @@ in
   home.file.".profile".force = true;
   home.file.".tmux.conf" = {
     text = ''
+      unbind C-b
+      set -g prefix C-a
+      bind C-a send-prefix
+
       # Smart pane switching with awareness of Vim splits.
       # See: https://github.com/christoomey/vim-tmux-navigator
       set -g mode-keys vi

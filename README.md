@@ -12,6 +12,8 @@
 - `docs/devShells.md`: devShells の内容と各ツールの説明。
 - `docs/home-manager-versioning.md`: Home Manager のバージョン更新と `home.stateVersion` の扱い。
 - `docs/ai-cli.md`: AI 開発支援 CLI ツールの導入方針とインストール。
+- `docs/aws-cli.md`: AWS CLI と SSM Session Manager の利用方法。
+- `docs/iam-identity-center-sso.md`: IAM Identity Center（SSO）ユーザー発行手順。
 - `docs/neovim.md`: Neovim のキーマップとカスタム操作。
 - `docs/dotfiles.md`: Bash aliases と tmux キーバインド。
 

@@ -17,6 +17,8 @@
 - nodejs: Node.js ランタイム。
 - terraform: Terraform CLI。
 - terraform-ls: Terraform の LSP サーバ。
+- awscli2: AWS CLI v2。
+- ssm-session-manager-plugin: AWS SSM Session Manager 用のプラグイン。
 
 ## lsp-store
 

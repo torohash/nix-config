@@ -29,6 +29,8 @@
       vim.opt.clipboard = "unnamedplus"
       vim.opt.grepprg = "rg --vimgrep --smart-case"
       vim.opt.grepformat = "%f:%l:%c:%m"
+      vim.opt.number = true
+      vim.opt.relativenumber = true
       local ok_catppuccin, catppuccin = pcall(require, "catppuccin")
       if ok_catppuccin then
         catppuccin.setup({

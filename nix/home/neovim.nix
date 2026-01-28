@@ -7,19 +7,14 @@
       nvim-web-devicons
       vim-tmux-navigator
       lualine-nvim
-      bufferline-nvim
-      bufdelete-nvim
       nvim-scrollbar
       indent-blankline-nvim
-      neo-tree-nvim
       telescope-nvim
-      neogit
       diffview-nvim
       nvim-cmp
       cmp-nvim-lsp
       nvim-lspconfig
       plenary-nvim
-      nui-nvim
       nvim-treesitter.withAllGrammars
     ];
     extraLuaConfig = ''
@@ -76,10 +71,6 @@
       if ok_lualine then
         lualine.setup()
       end
-      local ok_bufferline, bufferline = pcall(require, "bufferline")
-      if ok_bufferline then
-        bufferline.setup()
-      end
       local ok_scrollbar, scrollbar = pcall(require, "scrollbar")
       if ok_scrollbar then
         scrollbar.setup()
@@ -93,8 +84,6 @@
         vim.keymap.set("n", "<leader>fo", telescope_builtin.oldfiles, { desc = "Old files" })
         vim.keymap.set("n", "<leader>fh", telescope_builtin.help_tags, { desc = "Help tags" })
       end
-      vim.keymap.set("n", "H", "<Cmd>BufferLineCyclePrev<CR>", {})
-      vim.keymap.set("n", "L", "<Cmd>BufferLineCycleNext<CR>", {})
       vim.keymap.set("n", "<C-h>", "<Cmd>TmuxNavigateLeft<CR>", { silent = true })
       vim.keymap.set("n", "<C-j>", "<Cmd>TmuxNavigateDown<CR>", { silent = true })
       vim.keymap.set("n", "<C-k>", "<Cmd>TmuxNavigateUp<CR>", { silent = true })
@@ -119,28 +108,6 @@
           map_diffview_q(event.buf)
         end,
       })
-      vim.api.nvim_create_autocmd("VimEnter", {
-        callback = function()
-          local ok_neotree, neotree = pcall(require, "neo-tree.command")
-          if ok_neotree then
-            neotree.execute({ action = "show", source = "filesystem" })
-          end
-        end,
-      })
-      vim.cmd([[cnoreabbrev <expr> bd (getcmdtype() == ':' ? (getcmdline() ==# 'bd' ? 'Bdelete' : (getcmdline() =~# '^bd[! ]' ? substitute(getcmdline(), '^bd', 'Bdelete', "") : 'bd')) : 'bd')]])
-      vim.cmd([[cnoreabbrev <expr> bdelete (getcmdtype() == ':' ? (getcmdline() ==# 'bdelete' ? 'Bdelete' : (getcmdline() =~# '^bdelete[! ]' ? substitute(getcmdline(), '^bdelete', 'Bdelete', "") : 'bdelete')) : 'bdelete')]])
-      vim.api.nvim_create_user_command("Bonly", function()
-        local ok_bufdelete, bufdelete = pcall(require, "bufdelete")
-        if not ok_bufdelete then
-          return
-        end
-        local current = vim.api.nvim_get_current_buf()
-        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-          if buf ~= current and vim.api.nvim_buf_is_loaded(buf) and vim.fn.buflisted(buf) == 1 then
-            bufdelete.bufdelete(buf)
-          end
-        end
-      end, {})
     '';
   };
 

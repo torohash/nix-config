@@ -1,6 +1,12 @@
 { pkgs, config, ... }:
 let
   stores = import ../lib/stores.nix { inherit pkgs; };
+  yaziPlugins = pkgs.fetchFromGitHub {
+    owner = "yazi-rs";
+    repo = "plugins";
+    rev = "e07bf41442a7f6fdd003069f380e1ae469a86211";
+    sha256 = "sha256-aC8DUZpzNHEf9MW3tX3XcDYY/mWClAHkw+nZaxDQHp8=";
+  };
 in
 {
   # unfree は再配布や利用形態に制限があるライセンスのパッケージ。
@@ -21,6 +27,12 @@ in
   home.sessionPath = [
     "${config.home.homeDirectory}/.opencode/bin"
   ];
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    GIT_EDITOR = "nvim";
+  };
 
   programs.bash = {
     enable = true;
@@ -118,5 +130,56 @@ in
   xdg.configFile."opencode/oh-my-opencode.json" = {
     source = ../../dotfiles/opencode/oh-my-opencode.json;
     force = true;
+  };
+
+  xdg.configFile."yazi/yazi.toml" = {
+    text = ''
+      [opener]
+      edit = [
+        { run = "nvim %s", block = true, for = "unix" }
+      ]
+
+      [[plugin.prepend_fetchers]]
+      id = "git"
+      url = "*"
+      run = "git"
+
+      [[plugin.prepend_fetchers]]
+      id = "git"
+      url = "*/"
+      run = "git"
+    '';
+  };
+
+  xdg.configFile."yazi/keymap.toml" = {
+    text = ''
+      [[mgr.prepend_keymap]]
+      on = "g"
+      run = "shell --block lazygit"
+      desc = "Open lazygit"
+    '';
+  };
+
+  xdg.configFile."yazi/init.lua" = {
+    text = ''
+      require("git"):setup {
+        order = 1500,
+      }
+    '';
+  };
+
+  xdg.configFile."yazi/plugins/git.yazi" = {
+    source = "${yaziPlugins}/git.yazi";
+    recursive = true;
+  };
+
+  xdg.configFile."lazygit/config.yml" = {
+    text = ''
+      os:
+        edit: 'nvim {{filename}}'
+        editAtLine: 'nvim +{{line}} {{filename}}'
+        editAtLineAndWait: 'nvim +{{line}} {{filename}}'
+        editInTerminal: true
+    '';
   };
 }

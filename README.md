@@ -15,6 +15,7 @@
 - `docs/aws-cli.md`: AWS CLI と SSM Session Manager の利用方法。
 - `docs/iam-identity-center-sso.md`: IAM Identity Center（SSO）ユーザー発行手順。
 - `docs/neovim.md`: Neovim のキーマップとカスタム操作。
+- `docs/yazi.md`: Yazi のキー操作。
 - `docs/dotfiles.md`: Bash aliases と tmux キーバインド。
 
 ## セットアップ

@@ -44,6 +44,9 @@
     },
     "visual": {
       "model": "zai-coding-plan/glm-4.7"
+    },
+    "unspecified-low": {
+      "model": "zai-coding-plan/glm-4.7"
     }
   },
   "lsp": {

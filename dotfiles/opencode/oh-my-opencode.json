@@ -35,6 +35,9 @@
   "categories": {
     "quick": {
       "model": "zai-coding-plan/glm-4.7"
+    },
+    "writing": {
+      "model": "zai-coding-plan/glm-4.7"
     }
   },
   "lsp": {

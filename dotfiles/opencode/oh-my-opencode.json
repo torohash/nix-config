@@ -38,6 +38,12 @@
     },
     "writing": {
       "model": "zai-coding-plan/glm-4.7"
+    },
+    "data-science": {
+      "model": "zai-coding-plan/glm-4.7"
+    },
+    "visual": {
+      "model": "zai-coding-plan/glm-4.7"
     }
   },
   "lsp": {

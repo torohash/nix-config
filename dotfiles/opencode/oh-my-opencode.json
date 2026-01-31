@@ -27,7 +27,9 @@
     },
     "sisyphus-junior": {
       "model": "openai/gpt-5.2-codex"
-    }
+    },
+    "multimodal-locker": {
+      "model": "openai/gpt-5.2-codex"
   },
   "lsp": {
     "markdown": {

@@ -1,6 +1,6 @@
 # AI CLI ツール
 
-このリポジトリでは、AI 開発支援 CLI ツール（Claude Code、Codex CLI、OpenCode）を以下のアプローチで導入します。
+このリポジトリでは、AI 開発支援 CLI ツール（Claude Code、Codex CLI、OpenCode、agent-browser）を以下のアプローチで導入します。
 
 ## アプローチの理由
 
@@ -55,6 +55,27 @@ curl -fsSL https://opencode.ai/install | bash
 公式ドキュメント: https://opencode.ai/docs/
 
 インストール先の変更方法は公式ドキュメントに記載がないため、既定の配置先に従ってください。
+
+### agent-browser
+
+```bash
+# npm からインストール
+npm install -g agent-browser
+```
+
+Chromium のダウンロード方法（Linux では依存ライブラリの導入も必要）は以下の通りです。
+
+```bash
+# Linux 以外（macOS/Windows）、または Linux で依存ライブラリ導入済みの場合
+agent-browser install
+
+# Linux: 方法1（依存ライブラリ + Chromium）
+agent-browser install --with-deps
+
+# Linux: 方法2（依存ライブラリを先に導入）
+npx playwright install-deps chromium
+agent-browser install
+```
 
 ## 注意点
 

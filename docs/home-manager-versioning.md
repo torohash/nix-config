@@ -8,7 +8,7 @@
 
 ## 設定場所
 
-このリポジトリでは `nix/home/config.nix` で設定しています。
+このリポジトリでは `nix/home/users/torohash.nix` で設定しています。
 
 ## いつ更新すべきか
 

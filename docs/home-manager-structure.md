@@ -99,7 +99,6 @@ nix/home/
 - OSに依存しないものは `common/` に置く
 - プラットフォーム固有の差分だけを `platforms/<platform>/` に置く
 - 差分がない機能は `platforms/<platform>/` にファイルを作らず、`modules.nix` にも追加しない
-- WSLがUbuntuとほぼ同じ場合、`platforms/wsl/modules.nix` で `../ubuntu/modules.nix` を import し差分だけ追加する運用も可
 
 ## 追加方法
 

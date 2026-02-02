@@ -12,11 +12,27 @@
   outputs = { self, nixpkgs, home-manager }:
     let
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
-      homeConfig = import ./nix/home/config.nix;
-      homeSystem = homeConfig.system;
-      homeUsername = homeConfig.username;
-      homeDirectory = homeConfig.homeDirectory;
-      homeStateVersion = homeConfig.stateVersion;
+      homeSystem = "x86_64-linux";
+      homeUsername = "torohash";
+      homePlatforms = [
+        "ubuntu"
+        "wsl"
+      ];
+      hostModule = platform:
+        ./nix/home/hosts + "/${homeUsername}_${platform}.nix";
+      mkHomeConfiguration = platform:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${homeSystem};
+          modules = [
+            (hostModule platform)
+          ];
+        };
+      homeConfigurations = nixpkgs.lib.listToAttrs (map
+        (platform: {
+          name = "${homeUsername}_${platform}";
+          value = mkHomeConfiguration platform;
+        })
+        homePlatforms);
       mkPackages = system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
@@ -43,18 +59,6 @@
     {
       packages = forAllSystems mkPackages;
       devShells = forAllSystems mkDevShells;
-      homeConfigurations = {
-        ${homeUsername} = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${homeSystem};
-          modules = [
-            ./nix/home/common.nix
-            {
-              home.username = homeUsername;
-              home.homeDirectory = homeDirectory;
-              home.stateVersion = homeStateVersion;
-            }
-          ];
-        };
-      };
+      homeConfigurations = homeConfigurations;
     };
 }

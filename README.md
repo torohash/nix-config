@@ -11,6 +11,7 @@
 - `docs/packages.md`: packages の内容と各ツールの説明。
 - `docs/devShells.md`: devShells の内容と各ツールの説明。
 - `docs/home-manager-versioning.md`: Home Manager のバージョン更新と `home.stateVersion` の扱い。
+- `docs/home-manager-structure.md`: Home Manager のディレクトリ構成方針。
 - `docs/ai-cli.md`: AI 開発支援 CLI ツールの導入方針とインストール。
 - `docs/aws-cli.md`: AWS CLI と SSM Session Manager の利用方法。
 - `docs/iam-identity-center-sso.md`: IAM Identity Center（SSO）ユーザー発行手順。
@@ -74,13 +75,15 @@ sudo usermod -aG sudo alice
 
 ### 5. Home Manager の設定ファイルの編集
 
-`nix/home/config.nix` を環境に合わせて変更してください：
+`nix/home/users/torohash.nix` を環境に合わせて変更してください：
 
 - `username`: ユーザー名（初期値: `torohash`）
 - `homeDirectory`: ホームディレクトリ（初期値: `/home/torohash`）
-- `system`: システムタイプ（WSL の場合は `x86_64-linux`）
+- `stateVersion`: 初回インストール時の Home Manager バージョン
 
-`nix/home/git.nix` の Git 設定も環境に合わせて変更してください：
+システムタイプは `flake.nix` の `homeSystem` で指定します。
+
+`nix/home/common/git.nix` の Git 設定も環境に合わせて変更してください：
 
 - `programs.git.settings.user.name`: Git のユーザー名
 - `programs.git.settings.user.email`: Git のメールアドレス
@@ -110,23 +113,23 @@ Home Manager の案内: https://nix-community.github.io/home-manager/
 初回は以下のコマンドを実行してください：
 
 ```bash
-nix run github:nix-community/home-manager -- switch --flake nixcfg#<username>
+nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>
 ```
 
-`<username>` は `nix/home/config.nix` の `username` に合わせてください。
+`<host>` には `torohash_ubuntu` または `torohash_wsl` を指定してください。
 
 初回の適用が完了すると、`programs.home-manager.enable = true` の設定により
 `home-manager` コマンドが使用可能になります。
 
 必要に応じて新しいシェルを開くか、`source ~/.profile` を実行してください。
-`home-manager` が見つからない場合は、初回と同じ `nix run github:nix-community/home-manager -- switch --flake nixcfg#<username>` を使用できます。
+`home-manager` が見つからない場合は、初回と同じ `nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>` を使用できます。
 
 #### 2回目以降
 
 2回目以降は以下のコマンドを使用してください：
 
 ```bash
-home-manager switch --flake nixcfg#<username>
+home-manager switch --flake nixcfg#<host>
 ```
 
 Neovim のアイコン表示には Nerd Font が必要です。

@@ -6,4 +6,4 @@
 
 `~/.config/yazi/keymap.toml` に `shell --block lazygit` を割り当てています。
 
-Home Manager では `nix/home/dotfiles.nix` で管理しています。
+Home Manager では `nix/home/common/dotfiles.nix` で管理しています。

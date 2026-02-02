@@ -1,8 +1,9 @@
 { ... }:
 {
   imports = [
+    ./shell/bash.nix
+    ./editor/neovim.nix
     ./git.nix
-    ./neovim.nix
     ./dotfiles.nix
   ];
 }

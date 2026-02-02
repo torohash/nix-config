@@ -14,6 +14,7 @@
 - yazi: Rust 製ファイルマネージャ。
 - unzip: ZIP 展開ツール。
 - bash-completion: bash の補完定義。
+- chafa: 端末画像ビューア。
 - ripgrep: 高速な検索ツール（rg）。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。

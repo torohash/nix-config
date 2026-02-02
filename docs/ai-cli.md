@@ -17,13 +17,8 @@ Node.js は `common-store` に含めます。これにより、すべての CLI 
 ## インストールコマンド
 
 ### npm のインストール先
-Nix 環境では `npm install -g` の既定の prefix が読み取り専用になる場合があります。必要に応じてユーザーディレクトリへ切り替えてください。
-
-```bash
-npm config set prefix ~/.local
-```
-
-`~/.local/bin` が PATH に含まれていない場合は追加してください。
+Nix 環境では `npm install -g` の既定の prefix が読み取り専用になる場合があります。
+このリポジトリでは Home Manager で `NPM_CONFIG_PREFIX=~/.local` を設定し、`~/.local/bin` を PATH に追加します。
 
 ### Claude Code
 

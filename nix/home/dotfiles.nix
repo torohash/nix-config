@@ -26,12 +26,14 @@ in
 
   home.sessionPath = [
     "${config.home.homeDirectory}/.opencode/bin"
+    "${config.home.homeDirectory}/.local/bin"
   ];
 
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
     GIT_EDITOR = "nvim";
+    NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.local";
   };
 
   programs.bash = {

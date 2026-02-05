@@ -77,6 +77,11 @@ in
     force = true;
   };
 
+  xdg.configFile."opencode/opencode.json" = {
+    source = ../../../dotfiles/opencode/opencode.json;
+    force = true;
+  };
+
   xdg.configFile."yazi/yazi.toml" = {
     text = ''
       [opener]

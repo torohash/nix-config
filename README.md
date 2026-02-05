@@ -35,6 +35,12 @@ Nix（2.4+）をインストールします。
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
 ```
 
+インストール後に Nix の環境変数を反映します。
+
+```bash
+source ~/.nix-profile/etc/profile.d/nix.sh
+```
+
 ### 2. flakes の有効化
 
 flakes を有効化します。

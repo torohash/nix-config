@@ -28,3 +28,10 @@
 - nixd: Nix の LSP サーバ。
 - marksman: Markdown 向けの LSP サーバ。
 - lua-language-server: Lua の LSP サーバ。
+
+## home-manager (platform)
+
+- fcitx5: 入力メソッドフレームワーク（Ubuntu/Fedora）。
+- fcitx5-mozc: Mozc エンジン（Ubuntu/Fedora）。
+- fcitx5-gtk: GTK アプリ連携（Ubuntu/Fedora）。
+- kdePackages.fcitx5-qt: Qt アプリ連携（Ubuntu/Fedora）。

@@ -27,6 +27,13 @@ nix/home/
       editor/
         neovim.nix
       dotfiles.nix
+    fedora/
+      modules.nix
+      shell/
+        bash.nix
+      editor/
+        neovim.nix
+      dotfiles.nix
     wsl/
       modules.nix
       shell/
@@ -40,6 +47,7 @@ nix/home/
 
   hosts/
     torohash_ubuntu.nix
+    torohash_fedora.nix
     torohash_wsl.nix
 ```
 

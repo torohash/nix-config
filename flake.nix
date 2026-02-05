@@ -16,6 +16,7 @@
       homeUsername = "torohash";
       homePlatforms = [
         "ubuntu"
+        "fedora"
         "wsl"
       ];
       hostModule = platform:

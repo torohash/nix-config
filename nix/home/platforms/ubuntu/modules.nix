@@ -28,7 +28,7 @@
       font-family = [
         "HackGen Console NF"
       ];
-      font-size = 14;
+      font-size = 13;
       adjust-cell-height = "10%";
       background-opacity = 0.90;
       background-blur = 20;
@@ -77,6 +77,7 @@
 
   home.packages = with pkgs; [
     hackgen-nf-font
+    obsidian
     google-chrome
     ticktick
     bitwarden-desktop

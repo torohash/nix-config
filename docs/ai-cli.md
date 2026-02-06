@@ -51,15 +51,6 @@ curl -fsSL https://opencode.ai/install | bash
 
 インストール先の変更方法は公式ドキュメントに記載がないため、既定の配置先に従ってください。
 
-### oh-my-opencode
-
-OpenCode のインストール後に実行してください。
-
-```bash
-# npm からインストール
-npm install -g oh-my-opencode
-```
-
 ### OpenCode 設定ファイル
 
 OpenCode の設定は Home Manager 経由で `~/.config/opencode` に配置します。

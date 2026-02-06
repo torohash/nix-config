@@ -28,6 +28,7 @@
       font-family = [
         "HackGen Console NF"
       ];
+      font-size = 14;
       adjust-cell-height = "10%";
       background-opacity = 0.90;
       background-blur = 20;
@@ -80,7 +81,6 @@
   home.packages = with pkgs; [
     hackgen-nf-font
     (config.lib.nixGL.wrap google-chrome)
-    obsidian
     ticktick
     bitwarden-desktop
     gnomeExtensions.kimpanel

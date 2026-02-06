@@ -42,7 +42,6 @@
 - kdePackages.fcitx5-qt: Qt アプリ連携（Ubuntu/Fedora）。
 - hackgen-nf-font: 日本語を含む HackGen Nerd Font（Ubuntu/Fedora）。
 - google-chrome: Web ブラウザ（Ubuntu/Fedora）。
-- obsidian: Markdown ベースのノートアプリ（Ubuntu/Fedora）。
 - ticktick: タスク管理アプリ（Ubuntu/Fedora）。
 - bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。
 - ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化）。

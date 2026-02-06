@@ -24,6 +24,11 @@
     enable = true;
     package = config.lib.nixGL.wrap pkgs.ghostty;
     enableZshIntegration = true;
+    settings = {
+      font-family = [
+        "HackGen Console NF"
+      ];
+    };
   };
 
   i18n.inputMethod = {
@@ -67,6 +72,7 @@
   };
 
   home.packages = with pkgs; [
+    hackgen-nf-font
     google-chrome
     obsidian
     ticktick

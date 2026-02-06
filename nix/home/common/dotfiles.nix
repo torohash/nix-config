@@ -26,6 +26,7 @@ in
   ];
 
   programs.home-manager.enable = true;
+  fonts.fontconfig.enable = true;
   xdg.enable = true;
 
   home.sessionPath = [

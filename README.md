@@ -18,6 +18,8 @@
 - `docs/neovim.md`: Neovim のキーマップとカスタム操作。
 - `docs/yazi.md`: Yazi のキー操作。
 - `docs/dotfiles.md`: Bash aliases と tmux キーバインド。
+- `docs/gnome-fcitx5.md`: GNOME と fcitx5 の入力切替の関係。
+- `docs/gnome-shortcuts.md`: GNOME のスクリーンショット系ショートカットと関連設定のメモ。
 
 ## セットアップ
 

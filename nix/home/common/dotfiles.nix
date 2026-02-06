@@ -14,6 +14,10 @@ in
   # 本プロジェクトではビルド成果物の再配布は行わないため許可する。
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
     "terraform"
+    "google-chrome"
+    "obsidian"
+    "ticktick"
+    "bitwarden-desktop"
   ];
 
   home.packages = [

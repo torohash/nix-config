@@ -9,4 +9,11 @@
       kdePackages.fcitx5-qt
     ];
   };
+
+  home.packages = with pkgs; [
+    google-chrome
+    obsidian
+    ticktick
+    bitwarden-desktop
+  ];
 }

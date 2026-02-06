@@ -35,3 +35,7 @@
 - fcitx5-mozc: Mozc エンジン（Ubuntu/Fedora）。
 - fcitx5-gtk: GTK アプリ連携（Ubuntu/Fedora）。
 - kdePackages.fcitx5-qt: Qt アプリ連携（Ubuntu/Fedora）。
+- google-chrome: Web ブラウザ（Ubuntu/Fedora）。
+- obsidian: Markdown ベースのノートアプリ（Ubuntu/Fedora）。
+- ticktick: タスク管理アプリ（Ubuntu/Fedora）。
+- bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。

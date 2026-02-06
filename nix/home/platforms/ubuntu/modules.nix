@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, nixgl, ... }:
 {
   programs.zsh = {
     enable = true;
@@ -14,6 +14,17 @@
   };
 
   programs.direnv.enableZshIntegration = true;
+
+  targets.genericLinux = {
+    enable = true;
+    nixGL.packages = nixgl.packages;
+  };
+
+  programs.ghostty = {
+    enable = true;
+    package = config.lib.nixGL.wrap pkgs.ghostty;
+    enableZshIntegration = true;
+  };
 
   i18n.inputMethod = {
     enable = true;
@@ -60,7 +71,6 @@
     obsidian
     ticktick
     bitwarden-desktop
-    ghostty
     gnomeExtensions.kimpanel
   ];
 }

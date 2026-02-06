@@ -29,7 +29,10 @@
 
 ### 2) Ghostty の追加
 
-Ubuntu/Fedora の `home.packages` に `ghostty` を追加。
+Ubuntu/Fedora の `programs.ghostty` を有効化。
+
+- `programs.ghostty.enable = true`
+- `programs.ghostty.enableZshIntegration = true`
 
 補足: パッケージ一覧の説明は `docs/packages.md` を参照。
 

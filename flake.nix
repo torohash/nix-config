@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixgl = {
+      url = "github:nix-community/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager }:
+  outputs = { self, nixpkgs, home-manager, nixgl }:
     let
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
       homeSystem = "x86_64-linux";
@@ -24,6 +28,9 @@
       mkHomeConfiguration = platform:
         home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.${homeSystem};
+          extraSpecialArgs = {
+            inherit nixgl;
+          };
           modules = [
             (hostModule platform)
           ];

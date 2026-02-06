@@ -36,6 +36,11 @@
         "kimpanel@kde.org"
       ];
     };
+    "org/gnome/shell/keybindings" = {
+      show-screenshot-ui = [ "<Super><Shift>s" ];
+      screenshot = [ "<Super><Shift>3" ];
+      screenshot-window = [ "<Super><Shift>4" ];
+    };
   };
 
   xdg.configFile."fcitx5/config" = {
@@ -46,11 +51,19 @@
     '';
   };
 
+  xdg.configFile."zellij/config.kdl" = {
+    text = ''
+      default_shell "${config.home.homeDirectory}/.nix-profile/bin/zsh"
+    '';
+    force = true;
+  };
+
   home.packages = with pkgs; [
     google-chrome
     obsidian
     ticktick
     bitwarden-desktop
+    ghostty
     gnomeExtensions.kimpanel
   ];
 }

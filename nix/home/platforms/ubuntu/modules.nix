@@ -31,6 +31,7 @@
       font-size = 13;
       adjust-cell-height = "10%";
       background-opacity = 0.90;
+      background-opacity-cells = true;
       background-blur = 20;
     };
   };

@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 let
   stores = import ../../lib/stores.nix { inherit pkgs; };
   yaziPlugins = pkgs.fetchFromGitHub {
@@ -141,4 +141,28 @@ in
         editInTerminal: true
     '';
   };
+
+  home.activation.btopThemeTransparency = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    btop_conf="$HOME/.config/btop/btop.conf"
+    btop_backup="$HOME/.config/btop/btop.conf.backup"
+
+    mkdir -p "$HOME/.config/btop"
+
+    if [ ! -f "$btop_conf" ] && [ -f "$btop_backup" ]; then
+      cp "$btop_backup" "$btop_conf"
+    fi
+
+    if [ -f "$btop_conf" ]; then
+      if grep -q '^[[:space:]]*theme_background[[:space:]]*=' "$btop_conf"; then
+        sed -i 's/^[[:space:]]*theme_background[[:space:]]*=.*/theme_background = false/' "$btop_conf"
+      else
+        printf '\n# Ghostty の透過背景を活かす\ntheme_background = false\n' >> "$btop_conf"
+      fi
+    else
+      cat > "$btop_conf" <<'EOF'
+# Ghostty の透過背景を活かす
+theme_background = false
+EOF
+    fi
+  '';
 }

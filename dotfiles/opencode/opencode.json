@@ -4,6 +4,7 @@
     "oh-my-opencode"
   ],
   "instructions": ["AGENTS.md"],
+  "theme": "system",
   "tui": {
     "scroll_speed": 1,
     "scroll_acceleration": {

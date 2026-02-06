@@ -138,6 +138,31 @@ nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>
 home-manager switch --flake nixcfg#<host>
 ```
 
+### zsh をデフォルトシェルにする（Ubuntu/Fedora）
+
+`torohash_ubuntu` と `torohash_fedora` では Home Manager で `zsh` を有効化しています。
+
+#### Nix で可能なこと / 不可能なこと
+
+- 可能: `zsh` の導入。
+- 不可能（Fedora/Ubuntu + Home Manager 単体）: `/etc/shells` や `/etc/passwd` を完全に宣言的に固定すること。
+- 不可能（この設定）: `home-manager switch` 実行時に `/etc/shells` 登録や `chsh` を自動実行すること。
+
+#### 切り替え手順（1回だけ実施）
+
+`home-manager switch` は `/etc/shells` とログインシェルを変更しないため、
+以下を手動で実行してください（そのままコピペ可）。
+
+```bash
+ZSH_PATH="$HOME/.nix-profile/bin/zsh"
+grep -Fxq "$ZSH_PATH" /etc/shells || echo "$ZSH_PATH" | sudo tee -a /etc/shells
+chsh -s "$ZSH_PATH"
+getent passwd "$USER" | cut -d: -f7 || awk -F: -v u="$USER" '$1==u {print $7}' /etc/passwd
+```
+
+`sudo` が必要なのは `/etc/shells` 追記の行だけです。`chsh` は通常 sudo 不要です。
+確認結果が `.../zsh` になっていればOKです。反映には再ログインが必要です。
+
 Neovim のアイコン表示には Nerd Font が必要です。
 
 ## 基本的な使い方

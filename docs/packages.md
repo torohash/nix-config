@@ -31,6 +31,10 @@
 
 ## home-manager (platform)
 
+- zsh: シェル本体（Ubuntu/Fedora）。
+- oh-my-zsh: zsh のフレームワーク（Ubuntu/Fedora）。
+- zsh-autosuggestions: zsh のコマンド補完提案（Ubuntu/Fedora）。
+- zsh-syntax-highlighting: zsh のシンタックスハイライト（Ubuntu/Fedora）。
 - fcitx5: 入力メソッドフレームワーク（Ubuntu/Fedora）。
 - fcitx5-mozc: Mozc エンジン（Ubuntu/Fedora）。
 - fcitx5-gtk: GTK アプリ連携（Ubuntu/Fedora）。

@@ -1,5 +1,20 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
+  programs.zsh = {
+    enable = true;
+    dotDir = config.home.homeDirectory;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    oh-my-zsh = {
+      enable = true;
+      theme = "essembeh";
+      plugins = [ "git" ];
+    };
+  };
+
+  programs.direnv.enableZshIntegration = true;
+
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";

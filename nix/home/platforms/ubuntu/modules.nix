@@ -28,6 +28,9 @@
       font-family = [
         "HackGen Console NF"
       ];
+      adjust-cell-height = "10%";
+      background-opacity = 0.90;
+      background-blur = 20;
     };
   };
 

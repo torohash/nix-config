@@ -38,6 +38,10 @@ in
     VISUAL = "nvim";
     GIT_EDITOR = "nvim";
     NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.local";
+    XMODIFIERS = "@im=fcitx";
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    QT_IM_MODULES = "wayland;fcitx";
   };
 
   home.file.".tmux.conf" = {

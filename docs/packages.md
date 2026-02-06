@@ -39,3 +39,4 @@
 - obsidian: Markdown ベースのノートアプリ（Ubuntu/Fedora）。
 - ticktick: タスク管理アプリ（Ubuntu/Fedora）。
 - bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。
+- gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。

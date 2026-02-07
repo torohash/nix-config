@@ -28,6 +28,8 @@
 ## godot
 
 - godot_4: Godot 4 エディタ本体（GDScript 開発向け最小構成）。
+- godot_4-export-templates-bin: Godot 4 のエクスポートテンプレート。
+- gdtoolkit_4: GDScript 用の Linter/Formatter（`gdlint`, `gdformat`）。
 
 ## pencil
 

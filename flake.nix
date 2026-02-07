@@ -57,10 +57,16 @@
           devshells = import ./nix/lib/devshells.nix { inherit pkgs; };
           pythonShell = devshells.python;
           typescriptShell = devshells.typescript;
+          pencilShell = devshells.pencil;
+          jupyterlabShell = devshells.jupyterlab;
+          godotShell = devshells.godot;
         in
         {
           python = pythonShell;
           typescript = typescriptShell;
+          pencil = pencilShell;
+          jupyterlab = jupyterlabShell;
+          godot = godotShell;
           default = pythonShell;
         };
     in

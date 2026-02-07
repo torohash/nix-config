@@ -47,4 +47,5 @@
 - ticktick: タスク管理アプリ（Ubuntu/Fedora）。
 - bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。
 - ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化）。
+- zed-editor: GPU アクセラレーション対応のコードエディタ（Ubuntu/Fedora、`programs.zed-editor.enable` で有効化）。
 - gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。

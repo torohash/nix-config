@@ -36,6 +36,11 @@
     };
   };
 
+  programs.zed-editor = {
+    enable = true;
+    package = config.lib.nixGL.wrap pkgs.zed-editor;
+  };
+
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";

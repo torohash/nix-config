@@ -14,7 +14,6 @@
 - ruff: Python の高速な Linter/Formatter。
 - basedpyright: Pyright の拡張版 LSP サーバ。
 - python312Packages.jupyterlab: JupyterLab 実行環境。
-- python312Packages.ipykernel: Python カーネル実行環境。
 
 ## typescript
 

@@ -7,6 +7,5 @@ mkShell {
     ruff
     basedpyright
     python312Packages.jupyterlab
-    python312Packages.ipykernel
   ];
 }

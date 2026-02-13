@@ -76,6 +76,11 @@ in
     force = true;
   };
 
+  home.file.".claude/settings.json" = {
+    source = ../../../dotfiles/claude/settings.json;
+    force = true;
+  };
+
   xdg.configFile."opencode/AGENTS.md" = {
     source = ../../../dotfiles/opencode/AGENTS.md;
     force = true;

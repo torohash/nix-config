@@ -84,7 +84,17 @@ in
       disable-user-extensions = false;
       enabled-extensions = [
         "kimpanel@kde.org"
+        "Vitals@CoreCoding.com"
       ];
+    };
+    "org/gnome/shell/extensions/vitals" = {
+      hot-sensors = [
+        "_processor_usage_"
+        "_memory_usage_"
+      ];
+      update-time = 2;
+      show-processor = true;
+      show-memory = true;
     };
     "org/gnome/shell/keybindings" = {
       show-screenshot-ui = [ "<Super><Shift>s" ];
@@ -115,5 +125,6 @@ in
     ticktick
     bitwarden-desktop
     gnomeExtensions.kimpanel
+    gnomeExtensions.vitals
   ];
 }

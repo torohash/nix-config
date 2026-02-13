@@ -3,7 +3,6 @@
   programs.zed-editor.userSettings = {
     ui_font_family = "HackGen Console NF";
     buffer_font_family = "HackGen Console NF";
-    vim_mode = true;
     icon_theme = "Catppuccin Mocha";
     theme_overrides = {
       "One Dark" = {

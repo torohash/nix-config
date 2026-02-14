@@ -76,6 +76,18 @@ in
     force = true;
   };
 
+  home.file.".claude/agents" = {
+    source = ../../../dotfiles/claude/agents;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".claude/rules" = {
+    source = ../../../dotfiles/claude/rules;
+    recursive = true;
+    force = true;
+  };
+
   home.file.".claude/settings.json" = {
     source = ../../../dotfiles/claude/settings.json;
     force = true;

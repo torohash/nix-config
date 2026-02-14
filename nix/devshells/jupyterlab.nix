@@ -1,4 +1,4 @@
-{ mkShell, python312, uv, ruff, basedpyright, python312Packages }:
+{ mkShell, python312, uv, ruff, basedpyright, pyright, python312Packages }:
 
 mkShell {
   packages = [
@@ -6,6 +6,7 @@ mkShell {
     uv
     ruff
     basedpyright
+    pyright
     python312Packages.jupyterlab
   ];
 }

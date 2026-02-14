@@ -1,4 +1,4 @@
-{ mkShell, python312, uv, ruff, basedpyright }:
+{ mkShell, python312, uv, ruff, basedpyright, pyright }:
 
 mkShell {
   packages = [
@@ -7,5 +7,6 @@ mkShell {
     # Linter, Formatterなど。
     ruff
     basedpyright
+    pyright
   ];
 }

@@ -1,6 +1,7 @@
 # Coding Principles
 
 Core coding rules to always follow.
+Apply these principles idiomatically in whatever language the project uses.
 
 ## Simplicity First
 
@@ -16,62 +17,26 @@ Core coding rules to always follow.
 
 ## Early Return
 
-```python
-# Bad: Deep nesting
-def process(value):
-    if value is not None:
-        if value > 0:
-            return do_something(value)
-    return None
+- Avoid deep nesting by returning early for guard conditions
+- Flatten control flow: validate preconditions at the top, then proceed with the main logic
 
-# Good: Early return
-def process(value):
-    if value is None:
-        return None
-    if value <= 0:
-        return None
-    return do_something(value)
-```
+## Type Safety
 
-## Type Hints Required
-
-All functions must have type annotations:
-
-```python
-def call_llm(
-    prompt: str,
-    model: str = "gpt-4",
-    max_tokens: int = 1000
-) -> str:
-    ...
-```
+- All functions must have type annotations using the language's type system
+- Leverage compile-time or static checks wherever available
 
 ## Immutability
 
-Create new objects instead of mutating existing ones:
-
-```python
-# Bad: Mutating existing object
-data["new_key"] = value
-
-# Good: Creating new object
-new_data = {**data, "new_key": value}
-```
+- Create new objects instead of mutating existing ones
+- Prefer immutable data structures and const/readonly bindings
 
 ## Naming Conventions
 
 - **Constants**: UPPER_SNAKE_CASE (English)
 - **Meaningful names**: `user_count` over `x`
+- **Casing style**: Follow the project's existing convention (e.g., camelCase, snake_case, PascalCase)
 
 ## No Magic Numbers
 
-```python
-# Bad
-if retry_count > 3:
-    ...
-
-# Good
-MAX_RETRIES = 3
-if retry_count > MAX_RETRIES:
-    ...
-```
+- Extract numeric/string literals into named constants
+- The name should convey the intent (e.g., `MAX_RETRIES = 3`)

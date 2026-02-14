@@ -101,7 +101,7 @@ agent-browser: ページに移動 → コンテンツを取得 → スクリー�
 ```
 ツール 1: WebFetch(サイトマップから特定した関連ページ)
 ツール 2: WebSearch("library-name specific-topic usage example")
-ツール 3: gh search code "usage pattern" --language TypeScript
+ツール 3: gh search code "usage pattern" --language <project-language>
 ```
 
 **出力**: 公式ドキュメントへのリンク（バージョン付き）と実際の使用例を含めて要約する。
@@ -162,8 +162,8 @@ gh api repos/owner/repo/pulls/<number>/files
 ツール 2: WebSearch("library-name topic")
 
 // コード検索
-ツール 3: gh search code "pattern1" --language TypeScript
-ツール 4: gh search code "pattern2" --language TypeScript
+ツール 3: gh search code "pattern1" --language <project-language>
+ツール 4: gh search code "pattern2" --language <project-language>
 
 // ソース解析
 ツール 5: gh repo clone owner/repo ${TMPDIR:-/tmp}/repo -- --depth 1
@@ -184,9 +184,8 @@ gh api repos/owner/repo/pulls/<number>/files
 **主張**: [何を主張しているか]
 
 **根拠** ([ソース](https://github.com/owner/repo/blob/<sha>/path#L10-L20)):
-\`\`\`typescript
-// 実際のコード
-function example() { ... }
+\`\`\`
+// 実際のコード（対象リポジトリの言語で引用）
 \`\`\`
 
 **説明**: これが機能する理由は [コードからの具体的な理由]。
@@ -247,14 +246,14 @@ ${TMPDIR:-/tmp}/repo-name
 
 **検索クエリは常に変化させること**:
 ```
-// GOOD: 異なる角度から
-gh search code "useQuery(" --language TypeScript
-gh search code "queryOptions" --language TypeScript
-gh search code "staleTime:" --language TypeScript
+// GOOD: 異なる角度から検索する
+gh search code "function_name(" --language <project-language>
+gh search code "config_option" --language <project-language>
+gh search code "error handling" --language <project-language>
 
-// BAD: 同じパターン
-gh search code "useQuery"
-gh search code "useQuery"
+// BAD: 同じパターンを繰り返す
+gh search code "function_name"
+gh search code "function_name"
 ```
 
 ---

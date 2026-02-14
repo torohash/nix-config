@@ -36,12 +36,3 @@
 # BAD: 不要な逐次実行
 まずエージェント 1、次にエージェント 2、次にエージェント 3
 ```
-
-## 多角的分析
-
-複雑な問題には、役割を分担したサブエージェントを使用する:
-- Factual reviewer
-- Senior engineer
-- Security expert
-- Consistency reviewer
-- Redundancy checker

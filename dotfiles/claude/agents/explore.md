@@ -35,8 +35,8 @@ model: haiku
 必ず以下のフォーマットで終えること：
 
 **関連ファイル:**
-- /absolute/path/to/file1.ts — このファイルが関連する理由
-- /absolute/path/to/file2.ts — このファイルが関連する理由
+- /absolute/path/to/file1 — このファイルが関連する理由
+- /absolute/path/to/file2 — このファイルが関連する理由
 
 **回答:**
 実際のニーズに対する直接的な回答（ファイル一覧だけでなく）。

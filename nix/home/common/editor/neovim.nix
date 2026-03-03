@@ -17,7 +17,7 @@
       plenary-nvim
       nvim-treesitter.withAllGrammars
     ];
-    extraLuaConfig = ''
+    initLua = ''
       vim.g.mapleader = " "
       vim.opt.termguicolors = true
       vim.opt.autoread = true

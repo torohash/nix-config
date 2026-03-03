@@ -60,6 +60,7 @@
           pencilShell = devshells.pencil;
           jupyterlabShell = devshells.jupyterlab;
           godotShell = devshells.godot;
+          flutterShell = devshells.flutter;
         in
         {
           python = pythonShell;
@@ -67,6 +68,7 @@
           pencil = pencilShell;
           jupyterlab = jupyterlabShell;
           godot = godotShell;
+          flutter = flutterShell;
           default = pythonShell;
         };
     in

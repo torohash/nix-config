@@ -30,6 +30,10 @@
 - godot_4-export-templates-bin: Godot 4 のエクスポートテンプレート。
 - gdtoolkit_4: GDScript 用の Linter/Formatter（`gdlint`, `gdformat`）。
 
+## flutter
+
+- flutter: Flutter SDK（Dart SDK 同梱）。モバイル・Web・デスクトップアプリ開発環境。
+
 ## pencil
 
 - pencil-desktop: Pencil Desktop (AppImage) を起動するための最小構成。

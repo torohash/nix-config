@@ -54,7 +54,14 @@
       mkDevShells = system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          devshells = import ./nix/lib/devshells.nix { inherit pkgs; };
+          androidPkgs = import nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+              android_sdk.accept_license = true;
+            };
+          };
+          devshells = import ./nix/lib/devshells.nix { inherit pkgs androidPkgs; };
           pythonShell = devshells.python;
           typescriptShell = devshells.typescript;
           pencilShell = devshells.pencil;

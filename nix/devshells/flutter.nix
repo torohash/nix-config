@@ -2,8 +2,11 @@
 
 let
   androidSdk = (androidenv.composeAndroidPackages {
-    platformVersions = [ "35" ];
+    platformVersions = [ "35" "36" ];
     buildToolsVersions = [ "35.0.0" ];
+    includeNDK = true;
+    ndkVersions = [ "28.2.13676358" ];
+    cmakeVersions = [ "3.22.1" ];
     includeEmulator = false;
     includeSources = false;
   }).androidsdk;

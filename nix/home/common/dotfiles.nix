@@ -98,6 +98,12 @@ in
     force = true;
   };
 
+  xdg.configFile."opencode/skills" = {
+    source = ../../../dotfiles/opencode/skills;
+    recursive = true;
+    force = true;
+  };
+
   xdg.configFile."opencode/oh-my-opencode.json" = {
     source = ../../../dotfiles/opencode/oh-my-opencode.json;
     force = true;

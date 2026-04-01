@@ -1,14 +1,15 @@
 # nix-config
 
-この flake は、共通ツール用のパッケージと Python 向けの開発シェルを提供します。
+この flake は、共通ツール用のパッケージ、Home Manager 設定、そして `mise` を使った軽量な開発環境導線を提供します。
 
 ## 概要
 
-このリポジトリは packages と devShells を提供します。
+このリポジトリは packages / devShells / Home Manager 設定を提供します。日常的な開発環境セットアップは devShell より `mise` を優先します。
 
 ## ドキュメント
 
 - `docs/packages.md`: packages の内容と各ツールの説明。
+- `docs/mise.md`: mise の導入方針と基本操作。
 - `docs/devShells.md`: devShells の内容と各ツールの説明。
 - `docs/home-manager-versioning.md`: Home Manager のバージョン更新と `home.stateVersion` の扱い。
 - `docs/home-manager-structure.md`: Home Manager のディレクトリ構成方針。
@@ -104,6 +105,7 @@ sudo usermod -aG sudo alice
 このリポジトリには Home Manager 設定が含まれています。Home Manager は以下を管理します：
 
 - `.bashrc`（bash と direnv/nix-direnv 用の設定を含む）
+- bash / zsh での `mise` 有効化
 - direnv / nix-direnv の設定と有効化
 - Git 設定（プロンプトのブランチ表示と userName/userEmail）
 
@@ -180,11 +182,27 @@ packages の一覧と内容は `docs/packages.md` を参照してください。
 nix build nixcfg#common-store
 ```
 
+### 軽量な開発環境セットアップ（mise）
+
+基本操作:
+
+```bash
+mise --version
+mise doctor
+mise use --global node@22
+mise use --global python@3.12
+```
+
+プロジェクトごとに `mise.toml` を置いている場合は、そのディレクトリで以下を実行してください。
+
+```bash
+mise install
+mise ls --current
+```
+
 ### 開発シェル（nix develop）
 
-Python 向けの開発シェルを提供しています。
-
-devShells の一覧と内容は `docs/devShells.md` を参照してください。
+devShell は GUI アプリや SDK をまとめて扱いたい場合の補助手段として残しています。一覧と内容は `docs/devShells.md` を参照してください。
 
 ```bash
 nix develop nixcfg#python
@@ -196,9 +214,9 @@ nix develop nixcfg#python
 nix develop nixcfg
 ```
 
-### devShell の自動適用
+### devShell の自動適用（必要な場合のみ）
 
-リポジトリのルートに `.envrc` を作成し、以下を記載します。
+`nix develop` を自動適用したい場合は、リポジトリのルートに `.envrc` を作成し、以下を記載します。
 
 ```bash
 use flake "nixcfg"

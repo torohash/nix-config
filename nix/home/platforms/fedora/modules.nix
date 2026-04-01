@@ -6,7 +6,6 @@ let
     (builtins.attrNames (builtins.readDir mesaVulkanIcdDir));
   mesaVulkanIcdList = lib.concatStringsSep ":"
     (map (name: "${mesaVulkanIcdDir}/${name}") mesaVulkanIcdFiles);
-
   zedWithNixVulkanIcd = pkgs.symlinkJoin {
     name = "zed-editor-with-nix-vulkan-icd";
     paths = [ (config.lib.nixGL.wrap pkgs.zed-editor) ];
@@ -29,6 +28,11 @@ in
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+    initContent = lib.mkAfter ''
+      if command -v mise >/dev/null 2>&1; then
+        eval "$(mise activate zsh)"
+      fi
+    '';
     oh-my-zsh = {
       enable = true;
       theme = "essembeh";

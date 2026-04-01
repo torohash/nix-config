@@ -20,6 +20,7 @@
 - ripgrep: 高速な検索ツール（rg）。
 - xclip: X11 クリップボード操作ツール。
 - nodejs: Node.js ランタイム。
+- mise: 複数言語のツールチェーンとバージョンを管理するランタイムマネージャー。
 - vim: 軽量で拡張性の高いテキストエディタ。
 - terraform: Terraform CLI。
 - terraform-ls: Terraform の LSP サーバ。

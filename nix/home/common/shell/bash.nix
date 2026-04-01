@@ -18,6 +18,10 @@
         __SKEL_BASHRC_LOADED=1
       fi
 
+      if command -v mise >/dev/null 2>&1; then
+        eval "$(mise activate bash)"
+      fi
+
       if [ -f "${pkgs.git}/share/git/contrib/completion/git-prompt.sh" ]; then
         . "${pkgs.git}/share/git/contrib/completion/git-prompt.sh"
       fi

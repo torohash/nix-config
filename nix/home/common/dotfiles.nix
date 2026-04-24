@@ -109,6 +109,11 @@ in
     force = true;
   };
 
+  xdg.configFile."opencode/oh-my-openagent.json" = {
+    source = ../../../dotfiles/opencode/oh-my-openagent.json;
+    force = true;
+  };
+
   xdg.configFile."opencode/opencode.json" = {
     source = ../../../dotfiles/opencode/opencode.json;
     force = true;

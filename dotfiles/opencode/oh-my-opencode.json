@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "Sisyphus": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "librarian": {
       "model": "zai-coding-plan/glm-4.7"
@@ -11,28 +11,28 @@
       "model": "zai-coding-plan/glm-4.7"
     },
     "metis": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "atlas": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "momus": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "oracle": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "prometheus": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "sisyphus-junior": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "multimodal-looker": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "hephaestus": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     }
   },
   "categories": {
@@ -40,10 +40,10 @@
       "model": "google/gemini-3.1-pro-preview"
     },
     "ultrabrain": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "deep": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     },
     "artistry": {
       "model": "google/gemini-3.1-pro-preview"
@@ -58,7 +58,7 @@
       "model": "zai-coding-plan/glm-4.7"
     },
     "unspecified-high": {
-      "model": "openai/gpt-5.4"
+      "model": "openai/gpt-5.5"
     }
   },
   "disabled_skills": ["playwright"],

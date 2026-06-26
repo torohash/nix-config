@@ -10,6 +10,9 @@ node 系プロジェクトの土台を **全自動** で構築する。Next.js /
 確認は求めず、各ステップを順に実行し、最後にまとめだけ報告する。
 （破壊的操作=既存 `package.json` 等が既にある場合のみ、上書き前に一度だけ確認する）
 
+> 重要: bun は mise のローカルツール（プロジェクトの `mise.toml` でピン留め）。
+> 非対話シェルでは `bun` が PATH に無いため、**必ず `mise exec -- bun ...` / `mise exec -- bunx ...`** で実行する。
+
 ## 実行手順（上から順に Bash で実行）
 
 1. **bun を mise で導入・固定**
@@ -20,23 +23,24 @@ node 系プロジェクトの土台を **全自動** で構築する。Next.js /
 
 2. **TypeScript プロジェクト初期化**（`package.json` が無い場合のみ）
    ```bash
-   bun init -y
+   mise exec -- bun init -y
    ```
 
 3. **依存追加**（型チェッカ + Biome）
    ```bash
-   bun add -d typescript @types/bun @biomejs/biome
+   mise exec -- bun add -d typescript @types/bun @biomejs/biome
    ```
 
 4. **Biome 初期化**（lint + formatter）
    ```bash
-   bunx biome init
+   mise exec -- bunx biome init
    ```
 
 5. **`tsconfig.json` を strict + noEmit 前提に調整**（`.json` なので Claude が直接編集可）
    - `"strict": true`, `"noEmit": true`, `"skipLibCheck": true`, `"moduleResolution": "bundler"` を確認/設定。
+   - `bun init` 既定の tsconfig は概ね満たすので、欠けている項目だけ補う。
 
-6. **`package.json` に scripts を追加**（`.json` なので Claude が直接編集可）
+6. **`package.json` に scripts を追加**（`.json` なので Claude が直接編集可。`jq` でマージする）
    ```json
    {
      "scripts": {
@@ -83,15 +87,18 @@ node 系プロジェクトの土台を **全自動** で構築する。Next.js /
      }
    }
    ```
-   - これにより、以降このプロジェクトでは **ターン終了時に Biome + tsc 検証が走り、warning/error が消えるまで修正ループが強制** される（修正は Codex へ委譲）。
+   - これにより、以降このプロジェクトでは **ターン終了時に Biome + tsc + bun test が走り、warning/error/失敗が消えるまで修正ループが強制** される（修正は Codex へ委譲）。
 
-9. **初回検証**
+9. **整形 → 初回検証**（雛形は biome 既定整形と差があるので、先に `fix` で自動整形してから検証する）
    ```bash
-   bun run lint && bun run typecheck && bun test
+   mise exec -- bun run fix
+   mise exec -- bun run lint
+   mise exec -- bun run typecheck
+   mise exec -- bun test
    ```
 
 ## 完了報告に含めるもの
 - 導入した bun のバージョン（`mise.toml`）
 - 生成/更新したファイル一覧
 - `lint / typecheck / test` の結果
-- 次の一手（フレームワークが必要なら `/setup-next` 等を後日。それまでは素の TS）
+- 次の一手（フレームワークが必要なら専用コマンドを後日。それまでは素の TS）

@@ -82,6 +82,12 @@ in
     force = true;
   };
 
+  home.file.".claude/commands" = {
+    source = ../../../dotfiles/claude/commands;
+    recursive = true;
+    force = true;
+  };
+
   home.file.".claude/hooks" = {
     source = ../../../dotfiles/claude/hooks;
     recursive = true;

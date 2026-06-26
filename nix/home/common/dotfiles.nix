@@ -104,6 +104,12 @@ in
     force = true;
   };
 
+  xdg.configFile."opencode/skills/agent-browser" = {
+    source = ../../../dotfiles/claude/skills/agent-browser;
+    recursive = true;
+    force = true;
+  };
+
   xdg.configFile."opencode/oh-my-opencode.json" = {
     source = ../../../dotfiles/opencode/oh-my-opencode.json;
     force = true;

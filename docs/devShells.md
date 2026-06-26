@@ -10,6 +10,7 @@
 - uv: 高速な Python パッケージマネージャー。
 - ruff: Python の高速な Linter/Formatter。
 - basedpyright: Pyright の拡張版 LSP サーバ。
+- pyright: Microsoft 製の Python 型チェッカー/LSP サーバ。
 
 ## jupyterlab
 
@@ -17,6 +18,7 @@
 - uv: 高速な Python パッケージマネージャー。
 - ruff: Python の高速な Linter/Formatter。
 - basedpyright: Pyright の拡張版 LSP サーバ。
+- pyright: Microsoft 製の Python 型チェッカー/LSP サーバ。
 - python312Packages.jupyterlab: JupyterLab 実行環境。
 
 ## typescript

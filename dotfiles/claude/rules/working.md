@@ -14,7 +14,9 @@
 - 依存のあるタスクは順序を維持する（前段の結果が必要なものは直列）。
 
 ## コードレビュー・監査のサイクル（二重監査）
-- コード差分が生じたターンは、edit-only な Stop hook（`review-audit-gate.sh`）が block してレビュー+監査を強制する（コード変更が無いターンでは走らない／非 git では no-op）。
-- **第1層 Codex review**: Claude が `/codex:review`（companion の review）を実行し、**出力全文を直接読む**（ALLOW・指摘の有無に関わらず必ず読む）。
-- **第2層 Claude 監査**: Codex の戻り（差分・数値・文章・出典）を **verbatim で素通ししない**。ブリーフ・一次情報・事実と照合してから確定する。委譲は実装/相談まで、確定の責任は Claude。
-- 指摘や食い違いがあれば Codex に修正を委譲 → 再 review・再監査。解消するまで反復する。
+- 前回 accept 以降の **コード増分** が生じたターンは、edit-only な Stop hook（`review-audit-gate.sh`）が block する（増分が無いターン／非 git では no-op）。差分は private object store の snapshot で **commit 非依存** に管理（`.git/objects`・branch を汚さない／決定論的に cleanup）。
+- block されたら、**第1層 Codex review と 第2層 Claude 監査を並列**で実施する:
+  - **第1層 Codex review**: Claude が `/codex:review` を実行し、**出力全文を直接読む**（ALLOW・指摘の有無に関わらず必ず読む）。
+  - **第2層 Claude 監査**: Codex の戻り（差分・数値・文章・出典）を **verbatim で素通ししない**。ブリーフ・一次情報・事実と照合する。確定の責任は Claude。
+- 指摘や食い違いがあれば Codex に修正委譲 → 差分が変わり gate が再 block → 再レビュー。解消するまで反復。
+- 両方 pass したら **`bash ~/.claude/hooks/review-accept.sh` を実行して baseline を更新**（以降は新しい増分だけが対象）。

@@ -33,7 +33,7 @@
           {
             "type": "command",
             "command": "bash /home/torohash/.claude/hooks/review-audit-gate.sh",
-            "timeout": 30
+            "timeout": 900
           }
         ]
       }

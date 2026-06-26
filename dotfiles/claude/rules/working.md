@@ -13,10 +13,12 @@
 - 依存の無いタスクは複数の Codex タスクを `--background` で同時に投げ、結果を待ち受けてから次へ進む。
 - 依存のあるタスクは順序を維持する（前段の結果が必要なものは直列）。
 
-## コードレビュー・監査のサイクル（二重監査）
-- 前回 accept 以降の **コード増分** が生じたターンは、edit-only な Stop hook（`review-audit-gate.sh`）が block する（増分が無いターン／非 git では no-op）。差分は private object store の snapshot で **commit 非依存** に管理（`.git/objects`・branch を汚さない／決定論的に cleanup）。
-- block されたら、**第1層 Codex review と 第2層 Claude 監査を並列**で実施する:
-  - **第1層 Codex review**: Claude が `/codex:review` を実行し、**出力全文を直接読む**（ALLOW・指摘の有無に関わらず必ず読む）。
-  - **第2層 Claude 監査**: Codex の戻り（差分・数値・文章・出典）を **verbatim で素通ししない**。ブリーフ・一次情報・事実と照合する。確定の責任は Claude。
-- 指摘や食い違いがあれば Codex に修正委譲 → 差分が変わり gate が再 block → 再レビュー。解消するまで反復。
-- 両方 pass したら **`bash ~/.claude/hooks/review-accept.sh` を実行して baseline を更新**（以降は新しい増分だけが対象）。
+## コードレビュー・監査のサイクル（verify 型ゲート＋内容監査）
+- 前回 accept 以降の **コード増分**（.nix 含む）が生じたターンは、Stop hook `review-audit-gate.sh` が **gate 自身で Codex review を実行**する（増分が無いターン／非 git では no-op）。差分は private object store の snapshot で commit 非依存に管理し、`.git/objects`・branch を汚さず決定論的に cleanup。
+- gate の判定（fail-closed）:
+  - **ALLOW** → baseline を自動 accept して停止許可。
+  - **BLOCK／実行失敗（不可用・timeout・JSON parse 失敗・巨大差分）** → 停止を block し指摘を Claude に返す。
+- block されたら Claude は指摘を読み、**修正を Codex に委譲** → 差分が変わり gate が再 review → 解消するまで反復（ruff の fix ループと同型）。
+- review は **gate が同期実行**するので、Claude が手動で `/codex:review` を起動したり background dispatch したりしない（dispatch+待機は Stop ループを誘発するため禁止）。
+- **第2層 Claude 内容監査**: Codex の戻り（数値・文章・出典・ブリーフ整合）は hook で機械化できない。レポート/データ等を扱うときは Claude が verbatim 素通しせず、一次情報と照合してから確定する。
+- `review-accept.sh` は baseline の手動 init/リセット用（通常フローでは gate が自動 accept する）。

@@ -2,10 +2,10 @@
 description: Bootstrap a bare TypeScript project (mise + bun + Biome + tsc + bun test) fully automatically
 ---
 
-# /setup — TypeScript プロジェクト初期セットアップ
+# /bun-init — TypeScript プロジェクト初期セットアップ
 
 node 系プロジェクトの土台を **全自動** で構築する。Next.js / Vite 等のフレームワークは
-本コマンドの対象外（別コマンド `/setup-next` 等を後日用意）。TypeScript は必須。
+本コマンドの対象外（フレームワーク用コマンドは後日別途用意）。TypeScript は必須。
 
 確認は求めず、各ステップを順に実行し、最後にまとめだけ報告する。
 （破壊的操作=既存 `package.json` 等が既にある場合のみ、上書き前に一度だけ確認する）

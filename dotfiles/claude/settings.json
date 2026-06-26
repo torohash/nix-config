@@ -4,6 +4,17 @@
     "type": "command",
     "command": "bash /home/torohash/.claude/statusline-command.sh"
   },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true
+  },
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [

@@ -26,6 +26,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/torohash/.claude/hooks/enable-codex-review-gate.sh",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   },
   "permissions": {

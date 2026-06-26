@@ -54,21 +54,15 @@
       "Skill(*)",
       "TodoWrite(*)"
     ],
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(rm -rf /)",
-      "Bash(rm -rf ~*)",
-      "Bash(rm -rf .)",
-      "Bash(rm -rf ./)",
-      "Bash(rm -rf ./*)",
-      "Bash(rm -rf ../)",
-      "Bash(rm -fr *)",
-      "Bash(rm -fr /)",
-      "Bash(rm -r -f *)",
-      "Bash(rm -f -r *)",
+    "ask": [
+      "Bash(rm -rf*)",
+      "Bash(rm -fr*)",
+      "Bash(rm -r -f*)",
+      "Bash(rm -f -r*)",
       "Bash(rm --recursive*)",
-      "Bash(rm -r *)",
-      "Bash(rm -r /)",
+      "Bash(rm -r *)"
+    ],
+    "deny": [
       "Bash(git push --force*)",
       "Bash(git push *--force*)",
       "Bash(git push -f*)",

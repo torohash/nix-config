@@ -26,6 +26,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/torohash/.claude/hooks/review-audit-gate.sh",
+            "timeout": 900
+          }
+        ]
+      }
     ]
   },
   "permissions": {

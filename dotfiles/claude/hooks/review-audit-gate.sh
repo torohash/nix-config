@@ -81,6 +81,7 @@ ensure_audit_log_path() {
 
 append_infra_skip_audit_log() {
   local reason="$1"
+  local detail="${2:-}"
   local timestamp
 
   ensure_audit_log_path || return 0
@@ -91,6 +92,7 @@ append_infra_skip_audit_log() {
     jq -c -n \
       --arg timestamp "$timestamp" \
       --arg reason "$reason" \
+      --arg detail "$detail" \
       --arg model "$MODEL" \
       --arg pathspec_version "$PATHSPEC_VERSION" \
       --arg prompt_version "$PROMPT_VERSION" \
@@ -102,7 +104,14 @@ append_infra_skip_audit_log() {
       '{
         timestamp: $timestamp,
         source: "infra_skip",
-        reason: $reason,
+        reason: $reason
+      } + (
+        if $detail == "" then
+          {}
+        else
+          {detail: $detail}
+        end
+      ) + {
         model: $model,
         pathspec_version: $pathspec_version,
         prompt_version: $prompt_version,
@@ -123,9 +132,16 @@ append_infra_skip_audit_log() {
         end
       )' >>"$audit_log"
   else
-    printf '{"timestamp":"%s","source":"infra_skip","reason":"%s"}\n' \
-      "$(json_escape "$timestamp")" \
-      "$(json_escape "$reason")" >>"$audit_log"
+    if [[ -n "$detail" ]]; then
+      printf '{"timestamp":"%s","source":"infra_skip","reason":"%s","detail":"%s"}\n' \
+        "$(json_escape "$timestamp")" \
+        "$(json_escape "$reason")" \
+        "$(json_escape "$detail")" >>"$audit_log"
+    else
+      printf '{"timestamp":"%s","source":"infra_skip","reason":"%s"}\n' \
+        "$(json_escape "$timestamp")" \
+        "$(json_escape "$reason")" >>"$audit_log"
+    fi
   fi
 }
 
@@ -226,11 +242,12 @@ defer_review() {
 
 allow_with_warning() {
   local reason="$1"
+  local detail="${2:-}"
   local message
 
   set +e
   cleanup_tmp
-  append_infra_skip_audit_log "$reason"
+  append_infra_skip_audit_log "$reason" "$detail"
   message="⚠️ review skipped: ${reason}. コードは未レビューのまま通します（Codex 復旧後に再 review されます）。"
   emit_system_message "$message"
   exit 0
@@ -682,6 +699,35 @@ validate_review_json() {
     ' "$verdict_file" >/dev/null
 }
 
+tail_diagnostic_file() {
+  local file="$1"
+
+  [[ -s "$file" ]] || return 0
+  LC_ALL=C tail -c 2000 "$file" 2>/dev/null || true
+}
+
+review_failure_detail() {
+  local stdout_file="$1"
+  local stderr_file="$2"
+  local stderr_tail stdout_tail detail=""
+
+  stderr_tail="$(tail_diagnostic_file "$stderr_file")"
+  stdout_tail="$(tail_diagnostic_file "$stdout_file")"
+
+  if [[ -n "$stderr_tail" ]]; then
+    detail="stderr (tail):"$'\n'"$stderr_tail"
+  fi
+
+  if [[ -n "$stdout_tail" ]]; then
+    if [[ -n "$detail" ]]; then
+      detail+=$'\n\n'
+    fi
+    detail+="stdout (tail):"$'\n'"$stdout_tail"
+  fi
+
+  printf '%s' "$detail"
+}
+
 adjudicate_review_json() {
   local verdict_file="$1"
 
@@ -959,18 +1005,18 @@ handle_review_verdict() {
 run_codex_review() {
   local patch_file="$1"
   local verdict_file="$2"
-  local companion review_prompt stdout_file stderr_file status
+  local companion review_prompt stdout_file stderr_file status detail
 
   if ! command -v timeout >/dev/null 2>&1; then
-    allow_with_warning "Codex review の timeout コマンドが利用できません"
+    allow_with_warning "Codex review の timeout コマンドが利用できません" "timeout command not found"
   fi
 
   if ! command -v node >/dev/null 2>&1; then
-    allow_with_warning "Codex review の node コマンドが利用できません"
+    allow_with_warning "Codex review の node コマンドが利用できません" "node command not found"
   fi
 
   if ! companion="$(resolve_companion)"; then
-    allow_with_warning "Codex companion が見つからないため review を実行できません"
+    allow_with_warning "Codex companion が見つからないため review を実行できません" "Codex companion script was not found"
   fi
 
   review_prompt="$(build_review_prompt "$patch_file")"
@@ -986,18 +1032,21 @@ run_codex_review() {
   set -e
 
   if [[ "$status" -ne 0 ]]; then
+    detail="$(review_failure_detail "$stdout_file" "$stderr_file")"
     if [[ "$status" -eq 124 || "$status" -eq 137 ]]; then
-      allow_with_warning "Codex review がタイムアウトしました"
+      allow_with_warning "Codex review がタイムアウトしました" "$detail"
     fi
-    allow_with_warning "Codex review を実行できませんでした（exit ${status}）"
+    allow_with_warning "Codex review を実行できませんでした（exit ${status}）" "$detail"
   fi
 
   if ! extract_review_json "$stdout_file" "$verdict_file"; then
-    allow_with_warning "Codex review の出力から厳格 JSON を抽出できませんでした"
+    detail="$(review_failure_detail "$stdout_file" "$stderr_file")"
+    allow_with_warning "Codex review の出力から厳格 JSON を抽出できませんでした" "$detail"
   fi
 
   if ! validate_review_json "$verdict_file"; then
-    allow_with_warning "Codex review の JSON が期待形式ではありません"
+    detail="$(review_failure_detail "$stdout_file" "$stderr_file")"
+    allow_with_warning "Codex review の JSON が期待形式ではありません" "$detail"
   fi
 }
 

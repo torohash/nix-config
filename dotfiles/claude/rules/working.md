@@ -20,11 +20,15 @@
 
 ## コードレビュー・監査のサイクル（notify-driven async review＋内容監査）
 - 前回 accept 以降の **コード増分**は、Stop hook ではなく `review-auditor` サブエージェントで非同期 review する。差分抽出は `review-diff-extract.sh extract` が担当し、private object store の snapshot で commit 非依存に管理する（`.git/objects`・branch・index を汚さない）。
-- コード編集を伴うターンでは、Claude 本体は実装/修正を `codex-runner` サブエージェント（Agent tool で background 起動。短ければ `--quick`=foreground、長ければ background＋ポーリング）に委譲し、`task-notification` の実結果を監査する。同時に、独立して `review-auditor` を background Agent として dispatch し、意味領域（logic/security/data_loss/reliability）の review を走らせる。
-- `review-auditor` は内部で Codex companion `task` を **read-only foreground** で呼び、raw findings を決定論ツール（bash -n / shellcheck / ruff / pyright / py_compile 等）とパッチ照合で偽陽性フィルタする。Claude 本体へ返すのは distilled JSON verdict のみ。
-- サブエージェント完了通知を受けたら、Claude 本体が verdict を監査する:
+- コード編集を伴うターンでは、Claude 本体は実装/修正を `codex-runner` サブエージェント（Agent tool で background 起動。短ければ `--quick`=foreground、長ければ background＋ポーリング）に委譲し、`task-notification` の実結果を監査する。同時に、独立して `review-auditor` を background Agent として **1 つだけ** dispatch する。`review-auditor` は内部で 3 種の review を **並行**に回す:
+  - 意味領域（logic/security/data_loss/reliability）
+  - テストの質（浅い/弱いテストの検出。テストファイルの変更があるときだけ）
+  - 機密情報（鍵・トークン・認証情報・秘密 URL）の混入
+  - → main は 1 回 dispatch して 1 つの統合 verdict を監査するだけでよい（PM 側の負担を増やさない）。
+- `review-auditor`（orchestrator）は差分を1回だけ抽出し、`review-semantic`・`review-test-quality`・`review-secret` の 3 子を並行 dispatch して集約する。各子が内部で Codex companion `task` を **read-only foreground** で呼び、raw findings を決定論ツール（bash -n / shellcheck / ruff / pyright / py_compile 等）とパッチ照合で偽陽性フィルタし、distilled verdict を返す。`review-auditor` はそれらを統合し、Claude 本体へは統合 distilled JSON verdict のみ返す。
+- `review-auditor` の完了通知を受けたら、Claude 本体が統合 verdict を監査する:
   - `clean` → その間に新しいコード増分が無いことを確認し、`bash ~/.claude/hooks/review-diff-extract.sh accept` で baseline を進める。
-  - `issues` → issue 内容を監査し、修正を `codex-runner` に委譲して、extract/review/accept のサイクルを繰り返す。
+  - `issues` → issue 内容（logic/security/data_loss/reliability/test_quality/secret_leak）を監査し、修正を `codex-runner` に委譲して、extract/review/accept のサイクルを繰り返す。未解決の issue が残る間は accept しない。
 - Codex companion の `--background` review job は使わない。完了通知は Claude Code harness が追跡する Agent/Bash background unit から受け取り、`/codex:status` の自前ポーリングはしない。
 - **第2層 Claude 内容監査**: Codex の戻り（数値・文章・出典・ブリーフ整合）や `review-auditor` の distilled verdict は hook で機械化できない。Claude が verbatim 素通しせず、一次情報・差分・ツール結果と照合してから確定する。
 - baseline の手動 init/リセットは `bash ~/.claude/hooks/review-diff-extract.sh accept` で行う。

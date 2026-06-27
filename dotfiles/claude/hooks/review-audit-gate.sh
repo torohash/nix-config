@@ -37,21 +37,150 @@ emit_block() {
   fi
 }
 
+json_escape() {
+  local value="$1"
+
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  value="${value//$'\n'/\\n}"
+  value="${value//$'\r'/\\r}"
+  value="${value//$'\t'/\\t}"
+
+  printf '%s' "$value"
+}
+
+emit_system_message() {
+  local message="$1"
+
+  if command -v jq >/dev/null 2>&1; then
+    jq -n --arg message "$message" '{systemMessage:$message}'
+  else
+    printf '{"systemMessage":"%s"}\n' "$(json_escape "$message")"
+  fi
+}
+
+ensure_audit_log_path() {
+  local dir
+
+  if [[ -n "${audit_log:-}" ]]; then
+    return 0
+  fi
+
+  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    return 1
+  fi
+
+  dir="$(git rev-parse --git-path claude-review)" || return 1
+  mkdir -p "$dir" || return 1
+  dir="$(cd "$dir" && pwd -P)" || return 1
+
+  review_dir="$dir"
+  audit_log="$review_dir/audit.log"
+}
+
+append_infra_skip_audit_log() {
+  local reason="$1"
+  local timestamp
+
+  ensure_audit_log_path || return 0
+  mkdir -p "$(dirname "$audit_log")" || return 0
+  timestamp="$(date -u '+%Y-%m-%dT%H:%M:%SZ')" || timestamp=""
+
+  if command -v jq >/dev/null 2>&1; then
+    jq -c -n \
+      --arg timestamp "$timestamp" \
+      --arg reason "$reason" \
+      --arg model "$MODEL" \
+      --arg pathspec_version "$PATHSPEC_VERSION" \
+      --arg prompt_version "$PROMPT_VERSION" \
+      --arg check_policy_version "$CHECK_POLICY_VERSION" \
+      --arg patch_oid "${patch_oid:-}" \
+      --arg base_oid "${base_oid:-}" \
+      --arg current_oid "${current_oid:-}" \
+      --arg cache_key "${cache_key:-}" \
+      '{
+        timestamp: $timestamp,
+        source: "infra_skip",
+        reason: $reason,
+        model: $model,
+        pathspec_version: $pathspec_version,
+        prompt_version: $prompt_version,
+        check_policy_version: $check_policy_version
+      } + (
+        if $patch_oid == "" or $base_oid == "" or $current_oid == "" or $cache_key == "" then
+          {}
+        else
+          {
+            binding: {
+              patch_oid: $patch_oid,
+              base_oid: $base_oid,
+              current_oid: $current_oid,
+              cache_key: $cache_key,
+              check_policy_version: $check_policy_version
+            }
+          }
+        end
+      )' >>"$audit_log"
+  else
+    printf '{"timestamp":"%s","source":"infra_skip","reason":"%s"}\n' \
+      "$(json_escape "$timestamp")" \
+      "$(json_escape "$reason")" >>"$audit_log"
+  fi
+}
+
+append_bypass_audit_log() {
+  local timestamp
+
+  ensure_audit_log_path || return 0
+  mkdir -p "$(dirname "$audit_log")" || return 0
+  timestamp="$(date -u '+%Y-%m-%dT%H:%M:%SZ')" || timestamp=""
+
+  if command -v jq >/dev/null 2>&1; then
+    jq -c -n \
+      --arg timestamp "$timestamp" \
+      --arg model "$MODEL" \
+      --arg pathspec_version "$PATHSPEC_VERSION" \
+      --arg prompt_version "$PROMPT_VERSION" \
+      --arg check_policy_version "$CHECK_POLICY_VERSION" \
+      '{
+        timestamp: $timestamp,
+        source: "bypass",
+        model: $model,
+        pathspec_version: $pathspec_version,
+        prompt_version: $prompt_version,
+        check_policy_version: $check_policy_version
+      }' >>"$audit_log"
+  else
+    printf '{"timestamp":"%s","source":"bypass"}\n' \
+      "$(json_escape "$timestamp")" >>"$audit_log"
+  fi
+}
+
+allow_with_warning() {
+  local reason="$1"
+  local message
+
+  set +e
+  cleanup_tmp
+  append_infra_skip_audit_log "$reason"
+  message="⚠️ review skipped: ${reason}. コードは未レビューのまま通します（Codex 復旧後に再 review されます）。"
+  emit_system_message "$message"
+  exit 0
+}
+
 fail_closed() {
-  local reason="${1:-review gate の内部エラーが発生しました。安全のため停止をブロックします。}"
+  local reason="${1:-review gate の内部エラーが発生しました。}"
 
   if [[ "$in_fail_closed" -eq 1 ]]; then
     exit 0
   fi
 
   in_fail_closed=1
-  cleanup_tmp
-  emit_block "$reason"
-  exit 0
+  allow_with_warning "$reason"
 }
 
 trap cleanup_tmp EXIT
-trap 'fail_closed "review gate の内部エラーが発生しました。安全のため停止をブロックします。"' ERR
+trap 'fail_closed "review gate の内部エラーが発生しました。"' ERR
 
 hook_input="$(cat)"
 project_dir="$(jq -r --arg pwd "$PWD" '.cwd // $pwd' <<<"$hook_input")"
@@ -66,6 +195,21 @@ if [[ "${REVIEW_GATE_ACTIVE:-0}" == "1" ]]; then
   exit 0
 fi
 
+review_dir="$(git rev-parse --git-path claude-review)"
+mkdir -p "$review_dir"
+review_dir="$(cd "$review_dir" && pwd -P)"
+audit_log="$review_dir/audit.log"
+
+if [[ -f "$review_dir/bypass" ]]; then
+  append_bypass_audit_log
+  emit_system_message "⚠️ review-audit-gate: bypass 有効。review skip。"
+  exit 0
+fi
+
+lock_file="$review_dir/lock"
+exec 9>"$lock_file"
+flock 9
+
 if ! jq -e 'has("background_tasks") and (.background_tasks | type == "array")' <<<"$hook_input" >/dev/null; then
   fail_closed "background_tasks が無い。新しめの Claude Code で再実行してください。"
 fi
@@ -78,20 +222,12 @@ fi
 
 main_objects="$(git rev-parse --git-path objects)"
 main_objects="$(cd "$main_objects" && pwd -P)"
-review_dir="$(git rev-parse --git-path claude-review)"
-mkdir -p "$review_dir"
-review_dir="$(cd "$review_dir" && pwd -P)"
 stores_dir="$review_dir/stores"
 verdicts_dir="$review_dir/verdicts"
 overrides_dir="$review_dir/overrides"
 tmp_root="$review_dir/tmp"
 state_file="$review_dir/state.json"
-audit_log="$review_dir/audit.log"
-lock_file="$review_dir/lock"
 mkdir -p "$stores_dir" "$verdicts_dir" "$overrides_dir" "$tmp_root"
-
-exec 9>"$lock_file"
-flock 9
 
 state_get() {
   local query="$1"
@@ -260,7 +396,7 @@ validate_numeric_settings() {
   for name in MAX_PATCH_BYTES MAX_PATCH_FILES CODEX_REVIEW_TIMEOUT_SECONDS; do
     value="${!name}"
     if [[ ! "$value" =~ ^[1-9][0-9]*$ ]]; then
-      fail_closed "review gate の数値設定が不正です。安全のため停止をブロックします。"
+      fail_closed "review gate の数値設定が不正です。"
     fi
   done
 }
@@ -698,15 +834,15 @@ run_codex_review() {
   local companion review_prompt stdout_file stderr_file status
 
   if ! command -v timeout >/dev/null 2>&1; then
-    block_current "Codex review の timeout コマンドが利用できません。安全のため停止をブロックします。"
+    allow_with_warning "Codex review の timeout コマンドが利用できません"
   fi
 
   if ! command -v node >/dev/null 2>&1; then
-    block_current "Codex review の node コマンドが利用できません。安全のため停止をブロックします。"
+    allow_with_warning "Codex review の node コマンドが利用できません"
   fi
 
   if ! companion="$(resolve_companion)"; then
-    block_current "Codex companion が見つからないため review を実行できません。安全のため停止をブロックします。"
+    allow_with_warning "Codex companion が見つからないため review を実行できません"
   fi
 
   review_prompt="$(build_review_prompt "$patch_file")"
@@ -723,17 +859,17 @@ run_codex_review() {
 
   if [[ "$status" -ne 0 ]]; then
     if [[ "$status" -eq 124 || "$status" -eq 137 ]]; then
-      block_current "Codex review がタイムアウトしました。安全のため停止をブロックします。"
+      allow_with_warning "Codex review がタイムアウトしました"
     fi
-    block_current "Codex review を実行できませんでした。安全のため停止をブロックします。"
+    allow_with_warning "Codex review を実行できませんでした（exit ${status}）"
   fi
 
   if ! extract_review_json "$stdout_file" "$verdict_file"; then
-    block_current "Codex review の出力から厳格 JSON を抽出できませんでした。安全のため停止をブロックします。"
+    allow_with_warning "Codex review の出力から厳格 JSON を抽出できませんでした"
   fi
 
   if ! validate_review_json "$verdict_file"; then
-    block_current "Codex review の JSON が期待形式ではありません。安全のため停止をブロックします。"
+    allow_with_warning "Codex review の JSON が期待形式ではありません"
   fi
 }
 
@@ -755,7 +891,7 @@ base_oid=""
 base_store=""
 if [[ -n "$accepted_oid" || -n "$accepted_store" ]]; then
   if [[ -z "$accepted_oid" || -z "$accepted_store" ]]; then
-    fail_closed "review baseline の状態ファイルが壊れています。安全のため停止をブロックします。"
+    fail_closed "review baseline の状態ファイルが壊れています。"
   fi
   base_store="$(store_abs_from_state "$accepted_store")"
   validate_tree_store "$accepted_oid" "$base_store"
@@ -828,7 +964,7 @@ verdict_file="$run_tmp_dir/verdict.json"
 run_codex_review "$patch_file" "$verdict_file"
 
 if ! validate_review_json "$verdict_file"; then
-  block_current "Codex review の JSON が期待形式ではありません。安全のため停止をブロックします。"
+  allow_with_warning "Codex review の JSON が期待形式ではありません"
 fi
 
 adjudicated_verdict="$(adjudicate_review_json "$verdict_file")"

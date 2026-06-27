@@ -16,6 +16,7 @@ MODEL="${REVIEW_GATE_MODEL:-${CODEX_MODEL:-codex-companion-default}}"
 MAX_PATCH_BYTES="${REVIEW_GATE_MAX_PATCH_BYTES:-262144}"
 MAX_PATCH_FILES="${REVIEW_GATE_MAX_PATCH_FILES:-40}"
 CODEX_REVIEW_TIMEOUT_SECONDS="${REVIEW_GATE_CODEX_TIMEOUT_SECONDS:-840}"
+STABILITY_DELAY_SECONDS="${REVIEW_GATE_STABILITY_DELAY_SECONDS:-1}"
 
 run_tmp_dir=""
 in_fail_closed=0
@@ -156,6 +157,73 @@ append_bypass_audit_log() {
   fi
 }
 
+append_defer_audit_log() {
+  local source="$1"
+  local reason="$2"
+  local timestamp
+
+  ensure_audit_log_path || return 0
+  mkdir -p "$(dirname "$audit_log")" || return 0
+  timestamp="$(date -u '+%Y-%m-%dT%H:%M:%SZ')" || timestamp=""
+
+  if command -v jq >/dev/null 2>&1; then
+    jq -c -n \
+      --arg timestamp "$timestamp" \
+      --arg source "$source" \
+      --arg reason "$reason" \
+      --arg model "$MODEL" \
+      --arg pathspec_version "$PATHSPEC_VERSION" \
+      --arg prompt_version "$PROMPT_VERSION" \
+      --arg check_policy_version "$CHECK_POLICY_VERSION" \
+      --arg patch_oid "${patch_oid:-}" \
+      --arg base_oid "${base_oid:-}" \
+      --arg current_oid "${current_oid:-}" \
+      --arg cache_key "${cache_key:-}" \
+      '{
+        timestamp: $timestamp,
+        source: $source,
+        reason: $reason,
+        model: $model,
+        pathspec_version: $pathspec_version,
+        prompt_version: $prompt_version,
+        check_policy_version: $check_policy_version
+      } + (
+        if $base_oid == "" or $current_oid == "" then
+          {}
+        else
+          {
+            binding: {
+              patch_oid: $patch_oid,
+              base_oid: $base_oid,
+              current_oid: $current_oid,
+              cache_key: $cache_key,
+              check_policy_version: $check_policy_version
+            }
+          }
+        end
+      )' >>"$audit_log"
+  else
+    printf '{"timestamp":"%s","source":"%s","reason":"%s"}\n' \
+      "$(json_escape "$timestamp")" \
+      "$(json_escape "$source")" \
+      "$(json_escape "$reason")" >>"$audit_log"
+  fi
+}
+
+defer_review() {
+  local source="$1"
+  local message="$2"
+
+  set +e
+  append_defer_audit_log "$source" "$message"
+  if [[ -n "${stores_dir:-}" && -n "${tmp_root:-}" && -n "${state_file:-}" ]]; then
+    cleanup_orphans
+  fi
+  cleanup_tmp
+  emit_system_message "$message"
+  exit 0
+}
+
 allow_with_warning() {
   local reason="$1"
   local message
@@ -216,9 +284,10 @@ fi
 
 background_task_count="$(jq -r '.background_tasks | length' <<<"$hook_input")"
 if [[ "$background_task_count" -gt 0 ]]; then
-  emit_block "background task 実行中。完了後に再実行してください。"
-  exit 0
+  defer_review "defer_background" "⚠️ review deferred: background task 実行中。完了後に review されます。"
 fi
+
+stop_hook_active="$(jq -r 'if .stop_hook_active == true then "true" else "false" end' <<<"$hook_input")"
 
 main_objects="$(git rev-parse --git-path objects)"
 main_objects="$(cd "$main_objects" && pwd -P)"
@@ -311,7 +380,18 @@ write_state() {
   local failed_store="$4"
   local candidate_oid="$5"
   local candidate_store="$6"
+  local last_block_cache_key last_block_patch_oid last_block_current_oid
   local tmp_state="$run_tmp_dir/state.json"
+
+  if [[ "$#" -ge 7 ]]; then
+    last_block_cache_key="$7"
+    last_block_patch_oid="${8:-}"
+    last_block_current_oid="${9:-}"
+  else
+    last_block_cache_key="$(state_get '.last_block_cache_key // .last_block.cache_key')"
+    last_block_patch_oid="$(state_get '.last_block.patch_oid')"
+    last_block_current_oid="$(state_get '.last_block.current_oid')"
+  fi
 
   jq -n \
     --arg accepted_oid "$accepted_oid" \
@@ -320,10 +400,25 @@ write_state() {
     --arg failed_store "$failed_store" \
     --arg candidate_oid "$candidate_oid" \
     --arg candidate_store "$candidate_store" \
+    --arg last_block_cache_key "$last_block_cache_key" \
+    --arg last_block_patch_oid "$last_block_patch_oid" \
+    --arg last_block_current_oid "$last_block_current_oid" \
     '{
       accepted: (if $accepted_oid == "" then null else {oid:$accepted_oid, store:$accepted_store} end),
       failed: (if $failed_oid == "" then null else {oid:$failed_oid, store:$failed_store} end),
-      candidate: (if $candidate_oid == "" then null else {oid:$candidate_oid, store:$candidate_store} end)
+      candidate: (if $candidate_oid == "" then null else {oid:$candidate_oid, store:$candidate_store} end),
+      last_block_cache_key: (if $last_block_cache_key == "" then null else $last_block_cache_key end),
+      last_block: (
+        if $last_block_cache_key == "" then
+          null
+        else
+          {
+            cache_key: $last_block_cache_key,
+            patch_oid: $last_block_patch_oid,
+            current_oid: $last_block_current_oid
+          }
+        end
+      )
     }' >"$tmp_state"
 
   mv "$tmp_state" "$state_file"
@@ -399,10 +494,17 @@ validate_numeric_settings() {
       fail_closed "review gate の数値設定が不正です。"
     fi
   done
+
+  if [[ ! "$STABILITY_DELAY_SECONDS" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    fail_closed "review gate の数値設定が不正です。"
+  fi
 }
 
 record_block_state() {
   local accepted_store_out=""
+  local block_cache_key="${cache_key:-}"
+  local block_patch_oid="${patch_oid:-}"
+  local block_current_oid="${current_oid:-}"
 
   if [[ -n "$accepted_oid" ]]; then
     accepted_store_out="$(store_rel_for_oid "$accepted_oid")"
@@ -411,7 +513,8 @@ record_block_state() {
   write_state \
     "$accepted_oid" "$accepted_store_out" \
     "$current_oid" "$(store_rel_for_oid "$current_oid")" \
-    "" ""
+    "" "" \
+    "$block_cache_key" "$block_patch_oid" "$block_current_oid"
   cleanup_orphans
 }
 
@@ -790,6 +893,27 @@ summarize_block_verdict() {
   ' "$verdict_file"
 }
 
+block_loop_escape_applies() {
+  local last_block_cache_key last_block_patch_oid last_block_current_oid
+
+  if [[ "$stop_hook_active" != "true" ]]; then
+    return 1
+  fi
+
+  last_block_cache_key="$(state_get '.last_block_cache_key // .last_block.cache_key')"
+  last_block_patch_oid="$(state_get '.last_block.patch_oid')"
+  last_block_current_oid="$(state_get '.last_block.current_oid')"
+
+  [[ -n "$cache_key" ]] &&
+    [[ "$last_block_cache_key" == "$cache_key" ]] &&
+    [[ "$last_block_patch_oid" == "$patch_oid" ]] &&
+    [[ "$last_block_current_oid" == "$current_oid" ]]
+}
+
+escape_block_loop() {
+  defer_review "block_loop_escape" "⚠️ review が同じ問題で BLOCK し続けています。修正不能なら .git/claude-review/overrides/ で override か手動対応を。ループ防止のため今回は通します。"
+}
+
 accept_current() {
   local verification_snapshot verify_oid verify_rest verify_store verify_created
 
@@ -803,7 +927,7 @@ accept_current() {
     current_oid="$verify_oid"
     current_store="$verify_store"
     current_created="$verify_created"
-    block_current "review 中に worktree が変化しました。完了後に review gate を再実行してください。"
+    defer_review "defer_review_changed" "⚠️ review deferred: worktree 変化中。"
   fi
 
   write_state "$current_oid" "$(store_rel_for_oid "$current_oid")" "" "" "" ""
@@ -825,6 +949,10 @@ handle_review_verdict() {
   fi
 
   reason="$(summarize_block_verdict "$verdict_file")"
+  if block_loop_escape_applies; then
+    escape_block_loop
+  fi
+
   block_current "$reason"
 }
 
@@ -873,6 +1001,24 @@ run_codex_review() {
   fi
 }
 
+exit_no_code_diff() {
+  local accepted_store_out=""
+
+  if [[ "$current_created" -eq 1 ]]; then
+    rm -rf -- "$stores_dir/$current_oid"
+  fi
+
+  if [[ -n "$candidate_oid" || -n "$failed_oid" ]]; then
+    if [[ -n "$accepted_oid" ]]; then
+      accepted_store_out="$(store_rel_for_oid "$accepted_oid")"
+    fi
+    write_state "$accepted_oid" "$accepted_store_out" "" "" "" ""
+    cleanup_orphans
+  fi
+
+  exit 0
+}
+
 cleanup_orphans
 run_tmp_dir="$(mktemp -d "$tmp_root/run.XXXXXX")"
 validate_numeric_settings
@@ -911,20 +1057,32 @@ current_created="${snapshot_rest##*$'\t'}"
 alternates="$(diff_alternates "$base_store" "$current_store")"
 if GIT_ALTERNATE_OBJECT_DIRECTORIES="$alternates" \
   git diff --quiet "$base_oid" "$current_oid" -- "${pathspecs[@]}"; then
-  if [[ "$current_created" -eq 1 ]]; then
-    rm -rf -- "$stores_dir/$current_oid"
-  fi
+  exit_no_code_diff
+fi
 
-  if [[ -n "$candidate_oid" || -n "$failed_oid" ]]; then
-    accepted_store_out=""
-    if [[ -n "$accepted_oid" ]]; then
-      accepted_store_out="$(store_rel_for_oid "$accepted_oid")"
-    fi
-    write_state "$accepted_oid" "$accepted_store_out" "" "" "" ""
-    cleanup_orphans
-  fi
+sleep "$STABILITY_DELAY_SECONDS"
+stability_snapshot="$(create_snapshot)"
+stability_oid="${stability_snapshot%%$'\t'*}"
+stability_rest="${stability_snapshot#*$'\t'}"
+stability_store="${stability_rest%%$'\t'*}"
+stability_created="${stability_rest##*$'\t'}"
+stability_alternates="$(diff_alternates "$current_store" "$stability_store")"
 
-  exit 0
+if ! GIT_ALTERNATE_OBJECT_DIRECTORIES="$stability_alternates" \
+  git diff --quiet "$current_oid" "$stability_oid" -- "${pathspecs[@]}"; then
+  current_oid="$stability_oid"
+  current_store="$stability_store"
+  current_created="$stability_created"
+  defer_review "defer_unstable" "⚠️ review deferred: worktree 変化中。"
+fi
+
+current_oid="$stability_oid"
+current_store="$stability_store"
+current_created="$stability_created"
+alternates="$(diff_alternates "$base_store" "$current_store")"
+if GIT_ALTERNATE_OBJECT_DIRECTORIES="$alternates" \
+  git diff --quiet "$base_oid" "$current_oid" -- "${pathspecs[@]}"; then
+  exit_no_code_diff
 fi
 
 patch_file="$run_tmp_dir/delta.patch"

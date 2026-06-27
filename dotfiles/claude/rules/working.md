@@ -1,6 +1,6 @@
 ## 作業ルール
 - コードの編集・実装・リファクタは必ず Codex に委譲する。
-- 調査・分析も必ず Codex に委譲する。
+- 調査・分析・検索（web search / code search 含む）は **原則 Codex に依頼**する（確率的・適宜判断。詳細は search-and-investigation ルール）。
 - ドキュメント（.md / README / 設計メモ / spec）作成は Claude が直接行う。
 - Claude 自身が行う作業としてはドキュメント作成やユーザーとの対話、全体の方針決定。
 - Claude 自身が Edit/Write/MultiEdit でソースを直接書き換えてはならない。
@@ -14,7 +14,7 @@
 - 依存のあるタスクは順序を維持する（前段の結果が必要なものは直列）。
 
 ## コードレビュー・監査のサイクル（verify 型ゲート＋内容監査）
-- 前回 accept 以降の **コード増分**（.nix 含む）が生じたターンは、Stop hook `review-audit-gate.sh` が **gate 自身で Codex review を実行**する（増分が無いターン／非 git では no-op）。差分は private object store の snapshot で commit 非依存に管理し、`.git/objects`・branch を汚さず決定論的に cleanup。
+- 前回 accept 以降の **コード増分**が生じたターンは、Stop hook `review-audit-gate.sh` が **gate 自身で Codex review を実行**する（増分が無いターン／非 git では no-op）。差分は private object store の snapshot で commit 非依存に管理し、`.git/objects`・branch を汚さず決定論的に cleanup。
 - gate の判定（fail-closed）:
   - **ALLOW** → baseline を自動 accept して停止許可。
   - **BLOCK／実行失敗（不可用・timeout・JSON parse 失敗・巨大差分）** → 停止を block し指摘を Claude に返す。

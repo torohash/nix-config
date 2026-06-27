@@ -88,6 +88,18 @@ node 系プロジェクトの土台を **全自動** で構築する。Next.js /
    }
    ```
    - これにより、以降このプロジェクトでは **ターン終了時に Biome + tsc + bun test が走り、warning/error/失敗が消えるまで修正ループが強制** される（修正は Codex へ委譲）。
+   - **`.claude/HOOKS.md` に hook の挙動メモを書く**（自動読込されない plain text。agent が hook 挙動に迷ったとき読む用。Bash heredoc）:
+   ```bash
+   cat > .claude/HOOKS.md <<'EOF'
+   # このプロジェクトの Stop hooks（自動読込なし・必要時に読む用メモ）
+
+   - ターン終了時に `.claude/settings.json` の Stop hook が走る。
+   - **verify hook（biome / tsc / bun test）は成功時は完全に無音（exit 0、出力なし）。出力・ブロックするのは失敗時だけ。**
+     → **無音＝「走って合格」であり「未発火」ではない**。silence を未発火と誤判定しないこと。
+   - グローバルの review-audit-gate はコード増分のあるターンで Codex review を実行し、問題があれば block する。
+   - hooks はセッション開始時にスナップショットされる。途中で追加した hook は新セッション（`claude` 再起動）か `/hooks` 承認まで無効。`claude -c` 再開時は再スナップショットされ有効。
+   EOF
+   ```
 
 9. **整形 → 初回検証**（雛形は biome 既定整形と差があるので、先に `fix` で自動整形してから検証する）
    ```bash

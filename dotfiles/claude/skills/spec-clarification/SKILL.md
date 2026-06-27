@@ -1,4 +1,9 @@
-# 実装前の要件明確化ルール
+---
+name: spec-clarification
+description: Use BEFORE starting any implementation/coding/refactor task to turn it into a verifiable spec. Trigger when a task arrives and any of success criteria, in/out-of scope, inputs/outputs, or error behavior is ambiguous. Resolve unknowns via Investigate > Assume > Ask, then output a confirmed spec before writing code.
+---
+
+# 実装前の要件明確化
 
 目的は、課題を **検証可能な要件（spec）に変換してから** 実装することです。
 これはリスクを止めるためのルールではなく、**仕様を明確にするための** ルールです。

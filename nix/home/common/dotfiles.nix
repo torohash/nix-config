@@ -88,6 +88,12 @@ in
     force = true;
   };
 
+  home.file.".claude/agents" = {
+    source = ../../../dotfiles/claude/agents;
+    recursive = true;
+    force = true;
+  };
+
   home.file.".claude/hooks" = {
     source = ../../../dotfiles/claude/hooks;
     recursive = true;

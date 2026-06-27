@@ -96,7 +96,7 @@ node 系プロジェクトの土台を **全自動** で構築する。Next.js /
    - ターン終了時に `.claude/settings.json` の Stop hook が走る。
    - **verify hook（biome / tsc / bun test）は成功時は完全に無音（exit 0、出力なし）。出力・ブロックするのは失敗時だけ。**
      → **無音＝「走って合格」であり「未発火」ではない**。silence を未発火と誤判定しないこと。
-   - グローバルの review-audit-gate はコード増分のあるターンで Codex review を実行し、問題があれば block する。
+   - コード増分 review は Stop hook ではなく、グローバル rules の notify-driven async `review-auditor` で行う。verify hook の出力と混同しないこと。
    - hooks はセッション開始時にスナップショットされる。途中で追加した hook は新セッション（`claude` 再起動）か `/hooks` 承認まで無効。`claude -c` 再開時は再スナップショットされ有効。
    EOF
    ```

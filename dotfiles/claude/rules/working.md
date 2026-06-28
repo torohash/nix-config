@@ -4,3 +4,4 @@
 - ドキュメント（.md / README / 設計メモ / spec）は Claude が直接書く。
 - Claude 自身の仕事は方針決定・監査・ユーザー対話。
 - コード増分は `review-auditor` で非同期 review し、Claude が verdict を **監査してから** `bash ~/.claude/hooks/review-diff-extract.sh accept` で baseline を進める。Codex や review の戻りは verbatim 素通ししない（第2層 内容監査）。
+- 監査は「確認」か「反証」で閉じる。閉じられない項目は『未検証（＋理由）』と明示する。検証していない項目に『信頼するな／鵜呑み禁止』という不信ラベルは貼らない（不信を表明するなら検証もセットで行う。検証しないものはスコープ上の保留として中立に置く）。

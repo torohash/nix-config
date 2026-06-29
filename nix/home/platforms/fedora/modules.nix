@@ -86,6 +86,7 @@ in
   dconf.settings = {
     "org/gnome/shell" = {
       disable-user-extensions = false;
+      disable-extension-version-validation = true;
       enabled-extensions = [
         "kimpanel@kde.org"
         "Vitals@CoreCoding.com"

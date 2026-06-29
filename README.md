@@ -127,7 +127,14 @@ Home Manager の案内: https://nix-community.github.io/home-manager/
 nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>
 ```
 
-`<host>` には `torohash_ubuntu` / `torohash_fedora` / `torohash_wsl` を指定してください。
+`<host>` は `<username>_<platform>` という命名になっています（例: `torohash_fedora`）。
+`platform` 単体（例: `fedora`）ではないので注意してください。指定できる値は
+`torohash_ubuntu` / `torohash_fedora` / `torohash_wsl` です。
+
+```bash
+# 例: Fedora の場合
+nix run github:nix-community/home-manager -- switch --flake nixcfg#torohash_fedora
+```
 
 初回の適用が完了すると、`programs.home-manager.enable = true` の設定により
 `home-manager` コマンドが使用可能になります。

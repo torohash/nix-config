@@ -1,26 +1,4 @@
 { config, lib, pkgs, nixgl, ... }:
-let
-  mesaVulkanIcdDir = "${pkgs.mesa}/share/vulkan/icd.d";
-  mesaVulkanIcdFiles = builtins.filter
-    (name: lib.hasSuffix ".x86_64.json" name)
-    (builtins.attrNames (builtins.readDir mesaVulkanIcdDir));
-  mesaVulkanIcdList = lib.concatStringsSep ":"
-    (map (name: "${mesaVulkanIcdDir}/${name}") mesaVulkanIcdFiles);
-  zedWithNixVulkanIcd = pkgs.symlinkJoin {
-    name = "zed-editor-with-nix-vulkan-icd";
-    paths = [ (config.lib.nixGL.wrap pkgs.zed-editor) ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      for bin in zed zeditor zed-editor; do
-        if [ -x "$out/bin/$bin" ]; then
-          wrapProgram "$out/bin/$bin" \
-            --set VK_ICD_FILENAMES "${mesaVulkanIcdList}" \
-            --set VK_DRIVER_FILES "${mesaVulkanIcdList}"
-        fi
-      done
-    '';
-  };
-in
 {
   programs.zsh = {
     enable = true;
@@ -44,7 +22,13 @@ in
 
   targets.genericLinux = {
     enable = true;
-    nixGL.packages = nixgl.packages;
+    nixGL = {
+      packages = nixgl.packages;
+      # Fedora は proprietary NVIDIA 前提。Mesa ICD を固定せず、
+      # nixGL の NVIDIA wrapper で GL/Vulkan のユーザー空間を揃える。
+      defaultWrapper = "nvidia";
+      vulkan.enable = true;
+    };
   };
 
   programs.ghostty = {
@@ -65,8 +49,8 @@ in
 
   programs.zed-editor = {
     enable = true;
-    # ホストの libc と混在させず、Nix 側 Vulkan ICD を明示して起動を安定化する。
-    package = zedWithNixVulkanIcd;
+    # Mesa ICD は llvmpipe を選ぶため、Fedora/NVIDIA では nixGL に任せる。
+    package = config.lib.nixGL.wrap pkgs.zed-editor;
   };
 
   i18n.inputMethod = {

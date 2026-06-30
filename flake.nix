@@ -23,13 +23,50 @@
         "fedora"
         "wsl"
       ];
+      isIntelX86Platform = homeSystem == "x86_64-linux";
+      fedoraNvidiaDriver =
+        {
+          # Keep these in sync with the Fedora host driver. Dynamic /proc
+          # detection would require impure IFD, and nixGL's auto regex does not
+          # handle the NVIDIA Open Kernel Module version format.
+          version = "595.80";
+          # Hash of NVIDIA-Linux-x86_64-595.80.run. Update with the version.
+          hash = "sha256-PVTIP+B/01c/8M66hXTAYTLg9T2Hy9u1gq43K7TF1Hg=";
+        };
+      fedoraNixglPkgs = import nixgl {
+        pkgs = import nixpkgs {
+          system = homeSystem;
+          config.allowUnfreePredicate = pkg:
+            builtins.elem (nixpkgs.lib.getName pkg) [
+              "nvidia"
+              "nvidia-x11"
+            ];
+        };
+        nvidiaVersion = fedoraNvidiaDriver.version;
+        nvidiaHash = fedoraNvidiaDriver.hash;
+        enable32bits = isIntelX86Platform;
+        enableIntelX86Extensions = isIntelX86Platform;
+      };
+      fedoraNixglPackages = nixgl.packages // {
+        ${homeSystem} = nixgl.packages.${homeSystem} // {
+          nixGLNvidia = fedoraNixglPkgs.nixGLNvidia;
+          nixVulkanNvidia = fedoraNixglPkgs.nixVulkanNvidia;
+        };
+      };
+      nixglPackagesFor = platform:
+        if platform == "fedora" then
+          fedoraNixglPackages
+        else
+          nixgl.packages;
       hostModule = platform:
         ./nix/home/hosts + "/${homeUsername}_${platform}.nix";
       mkHomeConfiguration = platform:
         home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.${homeSystem};
           extraSpecialArgs = {
-            inherit nixgl;
+            nixgl = nixgl // {
+              packages = nixglPackagesFor platform;
+            };
           };
           modules = [
             (hostModule platform)

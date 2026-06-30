@@ -46,9 +46,9 @@
 - kdePackages.fcitx5-qt: Qt アプリ連携（Ubuntu/Fedora）。
 - hackgen-nf-font: 日本語を含む HackGen Nerd Font（Ubuntu/Fedora）。
 - obsidian: Markdown ベースのノートアプリ（Ubuntu/Fedora）。
-- google-chrome: Web ブラウザ（Ubuntu/Fedora）。
+- google-chrome: Web ブラウザ（Ubuntu/Fedora。Fedora では nixGL NVIDIA wrapper を適用）。
 - ticktick: タスク管理アプリ（Ubuntu/Fedora）。
 - bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。
-- ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化）。
-- zed-editor: GPU アクセラレーション対応のコードエディタ（Ubuntu/Fedora、`programs.zed-editor.enable` で有効化。起動時に Nix 側 Mesa の Vulkan ICD を `VK_ICD_FILENAMES` / `VK_DRIVER_FILES` へ明示するラッパーを適用）。
+- ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化。Fedora では nixGL NVIDIA wrapper を適用）。
+- zed-editor: GPU アクセラレーション対応のコードエディタ（Ubuntu/Fedora、`programs.zed-editor.enable` で有効化。Fedora では nixGL NVIDIA GL/Vulkan wrapper、Ubuntu では Nix 側 Mesa の Vulkan ICD 明示 wrapper を適用）。
 - gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。

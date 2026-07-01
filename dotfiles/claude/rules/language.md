@@ -17,7 +17,6 @@
 - All code should be written in English:
   - Variable names: `user_count`, not `ユーザー数`
   - Function names: `calculate_total()`, not `合計計算()`
-  - Comments: `# Check if valid`, not `# 有効かチェック`
   - Docstrings: English descriptions
 
 ## Documentation

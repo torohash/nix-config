@@ -3,13 +3,13 @@
 
 set -euo pipefail
 
-code_exts=(py js jsx ts tsx go rs java c h cc cpp rb php swift sql sh nix)
+code_exts=(py js jsx ts tsx go rs java c h cc cpp rb php swift sql sh nix html htm)
 pathspecs=()
 for ext in "${code_exts[@]}"; do
   pathspecs+=("*.${ext}")
 done
 
-PATHSPEC_VERSION="code-exts-v2-nix"
+PATHSPEC_VERSION="code-exts-v3-html"
 PROMPT_VERSION="verify-review-v2"
 CHECK_POLICY_VERSION="semantic-domains-v1"
 MODEL="${REVIEW_GATE_MODEL:-${CODEX_MODEL:-codex-companion-default}}"

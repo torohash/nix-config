@@ -105,6 +105,27 @@ in
     force = true;
   };
 
+  # Share the single language-policy source with Codex as its global personal
+  # AGENTS.md so comment/naming rules stay managed in one place.
+  home.file.".codex/AGENTS.md" = {
+    source = ../../../dotfiles/claude/rules/language.md;
+    force = true;
+  };
+
+  # Share the Claude-side coding-convention skill with Codex (single source).
+  # Symlink the skill dir alone so Codex's own ~/.codex/skills/.system stays intact.
+  home.file.".codex/skills/typescript-conventions" = {
+    source = ../../../dotfiles/claude/skills/typescript-conventions;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".codex/skills/test-sizes" = {
+    source = ../../../dotfiles/claude/skills/test-sizes;
+    recursive = true;
+    force = true;
+  };
+
   xdg.configFile."opencode/AGENTS.md" = {
     source = ../../../dotfiles/opencode/AGENTS.md;
     force = true;

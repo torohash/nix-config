@@ -4,7 +4,6 @@
 
 - **Always think and reason in English**
 - Internal analysis, planning, and problem-solving should be in English
-- Code comments, variable names, function names, and docstrings should be in English
 
 ## User Communication
 
@@ -14,10 +13,12 @@
 
 ## Code
 
-- All code should be written in English:
+- **Code comments and docstrings should be written in Japanese**
+  - Comments: `// ユーザー数を計算する`, not `// calculate the user count`
+  - Docstrings: 日本語で記述する
+- Identifiers must stay in English:
   - Variable names: `user_count`, not `ユーザー数`
   - Function names: `calculate_total()`, not `合計計算()`
-  - Docstrings: English descriptions
 
 ## Documentation
 

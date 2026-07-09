@@ -126,6 +126,12 @@ in
     force = true;
   };
 
+  home.file.".codex/skills/domain-value-docs" = {
+    source = ../../../dotfiles/claude/skills/domain-value-docs;
+    recursive = true;
+    force = true;
+  };
+
   xdg.configFile."opencode/AGENTS.md" = {
     source = ../../../dotfiles/opencode/AGENTS.md;
     force = true;

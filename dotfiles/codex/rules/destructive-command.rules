@@ -1,0 +1,74 @@
+prefix_rule(
+    pattern = ["rm", ["-rf", "-fr", "-r", "--recursive"], ["/", "/home/torohash"]],
+    decision = "prompt",
+    justification = "ルートまたはホーム全体の削除です。対象パスを確認してください。",
+    match = [
+        "rm -rf /",
+        "rm -fr /home/torohash",
+        "rm --recursive /",
+    ],
+    not_match = [
+        "rm -rf /tmp/codex-test",
+        "rm file.txt",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push", ["--force", "--force-with-lease", "-f"]],
+    decision = "forbidden",
+    justification = "強制 push は禁止されています。通常の git push を使用してください。",
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "作業ツリーを破壊する reset --hard は禁止されています。非破壊的な方法を使用してください。",
+)
+
+prefix_rule(
+    pattern = ["git", "checkout", "."],
+    decision = "forbidden",
+    justification = "作業ツリー全体を破棄する checkout は禁止されています。対象ファイルを限定してください。",
+)
+
+prefix_rule(
+    pattern = ["git", "restore", "."],
+    decision = "forbidden",
+    justification = "作業ツリー全体を破棄する restore は禁止されています。対象ファイルを限定してください。",
+)
+
+prefix_rule(
+    pattern = ["git", "clean", ["-f", "-fd", "-fdx", "-fx", "-fX"]],
+    decision = "forbidden",
+    justification = "未追跡ファイルを強制削除する git clean は禁止されています。",
+)
+
+prefix_rule(
+    pattern = ["git", "branch", "-D"],
+    decision = "forbidden",
+    justification = "ブランチの強制削除は禁止されています。git branch -d を使用してください。",
+)
+
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "forbidden",
+    justification = "sudo は禁止されています。必要な権限変更はユーザーが明示的に実行してください。",
+)
+
+prefix_rule(
+    pattern = ["dd"],
+    decision = "forbidden",
+    justification = "デバイスやファイルを上書きし得る dd は禁止されています。別の非破壊的な手段を使用してください。",
+)
+
+prefix_rule(
+    pattern = [["mkfs", "mkfs.btrfs", "mkfs.exfat", "mkfs.ext2", "mkfs.ext3", "mkfs.ext4", "mkfs.fat", "mkfs.vfat", "mkfs.xfs"]],
+    decision = "forbidden",
+    justification = "ファイルシステムの作成はデータを破壊するため禁止されています。",
+)
+
+prefix_rule(
+    pattern = ["chmod", ["-R", "--recursive"], ["000", "0000"]],
+    decision = "forbidden",
+    justification = "再帰的に全権限を除去する chmod は禁止されています。対象と権限を限定してください。",
+)

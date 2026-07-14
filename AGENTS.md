@@ -1,3 +1,4 @@
+- ユーザー向けの説明、質問、進捗報告、エラーメッセージを含むコミュニケーションは常に日本語で行うこと
 - nixの一般的なベストプラクティスに沿った実装を行うこと
 - package/devShellの追加・変更時は `docs/packages.md` または `docs/devShells.md` を更新すること
 - vimPluginsの追加・変更時は `docs/vimPlugins.md` を更新すること

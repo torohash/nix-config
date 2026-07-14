@@ -105,6 +105,11 @@ in
     force = true;
   };
 
+  home.file.".codex/rules/destructive-command.rules" = {
+    source = ../../../dotfiles/codex/rules/destructive-command.rules;
+    force = true;
+  };
+
   # Share the single language-policy source with Codex as its global personal
   # AGENTS.md so comment/naming rules stay managed in one place.
   home.file.".codex/AGENTS.md" = {

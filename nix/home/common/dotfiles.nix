@@ -110,10 +110,9 @@ in
     force = true;
   };
 
-  # Share the single language-policy source with Codex as its global personal
-  # AGENTS.md so comment/naming rules stay managed in one place.
+  # Codexのグローバル個人指示を配置する。
   home.file.".codex/AGENTS.md" = {
-    source = ../../../dotfiles/claude/rules/language.md;
+    source = ../../../dotfiles/codex/AGENTS.md;
     force = true;
   };
 

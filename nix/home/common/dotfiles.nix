@@ -123,52 +123,114 @@ in
     force = true;
   };
 
-  # Claude側と共有するSkillをCodexのユーザー共通Skillとして配置する。
+  # Codexが検出できるよう、各Skillをディレクトリ単位のシンボリックリンクとして配置する。
+  # recursive配置で作られた旧ディレクトリは、内容がHome Managerの管理リンクだけの場合に移行する。
+  home.activation.migrateCodexSkillDirectories = lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ] ''
+    for skill_name in \
+      typescript-conventions \
+      test-sizes \
+      domain-value-docs \
+      bun-init \
+      uv-init \
+      delegate-code-changes \
+      delegate-research \
+      delegate-code-review
+    do
+      skill_dir="$HOME/.agents/skills/$skill_name"
+
+      if [ -L "$skill_dir" ] || [ ! -e "$skill_dir" ]; then
+        continue
+      fi
+
+      if [ ! -d "$skill_dir" ]; then
+        printf 'エラー: %s は通常ファイル、ソケットなどのため削除できません。ユーザーデータを保護するためHome Managerの適用を停止します。\n' "$skill_dir" >&2
+        exit 1
+      fi
+
+      unexpected_entry="$("${pkgs.findutils}/bin/find" "$skill_dir" -mindepth 1 ! -type d ! -type l -print -quit)" || {
+        printf 'エラー: %s の内容を検査できません。削除せずHome Managerの適用を停止します。\n' "$skill_dir" >&2
+        exit 1
+      }
+      if [ -n "$unexpected_entry" ]; then
+        printf 'エラー: %s 内にディレクトリまたはシンボリックリンクではない項目があります（%s）。ユーザーデータを保護するため削除しません。\n' "$skill_dir" "$unexpected_entry" >&2
+        exit 1
+      fi
+
+      skill_links="$("${pkgs.findutils}/bin/find" "$skill_dir" -mindepth 1 -type l -print)" || {
+        printf 'エラー: %s 内のシンボリックリンクを検査できません。削除せずHome Managerの適用を停止します。\n' "$skill_dir" >&2
+        exit 1
+      }
+      if [ -z "$skill_links" ]; then
+        printf 'エラー: %s は旧Home Manager管理レイアウトと判定できません。削除せずHome Managerの適用を停止します。\n' "$skill_dir" >&2
+        exit 1
+      fi
+
+      while IFS= read -r skill_link; do
+        link_target="$("${pkgs.coreutils}/bin/readlink" -- "$skill_link")" || {
+          printf 'エラー: %s のリンク先を確認できません。削除せずHome Managerの適用を停止します。\n' "$skill_link" >&2
+          exit 1
+        }
+
+        case "$link_target" in
+          /nix/store/*)
+            ;;
+          *)
+            printf 'エラー: %s 内にNix store以外を指すシンボリックリンクがあります（%s）。ユーザーデータを保護するため削除しません。\n' "$skill_dir" "$skill_link" >&2
+            exit 1
+            ;;
+        esac
+
+        case "$link_target" in
+          /nix/store/*-home-manager-files/.agents/skills/"$skill_name"/*)
+            ;;
+          *)
+            printf 'エラー: %s は旧Home Manager管理レイアウトと判定できません（想定外のNix storeリンク: %s）。削除しません。\n' "$skill_dir" "$skill_link" >&2
+            exit 1
+            ;;
+        esac
+      done <<< "$skill_links"
+
+      $DRY_RUN_CMD "${pkgs.coreutils}/bin/rm" -rf -- "$skill_dir"
+    done
+  '';
+
   home.file.".agents/skills/typescript-conventions" = {
     source = ../../../dotfiles/claude/skills/typescript-conventions;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/test-sizes" = {
     source = ../../../dotfiles/claude/skills/test-sizes;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/domain-value-docs" = {
     source = ../../../dotfiles/claude/skills/domain-value-docs;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/bun-init" = {
     source = ../../../dotfiles/codex/skills/bun-init;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/uv-init" = {
     source = ../../../dotfiles/codex/skills/uv-init;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/delegate-code-changes" = {
     source = ../../../dotfiles/codex/skills/delegate-code-changes;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/delegate-research" = {
     source = ../../../dotfiles/codex/skills/delegate-research;
-    recursive = true;
     force = true;
   };
 
   home.file.".agents/skills/delegate-code-review" = {
     source = ../../../dotfiles/codex/skills/delegate-code-review;
-    recursive = true;
     force = true;
   };
 

@@ -4,7 +4,9 @@
 
 ## 概要
 
-このリポジトリは packages / devShells / Home Manager 設定を提供します。日常的な開発環境セットアップは devShell より `mise` を優先します。
+このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Claude Code・Codex・OpenCode のユーザー共通設定を管理します。
+
+日常的な言語ランタイムとプロジェクト単位のツールチェーンには `mise` を優先し、Nix の devShell は GUI アプリ、SDK、一時的な開発環境の補助手段として使用します。AI 開発支援 CLI 本体は Nix で固定せず、公式インストーラーまたは npm で導入します。
 
 ## ドキュメント
 
@@ -14,6 +16,7 @@
 - `docs/home-manager-versioning.md`: Home Manager のバージョン更新と `home.stateVersion` の扱い。
 - `docs/home-manager-structure.md`: Home Manager のディレクトリ構成方針。
 - `docs/ai-cli.md`: AI 開発支援 CLI ツールの導入方針とインストール。
+- `docs/claude-code-config.md`: Claude Code の設定階層、配置場所、適用優先順位。
 - `docs/aws-cli.md`: AWS CLI と SSM Session Manager の利用方法。
 - `docs/iam-identity-center-sso.md`: IAM Identity Center（SSO）ユーザー発行手順。
 - `docs/obsidian.md`: Obsidian 再構築手順と運用方針。
@@ -91,7 +94,7 @@ sudo usermod -aG sudo alice
 - `homeDirectory`: ホームディレクトリ（初期値: `/home/torohash`）
 - `stateVersion`: 初回インストール時の Home Manager バージョン
 
-システムタイプは `flake.nix` の `homeSystem` で指定します。
+現在の構成は、ユーザー名 `torohash`、ホームディレクトリ `/home/torohash`、システム `x86_64-linux` を前提としています。別の環境へ移植する場合は、上記のユーザー設定に加え、`flake.nix` の `homeUsername` / `homeSystem`、`nix/home/hosts/` のホストモジュール名、dotfiles 内のユーザー名と絶対パスも合わせて変更してください。
 
 `nix/home/common/git.nix` の Git 設定も環境に合わせて変更してください：
 
@@ -102,12 +105,19 @@ sudo usermod -aG sudo alice
 
 初回と2回目以降で実行するコマンドが異なります。
 
-このリポジトリには Home Manager 設定が含まれています。Home Manager は以下を管理します：
+このリポジトリの Home Manager 設定は、主に以下を管理します：
 
-- `.bashrc`（bash と direnv/nix-direnv 用の設定を含む）
-- bash / zsh での `mise` 有効化
-- direnv / nix-direnv の設定と有効化
-- Git 設定（プロンプトのブランチ表示と userName/userEmail）
+- `common-store` と `lsp-store` に含まれる共通 CLI・LSP
+- bash / zsh、`mise`、direnv / nix-direnv、Git
+- Neovim、Zed、tmux、Yazi、lazygit などのユーザー設定
+- Claude Code の settings・rules・skills・commands・agents・hooks
+- Codex のグローバル個人指示・rules・skills・委譲用 agents
+- OpenCode の設定・グローバル指示・skills
+- Ubuntu / Fedora 固有の GUI アプリ、fcitx5、日本語フォント、GNOME 設定
+
+一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.codex/config.toml`、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
+
+多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 
 Home Manager の案内: https://nix-community.github.io/home-manager/
 
@@ -255,6 +265,6 @@ AI 開発支援 CLI ツールの導入方針とインストール手順は `docs
 
 ## システム対応
 
-この flake は `nixpkgs.lib.systems.flakeExposed` で定義されたシステムをサポートしています。
+packages と devShells は `nixpkgs.lib.systems.flakeExposed` で定義されたシステム向けに生成します。Home Manager 構成は現在 `x86_64-linux` の Ubuntu、Fedora、WSL 向けです。
 
 注: store の profile install は Home Manager と競合するため実施非推奨です。

@@ -132,6 +132,7 @@ in
       domain-value-docs \
       bun-init \
       uv-init \
+      design-table \
       delegate-code-changes \
       delegate-research \
       delegate-code-review
@@ -216,6 +217,11 @@ in
 
   home.file.".agents/skills/uv-init" = {
     source = ../../../dotfiles/codex/skills/uv-init;
+    force = true;
+  };
+
+  home.file.".agents/skills/design-table" = {
+    source = ../../../dotfiles/codex/skills/design-table;
     force = true;
   };
 

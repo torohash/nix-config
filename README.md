@@ -117,6 +117,8 @@ sudo usermod -aG sudo alice
 
 一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.codex/config.toml`、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
 
+Codex の委譲用 agent は、各TOMLの`name`を実行時の`agent_role`として選択できるネイティブなサブエージェント起動経路を前提とします。モデルと推論レベルは各TOMLの`model`と`model_reasoning_effort`から適用されます。`agent_role`を指定できない汎用起動経路ではカスタムagentを利用できないため、依頼文だけで役割やモデルを指定して代替しないでください。
+
 多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 
 Home Manager の案内: https://nix-community.github.io/home-manager/

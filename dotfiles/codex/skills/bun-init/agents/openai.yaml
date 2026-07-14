@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bun TypeScript初期化"
+  short_description: "Bun、Biome、TypeScript、テスト付きプロジェクトを初期化"
+  default_prompt: "$bun-initを使って、BunとBiomeを備えた素のTypeScriptプロジェクトを初期化してください。"

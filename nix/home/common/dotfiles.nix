@@ -116,22 +116,33 @@ in
     force = true;
   };
 
-  # Share the Claude-side coding-convention skill with Codex (single source).
-  # Symlink the skill dir alone so Codex's own ~/.codex/skills/.system stays intact.
-  home.file.".codex/skills/typescript-conventions" = {
+  # Claude側と共有するSkillをCodexのユーザー共通Skillとして配置する。
+  home.file.".agents/skills/typescript-conventions" = {
     source = ../../../dotfiles/claude/skills/typescript-conventions;
     recursive = true;
     force = true;
   };
 
-  home.file.".codex/skills/test-sizes" = {
+  home.file.".agents/skills/test-sizes" = {
     source = ../../../dotfiles/claude/skills/test-sizes;
     recursive = true;
     force = true;
   };
 
-  home.file.".codex/skills/domain-value-docs" = {
+  home.file.".agents/skills/domain-value-docs" = {
     source = ../../../dotfiles/claude/skills/domain-value-docs;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".agents/skills/bun-init" = {
+    source = ../../../dotfiles/codex/skills/bun-init;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".agents/skills/uv-init" = {
+    source = ../../../dotfiles/codex/skills/uv-init;
     recursive = true;
     force = true;
   };

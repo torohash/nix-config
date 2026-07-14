@@ -1,0 +1,4 @@
+interface:
+  display_name: "uv Python初期化"
+  short_description: "uv、Ruff、Pyright、pytest付きPythonプロジェクトを初期化"
+  default_prompt: "$uv-initを使って、uv、Ruff、Pyright、pytestを備えたPythonプロジェクトを初期化してください。"

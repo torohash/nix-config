@@ -1,0 +1,4 @@
+interface:
+  display_name: "調査の委譲"
+  short_description: "調査対象と難しさに応じて適切な読み取り専用担当へ委譲します"
+  default_prompt: "$delegate-research を使って、この調査を適切な担当へ委譲してください。"

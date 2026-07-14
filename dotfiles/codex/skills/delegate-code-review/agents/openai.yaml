@@ -1,0 +1,4 @@
+interface:
+  display_name: "コードレビューの委譲"
+  short_description: "実装後の差分をSolの独立した担当へ委譲して確認します"
+  default_prompt: "$delegate-code-review を使って、この変更差分を独立した担当にレビューさせてください。"

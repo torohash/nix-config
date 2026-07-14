@@ -116,7 +116,7 @@ in
     force = true;
   };
 
-  # Codexのコード変更委譲用エージェントプロファイルを配置する。
+  # Codexのコード変更、調査、レビュー委譲用エージェントを配置する。
   home.file.".codex/agents" = {
     source = ../../../dotfiles/codex/agents;
     recursive = true;
@@ -156,6 +156,18 @@ in
 
   home.file.".agents/skills/delegate-code-changes" = {
     source = ../../../dotfiles/codex/skills/delegate-code-changes;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".agents/skills/delegate-research" = {
+    source = ../../../dotfiles/codex/skills/delegate-research;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".agents/skills/delegate-code-review" = {
+    source = ../../../dotfiles/codex/skills/delegate-code-review;
     recursive = true;
     force = true;
   };

@@ -116,6 +116,13 @@ in
     force = true;
   };
 
+  # Codexのコード変更委譲用エージェントプロファイルを配置する。
+  home.file.".codex/agents" = {
+    source = ../../../dotfiles/codex/agents;
+    recursive = true;
+    force = true;
+  };
+
   # Claude側と共有するSkillをCodexのユーザー共通Skillとして配置する。
   home.file.".agents/skills/typescript-conventions" = {
     source = ../../../dotfiles/claude/skills/typescript-conventions;
@@ -143,6 +150,12 @@ in
 
   home.file.".agents/skills/uv-init" = {
     source = ../../../dotfiles/codex/skills/uv-init;
+    recursive = true;
+    force = true;
+  };
+
+  home.file.".agents/skills/delegate-code-changes" = {
+    source = ../../../dotfiles/codex/skills/delegate-code-changes;
     recursive = true;
     force = true;
   };

@@ -1,0 +1,4 @@
+interface:
+  display_name: "コード変更の委譲"
+  short_description: "変更の難度とリスクに応じて適切な実装担当へ安全に委譲します"
+  default_prompt: "$delegate-code-changes を使って、このコード変更を適切な実装担当へ委譲してください。"

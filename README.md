@@ -111,11 +111,13 @@ sudo usermod -aG sudo alice
 - bash / zsh、`mise`、direnv / nix-direnv、Git
 - Neovim、Zed、tmux、Yazi、lazygit などのユーザー設定
 - Claude Code の settings・rules・skills・commands・agents・hooks
-- Codex のグローバル個人指示・rules・skills・委譲用 agents
+- Codex のグローバル設定・個人指示・rules・skills・委譲用 agents
 - OpenCode の設定・グローバル指示・skills
 - Ubuntu / Fedora 固有の GUI アプリ、fcitx5、日本語フォント、GNOME 設定
 
-一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.codex/config.toml`、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
+一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
+
+`~/.codex/config.toml`は`dotfiles/codex/config.toml`からHome Managerで強制配置します。Home Manager管理後は読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用してください。この設定には、GPT-5.6 SolのMultiAgent V2でカスタムエージェントを選択できるよう、`spawn_agent`へ`agent_type`を公開し、予約済みの`collaboration`名前空間とのスキーマ衝突を避ける回避設定を含めます。変更後は新しいCodexセッションを開始してください。
 
 Codex の委譲用Skillは、作業の種類と難しさに応じて`agents/`のカスタムagentを選びます。各agentのモデル、推論レベル、担当範囲は対応するTOMLに定義します。具体的な選択条件と起動方法は各Skillで管理します。
 

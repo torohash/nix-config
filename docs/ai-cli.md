@@ -60,9 +60,9 @@ Codex CLIでは`/agent`を使って、実行中のthreadと状態を確認でき
 
 実行状態が`completed`相当でも、委譲契約が求める結果をメインエージェントが確認するまでは成功としません。結果の欠落、error、interrupted、not found相当は成功として扱いません。同じ担当へ情報を追加する場合は既存の識別子を使い、別の役割へ再選定する場合は旧担当の終了を確認してから起動します。
 
-このリポジトリは`~/.codex/config.toml`を管理しません。`[agents]`を利用環境で設定していない場合、Codexの既定値は`max_threads = 6`、`max_depth = 1`です。カスタムエージェントのモデルと推論レベルは各TOMLで管理し、起動時には上書きしません。
+このリポジトリは`dotfiles/codex/config.toml`をHome Managerで`~/.codex/config.toml`へ強制配置します。Home Manager管理後のファイルは読み取り専用リンクになるため、以後の変更はリポジトリ側で行い、Home Managerを適用してください。`[features.multi_agent_v2]`の`hide_spawn_agent_metadata = false`と`tool_namespace = "agents"`は、GPT-5.6 SolのMultiAgent V2で`spawn_agent`にカスタムエージェント選択用の`agent_type`を公開し、予約済みの`collaboration`名前空間とのスキーマ衝突を避ける回避設定です。変更を反映するには新しいCodexセッションを開始します。`[agents]`を利用環境で設定していない場合、Codexの既定値は`max_threads = 6`、`max_depth = 1`です。カスタムエージェントのモデルと推論レベルは各TOMLで管理し、起動時には上書きしません。
 
-定義とSkillの対応は次のMediumサイズの静的検査で確認できます。必須キー、`name`の一意性とファイル名一致、役割ごとのモデル・推論レベル・sandbox、読み取り専用担当の禁止指示、Skillの機械判定用役割一覧を検査します。ローカルディスク上の複数ファイルを読むため、Smallサイズではありません。
+定義とSkillの対応、およびMultiAgent V2の回避設定は次のMediumサイズの静的検査で確認できます。必須キー、`name`の一意性とファイル名一致、役割ごとのモデル・推論レベル・sandbox、読み取り専用担当の禁止指示、Skillの機械判定用役割一覧、`hide_spawn_agent_metadata`と`tool_namespace`を検査します。ローカルディスク上の複数ファイルを読むため、Smallサイズではありません。
 
 ```bash
 nix build .#checks.x86_64-linux.codex-agent-definitions-medium

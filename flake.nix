@@ -90,6 +90,8 @@
           lib = pkgs.lib;
           agentDirectory = ./dotfiles/codex/agents;
           skillDirectory = ./dotfiles/codex/skills;
+          codexConfig = builtins.fromTOML (builtins.readFile ./dotfiles/codex/config.toml);
+          codexMultiAgentV2 = (codexConfig.features or {}).multi_agent_v2 or {};
           roleExpectations = {
             code-change-advanced = {
               model = "gpt-5.6-sol";
@@ -238,6 +240,9 @@
               in
               selectionListLines == [ expectedSelectionList ])
             (builtins.attrNames skillAgentNames);
+          multiAgentV2ConfigurationIsExpected =
+            (codexMultiAgentV2.hide_spawn_agent_metadata or null) == false
+            && (codexMultiAgentV2.tool_namespace or null) == "agents";
         in
         {
           # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。
@@ -258,9 +263,11 @@
               "Codexの調査・レビュー担当の禁止指示が不足しています";
             assert lib.assertMsg skillSelectionListsMatch
               "CodexのSkillの役割一覧とカスタムエージェント定義が一致しません";
+            assert lib.assertMsg multiAgentV2ConfigurationIsExpected
+              "CodexのMultiAgent V2でカスタムエージェントを選択する回避設定が一致しません";
             pkgs.runCommand "codex-agent-definitions-medium" { } ''
               mkdir -p "$out"
-              echo "Codexのカスタムエージェント定義とSkillの対応は正常です" > "$out/result"
+              echo "Codexのカスタムエージェント定義、Skill、MultiAgent V2設定は正常です" > "$out/result"
             '';
         };
     in

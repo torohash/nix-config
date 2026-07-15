@@ -1,0 +1,146 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "xhigh"
+model_verbosity = "low"
+sandbox_mode = "danger-full-access"
+approval_policy = { granular = { sandbox_approval = false, rules = true, mcp_elicitations = false, request_permissions = false, skill_approval = false } }
+plan_mode_reasoning_effort = "xhigh"
+
+[features.multi_agent_v2]
+# spawn_agentへagent_typeなどの経路情報を公開し、カスタムエージェントを選択可能にする。
+hide_spawn_agent_metadata = false
+# 予約済みのcollaboration名前空間とのスキーマ衝突を避けるため、agents名前空間を使う。
+tool_namespace = "agents"
+
+[projects."/home/torohash/nix-config"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/app-reserach"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/investment-idea-ai"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/phone-number-search"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/unity-game/BlockBreaker"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/seo-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/stat-arb"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/arb-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/crypto-ds"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/marp-test"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/multi-arb/arb-backtest"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/multi-arb/arb-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/monad-kyber-atomic"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/stablecoin-arb"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/earth-video"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/r18-game-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-trade-rth-open-fade"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-trade-open-residual-follow"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-trade-spcx-delayed-crypto"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-research2"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/claude-test"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/claude-test2"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/create-grok-test"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/orderbook-datalake"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/nannkasira"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/dlsite-game-review-sites"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-trade-kioxia-basis-fade"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/create-videos"]
+trust_level = "trusted"
+
+[projects."/home/torohash/life"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hl-address-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/game-architecture"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-mm-thin-listing"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/trades-datalake"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hip3-hft"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hft-labo"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/financial-research"]
+trust_level = "trusted"
+
+[projects."/home/torohash/dev/hft-research"]
+trust_level = "trusted"
+
+[mcp_servers.pencil]
+default_tools_approval_mode = "approve"
+command = "/home/torohash/.codex/pencil-mcp-launch.sh"
+args = []
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4

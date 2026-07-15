@@ -110,6 +110,12 @@ in
     force = true;
   };
 
+  # Codexのグローバル設定を配置する。以後の変更はリポジトリ上の設定ファイルで管理する。
+  home.file.".codex/config.toml" = {
+    source = ../../../dotfiles/codex/config.toml;
+    force = true;
+  };
+
   # Codexのグローバル個人指示を配置する。
   home.file.".codex/AGENTS.md" = {
     source = ../../../dotfiles/codex/AGENTS.md;

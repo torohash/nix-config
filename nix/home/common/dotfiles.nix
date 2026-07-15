@@ -43,6 +43,10 @@ in
     GTK_IM_MODULE = "fcitx";
     QT_IM_MODULE = "fcitx";
     QT_IM_MODULES = "wayland;fcitx";
+    # OpenCodeをClaude Code互換設定・外部skills・プロジェクト共有設定から隔離する。
+    OPENCODE_DISABLE_CLAUDE_CODE = "true";
+    OPENCODE_DISABLE_EXTERNAL_SKILLS = "true";
+    OPENCODE_DISABLE_PROJECT_CONFIG = "true";
   };
 
   home.file.".tmux.conf" = {
@@ -125,6 +129,19 @@ in
   # Codexのコード変更、調査、レビュー委譲用エージェントを配置する。
   home.file.".codex/agents" = {
     source = ../../../dotfiles/codex/agents;
+    recursive = true;
+    force = true;
+  };
+
+  # OpenCodeの共通権限を配置する。個人用opencode.jsoncは上書きしない。
+  xdg.configFile."opencode/opencode.json" = {
+    source = ../../../dotfiles/opencode/opencode.json;
+    force = true;
+  };
+
+  # OpenCodeのネイティブsubagentを配置する。
+  xdg.configFile."opencode/agents" = {
+    source = ../../../dotfiles/opencode/agents;
     recursive = true;
     force = true;
   };
@@ -243,38 +260,6 @@ in
 
   home.file.".agents/skills/delegate-code-review" = {
     source = ../../../dotfiles/codex/skills/delegate-code-review;
-    force = true;
-  };
-
-  xdg.configFile."opencode/AGENTS.md" = {
-    source = ../../../dotfiles/opencode/AGENTS.md;
-    force = true;
-  };
-
-  xdg.configFile."opencode/skills" = {
-    source = ../../../dotfiles/opencode/skills;
-    recursive = true;
-    force = true;
-  };
-
-  xdg.configFile."opencode/skills/agent-browser" = {
-    source = ../../../dotfiles/claude/skills/agent-browser;
-    recursive = true;
-    force = true;
-  };
-
-  xdg.configFile."opencode/oh-my-opencode.json" = {
-    source = ../../../dotfiles/opencode/oh-my-opencode.json;
-    force = true;
-  };
-
-  xdg.configFile."opencode/oh-my-openagent.json" = {
-    source = ../../../dotfiles/opencode/oh-my-openagent.json;
-    force = true;
-  };
-
-  xdg.configFile."opencode/opencode.json" = {
-    source = ../../../dotfiles/opencode/opencode.json;
     force = true;
   };
 

@@ -1,26 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "oh-my-openagent"
-  ],
-  "instructions": ["AGENTS.md"],
-  "theme": "system",
-  "tui": {
-    "scroll_speed": 1,
-    "scroll_acceleration": {
-      "enabled": true
-    },
-    "diff_style": "auto"
-  },
   "permission": {
     "bash": {
-      "*": "allow",
-      "rm -rf *": "deny",
-      "git push --force*": "deny",
-      "sudo *": "deny",
-      "dd *": "deny",
-      "mkfs*": "deny",
-      "format*": "deny"
+      "rm *": "ask",
+      "rm -rf /": "deny",
+      "rm -rf /*": "deny",
+      "rm -rf ~*": "deny",
+      "rm -rf $HOME*": "deny",
+      "rm -fr /": "deny",
+      "rm -fr /*": "deny",
+      "rm -fr ~*": "deny",
+      "rm -fr $HOME*": "deny",
+      "rm -r /": "deny",
+      "rm -r /*": "deny",
+      "rm -r ~*": "deny",
+      "rm -r $HOME*": "deny",
+      "rm --recursive /": "deny",
+      "rm --recursive /*": "deny",
+      "rm --recursive ~*": "deny",
+      "rm --recursive $HOME*": "deny"
     }
   }
 }

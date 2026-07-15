@@ -4,9 +4,11 @@
 
 ## 概要
 
-このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Claude Code・Codex・OpenCode のユーザー共通設定を管理します。
+このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Claude Code・Codex・OpenCode subagent のユーザー共通設定を管理します。
 
 日常的な言語ランタイムとプロジェクト単位のツールチェーンには `mise` を優先し、Nix の devShell は GUI アプリ、SDK、一時的な開発環境の補助手段として使用します。AI 開発支援 CLI 本体は Nix で固定せず、公式インストーラーまたは npm で導入します。
+
+OpenCode CLI は公式インストーラーなどで別途導入します。Home Manager は `~/.opencode/bin` を PATH に追加し、共通rm権限を `~/.config/opencode/opencode.json`、ネイティブsubagentを `~/.config/opencode/agents/` へ配置します。個人用 `opencode.jsonc`、グローバルルール、skills は管理せず、`OPENCODE_DISABLE_CLAUDE_CODE`、`OPENCODE_DISABLE_EXTERNAL_SKILLS`、`OPENCODE_DISABLE_PROJECT_CONFIG` によりClaude Code互換設定・外部skills・プロジェクト共有設定の読み込みを遮断します。
 
 ## ドキュメント
 
@@ -112,7 +114,7 @@ sudo usermod -aG sudo alice
 - Neovim、Zed、tmux、Yazi、lazygit などのユーザー設定
 - Claude Code の settings・rules・skills・commands・agents・hooks
 - Codex のグローバル設定・個人指示・rules・skills・委譲用 agents
-- OpenCode の設定・グローバル指示・skills
+- OpenCode の coding・プロジェクト内調査・コードレビュー・Web調査用subagent
 - Ubuntu / Fedora 固有の GUI アプリ、fcitx5、日本語フォント、GNOME 設定
 
 一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
@@ -121,7 +123,7 @@ sudo usermod -aG sudo alice
 
 Codex の委譲用Skillは、作業の種類と難しさに応じて`agents/`のカスタムagentを選びます。各agentのモデル、推論レベル、担当範囲は対応するTOMLに定義します。具体的な選択条件と起動方法は各Skillで管理します。
 
-多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
+多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode/opencode.json`、`~/.config/opencode/agents` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 
 Home Manager の案内: https://nix-community.github.io/home-manager/
 

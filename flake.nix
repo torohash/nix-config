@@ -90,6 +90,9 @@
           lib = pkgs.lib;
           agentDirectory = ./dotfiles/codex/agents;
           skillDirectory = ./dotfiles/codex/skills;
+          opencodeAgentDirectory = ./dotfiles/opencode/agents;
+          opencodeConfig = builtins.fromJSON
+            (builtins.readFile ./dotfiles/opencode/opencode.json);
           codexConfig = builtins.fromTOML (builtins.readFile ./dotfiles/codex/config.toml);
           codexMultiAgentV2 = (codexConfig.features or {}).multi_agent_v2 or {};
           roleExpectations = {
@@ -243,6 +246,89 @@
           multiAgentV2ConfigurationIsExpected =
             (codexMultiAgentV2.hide_spawn_agent_metadata or null) == false
             && (codexMultiAgentV2.tool_namespace or null) == "agents";
+          opencodeAgentFileNames = builtins.attrNames (lib.filterAttrs
+            (fileName: _: lib.hasSuffix ".md" fileName)
+            (builtins.readDir opencodeAgentDirectory));
+          expectedOpencodeAgentModels = {
+            "code-review.md" = {
+              model = "openai/gpt-5.6-sol";
+              variant = "xhigh";
+            };
+            "coding.md" = {
+              model = "openai/gpt-5.6-terra";
+              variant = "high";
+            };
+            "project-research.md" = {
+              model = "openai/gpt-5.6-terra";
+              variant = "high";
+            };
+            "web-research.md" = {
+              model = "openai/gpt-5.6-terra";
+              variant = "high";
+            };
+          };
+          expectedOpencodeAgentFileNames = builtins.attrNames
+            expectedOpencodeAgentModels;
+          opencodeAgentContents = map
+            (fileName: builtins.readFile (opencodeAgentDirectory + "/${fileName}"))
+            opencodeAgentFileNames;
+          opencodeAgentDefinitionsAreExpected = opencodeAgentFileNames
+            == expectedOpencodeAgentFileNames;
+          opencodeAgentCommonFieldsAreExpected = lib.all
+            (content:
+              lib.hasInfix "description: " content
+              && lib.hasInfix "mode: subagent" content
+              && lib.hasInfix "task: deny" content
+              && lib.hasInfix "external_directory: deny" content)
+            opencodeAgentContents;
+          opencodeReadOnlyAgentNames = [
+            "code-review.md"
+            "project-research.md"
+            "web-research.md"
+          ];
+          opencodeReadOnlyAgentsDenyEdits = lib.all
+            (fileName: lib.hasInfix "edit: deny"
+              (builtins.readFile (opencodeAgentDirectory + "/${fileName}")))
+            opencodeReadOnlyAgentNames;
+          opencodeCodingAgentAllowsEdits = lib.hasInfix "edit: allow"
+            (builtins.readFile (opencodeAgentDirectory + "/coding.md"));
+          opencodeAgentModelsAreExpected = lib.all
+            (fileName:
+              let
+                content = builtins.readFile
+                  (opencodeAgentDirectory + "/${fileName}");
+                expected = expectedOpencodeAgentModels.${fileName};
+              in
+              lib.hasInfix "model: ${expected.model}" content
+              && lib.hasInfix "variant: ${expected.variant}" content)
+            expectedOpencodeAgentFileNames;
+          expectedOpencodeRmPermissions = {
+            "rm *" = "ask";
+            "rm -rf /" = "deny";
+            "rm -rf /*" = "deny";
+            "rm -rf ~*" = "deny";
+            "rm -rf $HOME*" = "deny";
+            "rm -fr /" = "deny";
+            "rm -fr /*" = "deny";
+            "rm -fr ~*" = "deny";
+            "rm -fr $HOME*" = "deny";
+            "rm -r /" = "deny";
+            "rm -r /*" = "deny";
+            "rm -r ~*" = "deny";
+            "rm -r $HOME*" = "deny";
+            "rm --recursive /" = "deny";
+            "rm --recursive /*" = "deny";
+            "rm --recursive ~*" = "deny";
+            "rm --recursive $HOME*" = "deny";
+          };
+          opencodeBashPermissions = (opencodeConfig.permission or {}).bash or {};
+          opencodeRmPermissionsAreExpected = lib.all
+            (pattern: opencodeBashPermissions.${pattern} or null
+              == expectedOpencodeRmPermissions.${pattern})
+            (builtins.attrNames expectedOpencodeRmPermissions);
+          opencodeAgentsDoNotDuplicateRmPermissions = lib.all
+            (content: !lib.hasInfix "\"rm " content)
+            opencodeAgentContents;
         in
         {
           # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。
@@ -268,6 +354,27 @@
             pkgs.runCommand "codex-agent-definitions-medium" { } ''
               mkdir -p "$out"
               echo "Codexのカスタムエージェント定義、Skill、MultiAgent V2設定は正常です" > "$out/result"
+            '';
+
+          # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。
+          opencode-agent-definitions-medium =
+            assert lib.assertMsg opencodeAgentDefinitionsAreExpected
+              "OpenCodeのsubagent定義が期待する4ファイルと一致しません";
+            assert lib.assertMsg opencodeAgentCommonFieldsAreExpected
+              "OpenCodeのsubagent定義に必須フィールドまたは再委譲禁止がありません";
+            assert lib.assertMsg opencodeReadOnlyAgentsDenyEdits
+              "OpenCodeの調査・レビュー担当が読み取り専用ではありません";
+            assert lib.assertMsg opencodeCodingAgentAllowsEdits
+              "OpenCodeのcoding担当に編集権限がありません";
+            assert lib.assertMsg opencodeAgentModelsAreExpected
+              "OpenCodeのsubagentのモデルまたはvariantが期待値と一致しません";
+            assert lib.assertMsg opencodeRmPermissionsAreExpected
+              "OpenCodeの共通rm権限が期待値と一致しません";
+            assert lib.assertMsg opencodeAgentsDoNotDuplicateRmPermissions
+              "OpenCodeのsubagentに共通rm権限が重複しています";
+            pkgs.runCommand "opencode-agent-definitions-medium" { } ''
+              mkdir -p "$out"
+              echo "OpenCodeのsubagent定義と権限は正常です" > "$out/result"
             '';
         };
     in

@@ -81,16 +81,75 @@ curl -fsSL https://opencode.ai/install | bash
 
 インストール先の変更方法は公式ドキュメントに記載がないため、既定の配置先に従ってください。
 
-### OpenCode 設定ファイル
+### OpenCodeのsubagent
 
-OpenCode の設定は Home Manager 経由で `~/.config/opencode` に配置します。
+このリポジトリは、OpenCodeネイティブのMarkdown形式で定義した次のsubagentをHome Managerから `~/.config/opencode/agents/` へ配置します。
 
-- `dotfiles/opencode/opencode.json`
-- `dotfiles/opencode/oh-my-opencode.json`
-- `dotfiles/opencode/AGENTS.md`
-- `dotfiles/opencode/skills/`
+- `coding`: コード、テスト、設定、ビルド定義を変更する唯一の書き込み担当。
+- `project-research`: プロジェクト内のコード、設定、テスト、文書を調べる読み取り専用担当。
+- `code-review`: 実装差分のバグ、回帰、安全性、データ損失、テスト不足を確認する読み取り専用担当。
+- `web-research`: 公式文書と一次資料を優先して最新情報を調べる、Webアクセス専用の担当。
 
-`dotfiles/opencode/skills/` 配下の `SKILL.md` は `~/.config/opencode/skills/` に同期され、OpenCode からユーザースキルとして読み込まれます。
+subagentのモデルと推論強度は、対応するCodex agentの役割から次のように決めています。
+
+- `coding`: 通常の機能追加・修正を担う `code-change-standard` 相当として `openai/gpt-5.6-terra`、`high`。
+- `project-research`: 複数ファイルを横断する `project-research-synthesis` 相当として `openai/gpt-5.6-terra`、`high`。
+- `code-review`: Codexの `code-review` と同じ `openai/gpt-5.6-sol`、`xhigh`。
+- `web-research`: 複数の一次資料を統合する `web-research-synthesis` 相当として `openai/gpt-5.6-terra`、`high`。
+
+OpenCodeでは `variant` がOpenAIモデルの `reasoningEffort` に対応します。すべてのsubagentで追加のsubagent起動を禁止し、再帰的な委譲を防ぎます。
+
+primary agentはdescriptionを基に自動でsubagentを選択できます。明示的に指定する場合は `@` メンションを使います。
+
+```text
+@coding この不具合を修正してテストしてください
+@project-research 認証処理の流れを調べてください
+@code-review 現在の変更差分をレビューしてください
+@web-research OpenCodeの最新のpermission仕様を調べてください
+```
+
+定義の確認には次のコマンドを使います。
+
+```bash
+opencode agent list
+opencode debug agent coding
+nix build .#checks.x86_64-linux.opencode-agent-definitions-medium
+```
+
+agentファイルはOpenCode起動時に読み込まれます。Home Manager適用後は、実行中のOpenCodeを終了してから起動し直してください。
+
+### OpenCodeの共通権限
+
+`dotfiles/opencode/opencode.json`を `~/.config/opencode/opencode.json` へ配置し、すべてのprimary agentとsubagentへ共通のrm権限を適用します。通常の `rm` は確認を要求し、`/`、絶対パス、`~`、`$HOME`を対象にした再帰削除は拒否します。OpenCodeを `--auto` で起動した場合も、明示的な `deny` は維持されます。
+
+個人用の `~/.config/opencode/opencode.jsonc` は管理対象外です。OpenCodeは `opencode.json` と `opencode.jsonc` をマージするため、provider、モデル、TUIなどの個人設定を `opencode.jsonc` に保持できます。
+
+### OpenCodeの分離方針
+
+このリポジトリは共通rm権限を持つ最小の `opencode.json` だけを管理し、個人用 `opencode.jsonc`、グローバルルール、skills、provider、認証情報は管理しません。Home Managerは次の環境変数で、Claude Code・他ハーネス・プロジェクト共有の設定からOpenCodeを隔離します。
+
+- `OPENCODE_DISABLE_CLAUDE_CODE=true`: `~/.claude/CLAUDE.md`、プロジェクトと親ディレクトリの `CLAUDE.md`、プロジェクトとグローバル（`~/.claude/skills`）の `.claude/skills` の読み込みを無効にします。
+- `OPENCODE_DISABLE_EXTERNAL_SKILLS=true`: `~/.claude/`、`~/.agents/`、プロジェクトと親ディレクトリの `.claude/skills`、`.agents/skills` 配下の外部 skills の走査を無効にします。
+- `OPENCODE_DISABLE_PROJECT_CONFIG=true`: プロジェクト内・親ディレクトリの共有 `AGENTS.md`、プロジェクト固有の `.opencode/`、`opencode.json` を無効にします。この副作用により、プロジェクトの OpenCode 設定も読み込まれません。
+
+`~/.config/opencode/opencode.jsonc` の個人用グローバル設定は引き続き利用できます。`OPENCODE_DISABLE_EXTERNAL_SKILLS` と `OPENCODE_DISABLE_PROJECT_CONFIG` は公式文書に記載された回避設定です。`OPENCODE_DISABLE_CLAUDE_CODE` は現行実装に依存するため、OpenCodeのアップデート時に挙動を再確認してください。
+
+Home Manager は `~/.opencode/bin` を PATH に追加します。
+
+### OpenCode agent設計の方針
+
+- 複雑なpromptは `opencode.json` へ埋め込まず、役割ごとのMarkdownファイルへ分離します。
+- descriptionには「何をするか」と「いつ使うか」を書き、自動選択の誤りを減らします。
+- 書き込み権限は `coding` だけに与え、調査・レビュー担当では `edit: deny` を明示します。
+- `permission.task: deny` によりsubagentからの再委譲を禁止し、作業経路と責任を明確にします。
+- agentごとのモデルとvariantは、対応するCodex agentの役割・判断難度に合わせて固定します。
+- プロジェクト設定の自動読み込みを無効化しているため、ローカル担当のpromptで `AGENTS.md` とREADMEを明示的に確認させます。
+
+公式仕様:
+
+- https://opencode.ai/docs/agents/
+- https://opencode.ai/docs/permissions/
+- https://opencode.ai/docs/config/
 
 ### agent-browser
 

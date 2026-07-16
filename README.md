@@ -8,7 +8,7 @@
 
 日常的な言語ランタイムとプロジェクト単位のツールチェーンには `mise` を優先し、Nix の devShell は GUI アプリ、SDK、一時的な開発環境の補助手段として使用します。AI 開発支援 CLI 本体は Nix で固定せず、公式インストーラーまたは npm で導入します。
 
-OpenCode CLI は公式インストーラーなどで別途導入します。Home Manager は `~/.opencode/bin` を PATH に追加し、共通rm権限を `~/.config/opencode/opencode.json`、ネイティブsubagentを `~/.config/opencode/agents/` へ配置します。個人用 `opencode.jsonc`、グローバルルール、skills は管理せず、`OPENCODE_DISABLE_CLAUDE_CODE`、`OPENCODE_DISABLE_EXTERNAL_SKILLS`、`OPENCODE_DISABLE_PROJECT_CONFIG` によりClaude Code互換設定・外部skills・プロジェクト共有設定の読み込みを遮断します。
+OpenCode CLI は公式インストーラーなどで別途導入します。Home Manager は `~/.opencode/bin` を PATH に追加し、基本権限を `~/.config/opencode/opencode.json`、グローバルルールを `~/.config/opencode/AGENTS.md`、ネイティブsubagentを `~/.config/opencode/agents/` へ配置します。個人用 `opencode.jsonc` とskillsは管理せず、`OPENCODE_DISABLE_CLAUDE_CODE`、`OPENCODE_DISABLE_EXTERNAL_SKILLS`、`OPENCODE_DISABLE_PROJECT_CONFIG` によりClaude Code互換設定・外部skills・プロジェクト共有設定の読み込みを遮断します。
 
 ## ドキュメント
 
@@ -123,7 +123,7 @@ sudo usermod -aG sudo alice
 
 Codex の委譲用Skillは、作業の種類と難しさに応じて`agents/`のカスタムagentを選びます。各agentのモデル、推論レベル、担当範囲は対応するTOMLに定義します。具体的な選択条件と起動方法は各Skillで管理します。
 
-多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode/opencode.json`、`~/.config/opencode/agents` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
+多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode/opencode.json`、`~/.config/opencode/AGENTS.md`、`~/.config/opencode/agents` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 
 Home Manager の案内: https://nix-community.github.io/home-manager/
 

@@ -139,6 +139,12 @@ in
     force = true;
   };
 
+  # OpenCodeのグローバル個人指示を配置する。
+  xdg.configFile."opencode/AGENTS.md" = {
+    source = ../../../dotfiles/opencode/AGENTS.md;
+    force = true;
+  };
+
   # OpenCodeのネイティブsubagentを配置する。
   xdg.configFile."opencode/agents" = {
     source = ../../../dotfiles/opencode/agents;

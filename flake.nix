@@ -91,6 +91,7 @@
           agentDirectory = ./dotfiles/codex/agents;
           skillDirectory = ./dotfiles/codex/skills;
           opencodeAgentDirectory = ./dotfiles/opencode/agents;
+          opencodeGlobalRulesFile = ./dotfiles/opencode/AGENTS.md;
           opencodeConfig = builtins.fromJSON
             (builtins.readFile ./dotfiles/opencode/opencode.json);
           codexConfig = builtins.fromTOML (builtins.readFile ./dotfiles/codex/config.toml);
@@ -274,6 +275,8 @@
             opencodeAgentFileNames;
           opencodeAgentDefinitionsAreExpected = opencodeAgentFileNames
             == expectedOpencodeAgentFileNames;
+          opencodeGlobalRulesFileExists =
+            builtins.pathExists opencodeGlobalRulesFile;
           opencodeAgentCommonFieldsAreExpected = lib.all
             (content:
               lib.hasInfix "description: " content
@@ -370,6 +373,8 @@
 
           # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。
           opencode-agent-definitions-medium =
+            assert lib.assertMsg opencodeGlobalRulesFileExists
+              "OpenCodeのグローバルAGENTS.mdがありません";
             assert lib.assertMsg opencodeAgentDefinitionsAreExpected
               "OpenCodeのsubagent定義が期待する4ファイルと一致しません";
             assert lib.assertMsg opencodeAgentCommonFieldsAreExpected

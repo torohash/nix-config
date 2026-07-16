@@ -118,6 +118,10 @@ nix build .#checks.x86_64-linux.opencode-agent-definitions-medium
 
 agentファイルはOpenCode起動時に読み込まれます。Home Manager適用後は、実行中のOpenCodeを終了してから起動し直してください。
 
+### OpenCodeのグローバルルール
+
+`dotfiles/opencode/AGENTS.md`を `~/.config/opencode/AGENTS.md` へ配置し、すべてのOpenCodeセッションへ適用します。初期状態は空です。内容を変更するときは、Home Managerの配置先ではなくリポジトリ側のファイルを編集し、`home-manager switch`を再実行してからOpenCodeを再起動します。
+
 ### OpenCodeの基本権限
 
 `dotfiles/opencode/opencode.json`を `~/.config/opencode/opencode.json` へ配置します。main agentであるbuilt-in `build` は、作業ツリー外へのアクセス、`.env`を含むファイル読み取り、同一ツールの再実行を許可します。この緩和は `build` だけに適用し、Planと各subagentは既存の制限を維持します。
@@ -128,7 +132,7 @@ top-levelにはprimary agentとsubagent共通のrm基底ルールを設定しま
 
 ### OpenCodeの分離方針
 
-このリポジトリは共通rm権限とmain agentの承認不要な基本権限を定める最小の `opencode.json` だけを管理し、個人用 `opencode.jsonc`、グローバルルール、skills、provider、認証情報は管理しません。Home Managerは次の環境変数で、Claude Code・他ハーネス・プロジェクト共有の設定からOpenCodeを隔離します。
+このリポジトリはOpenCodeのグローバルルール、共通rm権限、main agentの承認不要な基本権限を管理し、個人用 `opencode.jsonc`、skills、provider、認証情報は管理しません。Home Managerは次の環境変数で、Claude Code・他ハーネス・プロジェクト共有の設定からOpenCodeを隔離します。
 
 - `OPENCODE_DISABLE_CLAUDE_CODE=true`: `~/.claude/CLAUDE.md`、プロジェクトと親ディレクトリの `CLAUDE.md`、プロジェクトとグローバル（`~/.claude/skills`）の `.claude/skills` の読み込みを無効にします。
 - `OPENCODE_DISABLE_EXTERNAL_SKILLS=true`: `~/.claude/`、`~/.agents/`、プロジェクトと親ディレクトリの `.claude/skills`、`.agents/skills` 配下の外部 skills の走査を無効にします。

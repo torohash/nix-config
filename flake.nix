@@ -302,6 +302,9 @@
               lib.hasInfix "model: ${expected.model}" content
               && lib.hasInfix "variant: ${expected.variant}" content)
             expectedOpencodeAgentFileNames;
+          opencodeBasePermissions = opencodeConfig.permission or {};
+          opencodeBuildPermissions =
+            (((opencodeConfig.agent or {}).build or {}).permission or {});
           expectedOpencodeRmPermissions = {
             "rm *" = "ask";
             "rm -rf /" = "deny";
@@ -321,11 +324,20 @@
             "rm --recursive ~*" = "deny";
             "rm --recursive $HOME*" = "deny";
           };
-          opencodeBashPermissions = (opencodeConfig.permission or {}).bash or {};
+          opencodeBashPermissions = opencodeBasePermissions.bash or {};
           opencodeRmPermissionsAreExpected = lib.all
             (pattern: opencodeBashPermissions.${pattern} or null
               == expectedOpencodeRmPermissions.${pattern})
             (builtins.attrNames expectedOpencodeRmPermissions);
+          opencodeBuildAllowsReads =
+            (opencodeBuildPermissions.read or null) == "allow";
+          opencodeBuildAllowsDoomLoops =
+            (opencodeBuildPermissions.doom_loop or null) == "allow";
+          opencodeBuildAllowsExternalDirectories =
+            (opencodeBuildPermissions.external_directory or null) == "allow";
+          opencodeBuildPermissionsAreScoped = lib.all
+            (permission: !(builtins.hasAttr permission opencodeBasePermissions))
+            [ "read" "doom_loop" "external_directory" ];
           opencodeAgentsDoNotDuplicateRmPermissions = lib.all
             (content: !lib.hasInfix "\"rm " content)
             opencodeAgentContents;
@@ -370,6 +382,14 @@
               "OpenCodeのsubagentのモデルまたはvariantが期待値と一致しません";
             assert lib.assertMsg opencodeRmPermissionsAreExpected
               "OpenCodeの共通rm権限が期待値と一致しません";
+            assert lib.assertMsg opencodeBuildAllowsReads
+              "OpenCodeのmain agentがファイル読み取り時に承認を要求します";
+            assert lib.assertMsg opencodeBuildAllowsDoomLoops
+              "OpenCodeの同一ツール再実行時に承認を要求します";
+            assert lib.assertMsg opencodeBuildAllowsExternalDirectories
+              "OpenCodeのmain agentが作業ツリー外へアクセスできません";
+            assert lib.assertMsg opencodeBuildPermissionsAreScoped
+              "OpenCodeのmain agent用権限がtop-levelへ漏れています";
             assert lib.assertMsg opencodeAgentsDoNotDuplicateRmPermissions
               "OpenCodeのsubagentに共通rm権限が重複しています";
             pkgs.runCommand "opencode-agent-definitions-medium" { } ''

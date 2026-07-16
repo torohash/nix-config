@@ -20,5 +20,14 @@
       "rm --recursive ~*": "deny",
       "rm --recursive $HOME*": "deny"
     }
+  },
+  "agent": {
+    "build": {
+      "permission": {
+        "read": "allow",
+        "doom_loop": "allow",
+        "external_directory": "allow"
+      }
+    }
   }
 }

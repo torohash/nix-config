@@ -118,15 +118,17 @@ nix build .#checks.x86_64-linux.opencode-agent-definitions-medium
 
 agentファイルはOpenCode起動時に読み込まれます。Home Manager適用後は、実行中のOpenCodeを終了してから起動し直してください。
 
-### OpenCodeの共通権限
+### OpenCodeの基本権限
 
-`dotfiles/opencode/opencode.json`を `~/.config/opencode/opencode.json` へ配置し、すべてのprimary agentとsubagentへ共通のrm権限を適用します。通常の `rm` は確認を要求し、`/`、絶対パス、`~`、`$HOME`を対象にした再帰削除は拒否します。OpenCodeを `--auto` で起動した場合も、明示的な `deny` は維持されます。
+`dotfiles/opencode/opencode.json`を `~/.config/opencode/opencode.json` へ配置します。main agentであるbuilt-in `build` は、作業ツリー外へのアクセス、`.env`を含むファイル読み取り、同一ツールの再実行を許可します。この緩和は `build` だけに適用し、Planと各subagentは既存の制限を維持します。
+
+top-levelにはprimary agentとsubagent共通のrm基底ルールを設定します。直接実行する `rm` は確認を要求し、既知の形式で `/`、絶対パス、`~`、`$HOME`を対象にした再帰削除は拒否します。agent固有のbash denyはこの基底ルールより優先されます。OpenCodeを `--auto` で起動した場合も、明示的な `deny` は維持されます。
 
 個人用の `~/.config/opencode/opencode.jsonc` は管理対象外です。OpenCodeは `opencode.json` と `opencode.jsonc` をマージするため、provider、モデル、TUIなどの個人設定を `opencode.jsonc` に保持できます。
 
 ### OpenCodeの分離方針
 
-このリポジトリは共通rm権限を持つ最小の `opencode.json` だけを管理し、個人用 `opencode.jsonc`、グローバルルール、skills、provider、認証情報は管理しません。Home Managerは次の環境変数で、Claude Code・他ハーネス・プロジェクト共有の設定からOpenCodeを隔離します。
+このリポジトリは共通rm権限とmain agentの承認不要な基本権限を定める最小の `opencode.json` だけを管理し、個人用 `opencode.jsonc`、グローバルルール、skills、provider、認証情報は管理しません。Home Managerは次の環境変数で、Claude Code・他ハーネス・プロジェクト共有の設定からOpenCodeを隔離します。
 
 - `OPENCODE_DISABLE_CLAUDE_CODE=true`: `~/.claude/CLAUDE.md`、プロジェクトと親ディレクトリの `CLAUDE.md`、プロジェクトとグローバル（`~/.claude/skills`）の `.claude/skills` の読み込みを無効にします。
 - `OPENCODE_DISABLE_EXTERNAL_SKILLS=true`: `~/.claude/`、`~/.agents/`、プロジェクトと親ディレクトリの `.claude/skills`、`.agents/skills` 配下の外部 skills の走査を無効にします。

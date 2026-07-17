@@ -43,10 +43,9 @@ in
     GTK_IM_MODULE = "fcitx";
     QT_IM_MODULE = "fcitx";
     QT_IM_MODULES = "wayland;fcitx";
-    # OpenCodeをClaude Code互換設定・外部skills・プロジェクト共有設定から隔離する。
+    # OpenCodeをClaude Code互換設定と外部skillsから隔離する。
     OPENCODE_DISABLE_CLAUDE_CODE = "true";
     OPENCODE_DISABLE_EXTERNAL_SKILLS = "true";
-    OPENCODE_DISABLE_PROJECT_CONFIG = "true";
   };
 
   home.file.".tmux.conf" = {
@@ -148,6 +147,19 @@ in
   # OpenCodeのネイティブsubagentを配置する。
   xdg.configFile."opencode/agents" = {
     source = ../../../dotfiles/opencode/agents;
+    recursive = true;
+    force = true;
+  };
+
+  # OpenCode専用のプロジェクト初期化Skillを個別配置する。
+  xdg.configFile."opencode/skills/bun-init" = {
+    source = ../../../dotfiles/opencode/skills/bun-init;
+    recursive = true;
+    force = true;
+  };
+
+  xdg.configFile."opencode/skills/uv-init" = {
+    source = ../../../dotfiles/opencode/skills/uv-init;
     recursive = true;
     force = true;
   };

@@ -91,6 +91,7 @@
           agentDirectory = ./dotfiles/codex/agents;
           skillDirectory = ./dotfiles/codex/skills;
           opencodeAgentDirectory = ./dotfiles/opencode/agents;
+          opencodeSkillDirectory = ./dotfiles/opencode/skills;
           opencodeGlobalRulesFile = ./dotfiles/opencode/AGENTS.md;
           opencodeConfig = builtins.fromJSON
             (builtins.readFile ./dotfiles/opencode/opencode.json);
@@ -344,6 +345,75 @@
           opencodeAgentsDoNotDuplicateRmPermissions = lib.all
             (content: !lib.hasInfix "\"rm " content)
             opencodeAgentContents;
+          opencodeSkillNames = builtins.attrNames (lib.filterAttrs
+            (_: type: type == "directory")
+            (builtins.readDir opencodeSkillDirectory));
+          expectedOpencodeSkillNames = [ "bun-init" "uv-init" ];
+          opencodeSkillDefinitionsAreExpected = lib.all
+            (skillName: builtins.elem skillName opencodeSkillNames)
+            expectedOpencodeSkillNames;
+          opencodeSkillContents = builtins.listToAttrs (map
+            (skillName: {
+              name = skillName;
+              value = builtins.readFile
+                (opencodeSkillDirectory + "/${skillName}/SKILL.md");
+            })
+            opencodeSkillNames);
+          opencodeSkillCommonFieldsAreExpected = lib.all
+            (skillName:
+              let
+                content = opencodeSkillContents.${skillName};
+              in
+              lib.hasInfix "name: ${skillName}" content
+              && lib.hasInfix "description: " content
+              && lib.hasInfix "compatibility: opencode" content)
+            opencodeSkillNames;
+          opencodeInitSkillAgentInstructionsAreExpected = lib.all
+            (skillName:
+              let
+                content = opencodeSkillContents.${skillName};
+              in
+              lib.hasInfix "AGENTS.md" content
+              && lib.hasInfix "<!-- ${skillName}:verification:start -->" content
+              && lib.hasInfix "<!-- ${skillName}:verification:end -->" content)
+            expectedOpencodeSkillNames;
+          opencodeSkillVerificationCommandsAreExpected =
+            lib.hasInfix "mise exec -- bun run lint"
+              opencodeSkillContents.bun-init
+            && lib.hasInfix "mise exec -- bun run typecheck"
+              opencodeSkillContents.bun-init
+            && lib.hasInfix "mise exec -- bun test"
+              opencodeSkillContents.bun-init
+            && lib.hasInfix "uv run ruff check ."
+              opencodeSkillContents.uv-init
+            && lib.hasInfix "uv run pyright"
+              opencodeSkillContents.uv-init
+            && lib.hasInfix "uv run pytest"
+              opencodeSkillContents.uv-init;
+          opencodeSkillsDoNotUseCodexHooks = lib.all
+            (content:
+              !lib.hasInfix "hooks.json" content
+              && !lib.hasInfix "$HOME/.agents/skills" content
+              && !lib.hasInfix "continue:false" content)
+            (builtins.attrValues opencodeSkillContents);
+          opencodeSkillsAreHomeManagerManaged = lib.all
+            (homeConfiguration: lib.all
+              (skillName:
+                let
+                  configFiles = homeConfiguration.config.xdg.configFile;
+                  configFile = configFiles.${"opencode/skills/${skillName}"}
+                    or null;
+                in
+                configFile != null
+                && configFile.target
+                  == ".config/opencode/skills/${skillName}")
+              opencodeSkillNames)
+            (builtins.attrValues homeConfigurations);
+          opencodeProjectConfigIsEnabled = lib.all
+            (homeConfiguration:
+              !(homeConfiguration.config.home.sessionVariables
+                ? OPENCODE_DISABLE_PROJECT_CONFIG))
+            (builtins.attrValues homeConfigurations);
         in
         {
           # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。
@@ -400,6 +470,27 @@
             pkgs.runCommand "opencode-agent-definitions-medium" { } ''
               mkdir -p "$out"
               echo "OpenCodeのsubagent定義と権限は正常です" > "$out/result"
+            '';
+
+          # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。
+          opencode-skill-definitions-medium =
+            assert lib.assertMsg opencodeSkillDefinitionsAreExpected
+              "OpenCodeのSkill定義にbun-initまたはuv-initがありません";
+            assert lib.assertMsg opencodeSkillCommonFieldsAreExpected
+              "OpenCodeのSkill定義に必須フィールドがありません";
+            assert lib.assertMsg opencodeInitSkillAgentInstructionsAreExpected
+              "OpenCodeの初期化SkillにAGENTS.md検証指示がありません";
+            assert lib.assertMsg opencodeSkillVerificationCommandsAreExpected
+              "OpenCodeのSkill定義に必要な検証コマンドがありません";
+            assert lib.assertMsg opencodeSkillsDoNotUseCodexHooks
+              "OpenCodeのSkill定義にCodex hookが残っています";
+            assert lib.assertMsg opencodeSkillsAreHomeManagerManaged
+              "OpenCodeのSkillがHome Manager管理ではありません";
+            assert lib.assertMsg opencodeProjectConfigIsEnabled
+              "OpenCodeのproject AGENTS.md読込が無効化されています";
+            pkgs.runCommand "opencode-skill-definitions-medium" { } ''
+              mkdir -p "$out"
+              echo "OpenCodeのSkill定義とproject AGENTS.md連携は正常です" > "$out/result"
             '';
         };
     in

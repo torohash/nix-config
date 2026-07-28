@@ -70,6 +70,18 @@ nix build .#checks.x86_64-linux.codex-agent-definitions-medium
 
 公式仕様: https://learn.chatgpt.com/docs/agent-configuration/subagents.md
 
+### Codexの意味対応表生成Skillとグローバルルール
+
+`semantic-generation` Skillは`dotfiles/codex/skills/semantic-generation/`で定義し、Home Managerがディレクトリ単位のシンボリックリンクとして`~/.agents/skills/semantic-generation`へ配置します。`agents/openai.yaml`も同じディレクトリに含まれます。
+
+常時読み込む`referent-before-label` ruleは`dotfiles/codex/AGENTS.md`で定義し、`~/.codex/AGENTS.md`へ配置します。このruleは、設計資料、調査報告、原因切り分け案、対策案、命名などの対象だけに`$semantic-generation`を適用し、指示対象と役割の対応表を本文より先に独立保存させます。
+
+Home Manager適用後、変更を反映するには新しいCodexセッションを開始してください。定義、配備先、global ruleの連携は次のMediumサイズのローカル静的検査で確認できます。
+
+```bash
+nix build .#checks.x86_64-linux.codex-skill-definitions-medium
+```
+
 ### OpenCode
 
 ```bash

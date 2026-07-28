@@ -1,0 +1,4 @@
+interface:
+  display_name: "意味対応表から生成"
+  short_description: "指示対象と役割を先に固定し、対応表から文書と名前を生成します"
+  default_prompt: "$semantic-generation を使って、指示対象と役割の対応表を先に保存してから本文を書いてください。"

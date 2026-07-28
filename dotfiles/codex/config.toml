@@ -1,6 +1,5 @@
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
-model_verbosity = "low"
 sandbox_mode = "danger-full-access"
 approval_policy = { granular = { sandbox_approval = false, rules = true, mcp_elicitations = false, request_permissions = false, skill_approval = false } }
 plan_mode_reasoning_effort = "xhigh"

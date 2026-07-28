@@ -174,6 +174,7 @@ in
       bun-init \
       uv-init \
       design-table \
+      semantic-generation \
       delegate-code-changes \
       delegate-research \
       delegate-code-review
@@ -263,6 +264,11 @@ in
 
   home.file.".agents/skills/design-table" = {
     source = ../../../dotfiles/codex/skills/design-table;
+    force = true;
+  };
+
+  home.file.".agents/skills/semantic-generation" = {
+    source = ../../../dotfiles/codex/skills/semantic-generation;
     force = true;
   };
 

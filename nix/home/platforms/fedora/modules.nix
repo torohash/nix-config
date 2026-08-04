@@ -39,6 +39,15 @@ in
     };
   };
 
+  # Flatpak's Freedesktop runtime also exposes Mesa's llvmpipe ICD.  DXVK can
+  # select it instead of the NVIDIA device, which turns Proton games into CPU
+  # rendering.  Limit Steam to the NVIDIA ICD without leaking host/Nix paths
+  # into the Flatpak sandbox.
+  xdg.dataFile."flatpak/overrides/com.valvesoftware.Steam".text = ''
+    [Environment]
+    VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json
+  '';
+
   programs.ghostty = {
     enable = true;
     package = config.lib.nixGL.wrap pkgs.ghostty;

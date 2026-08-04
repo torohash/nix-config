@@ -1,4 +1,4 @@
-{ buildEnv, htop, btop, cloc, tmux, zellij, git, curl, websocat, jq, tree, unzip, bash-completion, chafa, ripgrep, xclip, nodejs, mise, vim, yazi, lazygit, terraform, terraform-ls, awscli2, ssm-session-manager-plugin, turso-cli }:
+{ buildEnv, htop, btop, cloc, tmux, zellij, git, gh, curl, websocat, jq, tree, unzip, bash-completion, chafa, ripgrep, xclip, nodejs, mise, vim, yazi, lazygit, terraform, terraform-ls, awscli2, ssm-session-manager-plugin, turso-cli }:
 
 buildEnv {
   name = "common-store";
@@ -9,6 +9,7 @@ buildEnv {
     tmux
     zellij
     git
+    gh
     curl
     websocat
     jq

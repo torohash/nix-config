@@ -8,6 +8,7 @@
 - tmux: 端末セッションを分割・管理するためのマルチプレクサ。
 - zellij: Rust 製の端末マルチプレクサ。
 - git: 分散バージョン管理システム。
+- gh: GitHub を操作する公式 CLI。
 - lazygit: Git の TUI クライアント。
 - curl: HTTP/HTTPS クライアント。
 - websocat: WebSocket クライアント。

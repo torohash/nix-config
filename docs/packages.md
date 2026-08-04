@@ -55,3 +55,5 @@
 - gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。
 
 `ydotoold` を使うには、ホスト側で `/dev/uinput` への書き込み権限が必要です。Home Manager 単体では udev rule やユーザーのグループ所属を変更できないため、権限がない環境ではホスト側で設定してください。
+
+OpenWhispr のクラウド音声認識は BYOK（自分の API キー）を利用する。API キーは Nix の評価結果や Nix store に含めず、OpenWhispr の設定画面から登録する。通常の日本語音声入力は OpenAI の `GPT-4o Mini Transcribe` を既定とし、ローカルモデルへのフォールバックは無効にする。プロバイダー、モデル、言語などの可変設定もアプリ側で管理する。

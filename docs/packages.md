@@ -55,6 +55,29 @@
 - zed-editor: GPU アクセラレーション対応のコードエディタ（Ubuntu/Fedora、`programs.zed-editor.enable` で有効化。Fedora では nixGL NVIDIA GL/Vulkan wrapper、Ubuntu では Nix 側 Mesa の Vulkan ICD 明示 wrapper を適用）。
 - gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。
 
-`ydotoold` を使うには、ホスト側で `/dev/uinput` への書き込み権限が必要です。Home Manager 単体では udev rule やユーザーのグループ所属を変更できないため、権限がない環境ではホスト側で設定してください。
+`ydotoold` を使うには、ホスト側で `/dev/uinput` への書き込み権限が必要です。Home Manager 単体では udev rule を変更できないため、Fedora では次の手順で、現在アクティブなグラフィカルセッションのユーザーだけに読み書き ACL を付けます。
+
+```bash
+cd /home/torohash/nix-config
+sudo install -D -o root -g root -m 0644 \
+  host/fedora/udev/72-openwhispr-uinput.rules \
+  /etc/udev/rules.d/72-openwhispr-uinput.rules
+sudo udevadm verify /etc/udev/rules.d/72-openwhispr-uinput.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger --action=change --settle /sys/class/misc/uinput
+```
+
+`uaccess` は systemd-logind が現在アクティブなローカル seat ユーザーへ ACL を付け、セッションが非アクティブになったときに回収します。udev rule の基礎権限は `root:root` の `0600` で、グループや全ユーザーには開放しません。ACL 付与中は ACL マスクが `stat` のグループビットへ反映されるため、数値モードが `660` と表示されることがあります。適用後は次の結果を確認し、`ydotoold` を再起動します。
+
+```bash
+stat -c '%U:%G %a %n' /dev/uinput
+getfacl -p /dev/uinput
+test -r /dev/uinput && test -w /dev/uinput
+systemctl --user restart ydotoold.service
+systemctl --user is-active ydotoold.service
+journalctl --user -u ydotoold.service -n 20 --no-pager
+```
+
+所有者とグループが `root:root`、`getfacl` で現在のユーザーが `rw-`、`group::---` と `other::---`、`is-active` が `active` なら適用済みです。ルールは `/etc/udev/rules.d` に置かれるため、再起動後も同じ条件で適用されます。
 
 OpenWhispr のクラウド音声認識は BYOK（自分の API キー）を利用する。API キーは Nix の評価結果や Nix store に含めず、OpenWhispr の設定画面から登録する。通常の日本語音声入力は OpenAI の `GPT-4o Mini Transcribe` を既定とし、ローカルモデルへのフォールバックは無効にする。プロバイダー、モデル、言語などの可変設定もアプリ側で管理する。

@@ -125,6 +125,8 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           lib = pkgs.lib;
+          openwhisprUinputUdevRule =
+            ./host/fedora/udev/72-openwhispr-uinput.rules;
           agentDirectory = ./dotfiles/codex/agents;
           skillDirectory = ./dotfiles/codex/skills;
           codexGlobalRulesFile = ./dotfiles/codex/AGENTS.md;
@@ -626,6 +628,30 @@
             pkgs.runCommand "opencode-skill-definitions-medium" { } ''
               mkdir -p "$out"
               echo "OpenCodeのSkill定義とproject AGENTS.md連携は正常です" > "$out/result"
+            '';
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          # ローカルファイルを外部コマンドのudevadmで読む検査なので、テストサイズはMediumとする。
+          openwhispr-uinput-udev-rule-medium = pkgs.runCommand
+            "openwhispr-uinput-udev-rule-medium"
+            {
+              nativeBuildInputs = [
+                pkgs.gnugrep
+                pkgs.systemd
+              ];
+              udevRule = openwhisprUinputUdevRule;
+            }
+            ''
+              udevadm verify "$udevRule"
+              if ! grep -Fqx \
+                'SUBSYSTEM=="misc", KERNEL=="uinput", OWNER="root", GROUP="root", MODE="0600", TAG+="uaccess"' \
+                "$udevRule"; then
+                echo "OpenWhispr用udevルールの対象または最小権限設定が期待値と一致しません" >&2
+                exit 1
+              fi
+
+              mkdir -p "$out"
+              echo "OpenWhispr用udevルールの構文と最小権限設定は正常です" > "$out/result"
             '';
         };
     in

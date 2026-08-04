@@ -1,0 +1,5 @@
+# ファイル名の 72 は、標準のデバイス分類後かつ 73-seat-late.rules が uaccess ACL を適用する前に、このルールを評価するための順序番号。
+# SUBSYSTEM="misc" と KERNEL="uinput" は、仮想入力を生成する /dev/uinput だけを対象にし、他の入力デバイスを対象外にする条件。
+# OWNER="root"、GROUP="root"、MODE="0600" は、ACL がないユーザーには読み書きを許可しない基礎権限。
+# TAG+="uaccess" は、systemd-logind が現在アクティブなローカル seat ユーザーだけに読み書き ACL を付与し、非アクティブ化時に回収する指定。
+SUBSYSTEM=="misc", KERNEL=="uinput", OWNER="root", GROUP="root", MODE="0600", TAG+="uaccess"

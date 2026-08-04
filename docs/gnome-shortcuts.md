@@ -9,6 +9,7 @@
 
 - `nix/home/platforms/ubuntu/modules.nix`
 - `nix/home/platforms/fedora/modules.nix`
+- `nix/home/common/openwhispr.nix`
 
 ## 追加した GNOME ショートカット
 
@@ -17,6 +18,15 @@
 - `show-screenshot-ui = [ "<Super><Shift>s" ];`
 - `screenshot = [ "<Super><Shift>3" ];`
 - `screenshot-window = [ "<Super><Shift>4" ];`
+
+OpenWhispr のトグルは、`nix/home/common/openwhispr.nix` の GNOME
+カスタムショートカットとして以下を設定。
+
+- `binding = "<Super><Shift>k";`
+- D-Bus の `com.openwhispr.App.Toggle` を呼び出して録音を切り替える。
+
+`Super+Shift+K` は `Ctrl+Shift+K` をアプリ側のショートカットとして使えるようにしつつ、
+キーの覚えやすさを維持するために選択している。
 
 ## 同時に入った関連変更
 
@@ -52,6 +62,8 @@ home-manager switch --flake nixcfg#torohash_fedora
 gsettings get org.gnome.shell.keybindings show-screenshot-ui
 gsettings get org.gnome.shell.keybindings screenshot
 gsettings get org.gnome.shell.keybindings screenshot-window
+gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings
+gsettings get org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/openwhispr/ binding
 ```
 
 補足: `gsettings get` の出力は環境により修飾キー順序が入れ替わって見える場合がある（例: `<Shift><Super>`）。

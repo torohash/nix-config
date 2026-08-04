@@ -12,7 +12,7 @@ in
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/openwhispr" = {
       name = "OpenWhispr Toggle";
-      binding = "<Control><Shift>k";
+      binding = "<Super><Shift>k";
       command = "${pkgs.dbus}/bin/dbus-send --session --type=method_call --dest=com.openwhispr.App /com/openwhispr/App com.openwhispr.App.Toggle";
     };
   };

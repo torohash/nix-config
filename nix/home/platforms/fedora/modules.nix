@@ -1,5 +1,10 @@
 { config, lib, pkgs, nixgl, ... }:
+let
+  openwhispr = pkgs.callPackage ../../../packages/openwhispr.nix { };
+in
 {
+  imports = [ ../../common/ydotool.nix ];
+
   programs.zsh = {
     enable = true;
     dotDir = config.home.homeDirectory;
@@ -113,6 +118,7 @@
     (config.lib.nixGL.wrap google-chrome)
     ticktick
     bitwarden-desktop
+    (config.lib.nixGL.wrap openwhispr)
     gnomeExtensions.kimpanel
     gnomeExtensions.vitals
   ];

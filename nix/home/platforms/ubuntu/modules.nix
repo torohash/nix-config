@@ -21,8 +21,11 @@ let
       done
     '';
   };
+  openwhispr = pkgs.callPackage ../../../packages/openwhispr.nix { };
 in
 {
+  imports = [ ../../common/ydotool.nix ];
+
   programs.zsh = {
     enable = true;
     dotDir = config.home.homeDirectory;
@@ -116,6 +119,7 @@ in
     google-chrome
     ticktick
     bitwarden-desktop
+    openwhispr
     gnomeExtensions.kimpanel
   ];
 }

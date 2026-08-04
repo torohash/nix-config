@@ -49,6 +49,9 @@
 - google-chrome: Web ブラウザ（Ubuntu/Fedora。Fedora では nixGL NVIDIA wrapper を適用）。
 - ticktick: タスク管理アプリ（Ubuntu/Fedora）。
 - bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。
+- openwhispr: ローカルまたはクラウドの音声認識を利用できる音声入力アプリ（Ubuntu/Fedora、x86_64 Linux。Fedora では nixGL NVIDIA wrapper を適用し、両環境で Wayland の自動貼り付け用 `ydotoold` user service を有効化）。
 - ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化。Fedora では nixGL NVIDIA wrapper を適用）。
 - zed-editor: GPU アクセラレーション対応のコードエディタ（Ubuntu/Fedora、`programs.zed-editor.enable` で有効化。Fedora では nixGL NVIDIA GL/Vulkan wrapper、Ubuntu では Nix 側 Mesa の Vulkan ICD 明示 wrapper を適用）。
 - gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。
+
+`ydotoold` を使うには、ホスト側で `/dev/uinput` への書き込み権限が必要です。Home Manager 単体では udev rule やユーザーのグループ所属を変更できないため、権限がない環境ではホスト側で設定してください。

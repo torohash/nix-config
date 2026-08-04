@@ -24,7 +24,10 @@ let
   openwhispr = pkgs.callPackage ../../../packages/openwhispr.nix { };
 in
 {
-  imports = [ ../../common/ydotool.nix ];
+  imports = [
+    ../../common/openwhispr.nix
+    ../../common/ydotool.nix
+  ];
 
   programs.zsh = {
     enable = true;

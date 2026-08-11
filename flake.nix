@@ -130,13 +130,6 @@
           agentDirectory = ./dotfiles/codex/agents;
           skillDirectory = ./dotfiles/codex/skills;
           codexGlobalRulesFile = ./dotfiles/codex/AGENTS.md;
-          semanticGenerationSkillName = "semantic-generation";
-          semanticGenerationSkillDirectory =
-            skillDirectory + "/${semanticGenerationSkillName}";
-          semanticGenerationSkillFile =
-            semanticGenerationSkillDirectory + "/SKILL.md";
-          semanticGenerationInterfaceFile =
-            semanticGenerationSkillDirectory + "/agents/openai.yaml";
           opencodeAgentDirectory = ./dotfiles/opencode/agents;
           opencodeSkillDirectory = ./dotfiles/opencode/skills;
           opencodeGlobalRulesFile = ./dotfiles/opencode/AGENTS.md;
@@ -295,52 +288,8 @@
           multiAgentV2ConfigurationIsExpected =
             (codexMultiAgentV2.hide_spawn_agent_metadata or null) == false
             && (codexMultiAgentV2.tool_namespace or null) == "agents";
-          semanticGenerationSkillDefinitionExists =
-            builtins.pathExists semanticGenerationSkillFile
-            && builtins.pathExists semanticGenerationInterfaceFile;
-          semanticGenerationSkillContent =
-            builtins.readFile semanticGenerationSkillFile;
-          semanticGenerationSkillLines =
-            lib.splitString "\n" semanticGenerationSkillContent;
-          semanticGenerationDescriptionLine =
-            builtins.elemAt semanticGenerationSkillLines 2;
-          semanticGenerationFrontmatterIsExpected =
-            builtins.length semanticGenerationSkillLines >= 4
-            && builtins.elemAt semanticGenerationSkillLines 0 == "---"
-            && builtins.elemAt semanticGenerationSkillLines 1
-              == "name: ${semanticGenerationSkillName}"
-            && lib.hasPrefix "description: \""
-              semanticGenerationDescriptionLine
-            && semanticGenerationDescriptionLine != "description: \"\""
-            && lib.hasInfix "TRIGGERS:" semanticGenerationDescriptionLine
-            && lib.hasInfix "DO NOT TRIGGER:"
-              semanticGenerationDescriptionLine
-            && builtins.elemAt semanticGenerationSkillLines 3 == "---";
-          semanticGenerationInterfaceContent =
-            builtins.readFile semanticGenerationInterfaceFile;
-          semanticGenerationInterfaceLines =
-            lib.splitString "\n" semanticGenerationInterfaceContent;
-          semanticGenerationInterfaceFieldsAreExpected = lib.all
-            (line: builtins.elem line semanticGenerationInterfaceLines)
-            [
-              "interface:"
-              "  display_name: \"意味対応表から生成\""
-              "  short_description: \"指示対象と役割を先に固定し、対応表から文書と名前を生成します\""
-              "  default_prompt: \"$semantic-generation を使って、指示対象と役割の対応表を先に保存してから本文を書いてください。\""
-            ];
-          semanticGenerationSkillIsHomeManagerManaged = lib.all
-            (homeConfiguration:
-              let
-                configFiles = homeConfiguration.config.home.file;
-                configFile =
-                  configFiles.${".agents/skills/${semanticGenerationSkillName}"}
-                    or null;
-              in
-              configFile != null
-              && configFile.target
-                == ".agents/skills/${semanticGenerationSkillName}"
-              && !(configFile.recursive or false))
-            (builtins.attrValues homeConfigurations);
+          codexGlobalRulesFileExists =
+            builtins.pathExists codexGlobalRulesFile;
           codexGlobalRulesAreHomeManagerManaged = lib.all
             (homeConfiguration:
               let
@@ -350,20 +299,6 @@
               configFile != null
               && configFile.target == ".codex/AGENTS.md")
             (builtins.attrValues homeConfigurations);
-          codexGlobalRulesFileExists =
-            builtins.pathExists codexGlobalRulesFile;
-          codexGlobalRulesContent = builtins.readFile codexGlobalRulesFile;
-          referentBeforeLabelRuleIsExpected =
-            lib.hasInfix
-              "## referent-before-label — 語より先に指示対象を固定する"
-              codexGlobalRulesContent
-            && lib.hasInfix "$semantic-generation" codexGlobalRulesContent
-            && lib.hasInfix "共通指示の `referent-before-label` rule"
-              semanticGenerationSkillContent
-            && !lib.hasInfix "[[referent-before-label]]"
-              semanticGenerationSkillContent
-            && !lib.hasInfix "[[semantic-generation]]"
-              codexGlobalRulesContent;
           opencodeAgentFileNames = builtins.attrNames (lib.filterAttrs
             (fileName: _: lib.hasSuffix ".md" fileName)
             (builtins.readDir opencodeAgentDirectory));
@@ -552,30 +487,13 @@
               "CodexのSkillの役割一覧とカスタムエージェント定義が一致しません";
             assert lib.assertMsg multiAgentV2ConfigurationIsExpected
               "CodexのMultiAgent V2でカスタムエージェントを選択する回避設定が一致しません";
-            pkgs.runCommand "codex-agent-definitions-medium" { } ''
-              mkdir -p "$out"
-              echo "Codexのカスタムエージェント定義、Skill、MultiAgent V2設定は正常です" > "$out/result"
-            '';
-
-          # 複数のローカルファイルとHome Configurationを読む静的検査なので、テストサイズはMediumとする。
-          codex-skill-definitions-medium =
-            assert lib.assertMsg semanticGenerationSkillDefinitionExists
-              "semantic-generation Skillまたはagents/openai.yamlがありません";
-            assert lib.assertMsg semanticGenerationFrontmatterIsExpected
-              "semantic-generation Skillのfrontmatterが期待するname、descriptionと一致しません";
-            assert lib.assertMsg semanticGenerationInterfaceFieldsAreExpected
-              "semantic-generation SkillのUI必須フィールドが期待値と一致しません";
-            assert lib.assertMsg semanticGenerationSkillIsHomeManagerManaged
-              "semantic-generation Skillが全Home Configurationでディレクトリ単位の配置ではありません";
             assert lib.assertMsg codexGlobalRulesFileExists
               "CodexのグローバルAGENTS.mdがありません";
             assert lib.assertMsg codexGlobalRulesAreHomeManagerManaged
               "CodexのグローバルAGENTS.mdが全Home Configurationで管理されていません";
-            assert lib.assertMsg referentBeforeLabelRuleIsExpected
-              "referent-before-label ruleとsemantic-generation Skillの直接参照が一致しません";
-            pkgs.runCommand "codex-skill-definitions-medium" { } ''
+            pkgs.runCommand "codex-agent-definitions-medium" { } ''
               mkdir -p "$out"
-              echo "Codexのsemantic-generation Skillとreferent-before-label ruleは正常です" > "$out/result"
+              echo "Codexのカスタムエージェント定義、Skill、MultiAgent V2設定は正常です" > "$out/result"
             '';
 
           # 複数のローカルファイルを読む静的検査なので、テストサイズはMediumとする。

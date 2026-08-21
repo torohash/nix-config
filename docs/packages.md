@@ -51,7 +51,7 @@
 - ticktick: タスク管理アプリ（Ubuntu/Fedora）。
 - bitwarden-desktop: パスワードマネージャー（Ubuntu/Fedora）。
 - openwhispr: ローカルまたはクラウドの音声認識を利用できる音声入力アプリ（Ubuntu/Fedora、x86_64 Linux。Fedora では nixGL NVIDIA wrapper を適用。両環境で Wayland の自動貼り付け用 `ydotoold` user service と、`Super+Shift+K` から D-Bus 経由で起動する GNOME グローバルショートカットを有効化）。
-- ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化。Fedora では nixGL NVIDIA wrapper を適用）。
+- ghostty: GPU アクセラレーション対応のターミナルエミュレーター（Ubuntu/Fedora、`programs.ghostty.enable` で有効化。Fedora では nixGL NVIDIA wrapper を適用し、`flake.nix` のNVIDIAドライバー版をホスト側と一致させる）。
 - zed-editor: GPU アクセラレーション対応のコードエディタ（Ubuntu/Fedora、`programs.zed-editor.enable` で有効化。Fedora では nixGL NVIDIA GL/Vulkan wrapper、Ubuntu では Nix 側 Mesa の Vulkan ICD 明示 wrapper を適用）。
 - gnomeExtensions.kimpanel: GNOME Shell の入力メソッド候補ウィンドウ拡張（Ubuntu/Fedora）。
 

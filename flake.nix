@@ -29,9 +29,9 @@
           # Keep these in sync with the Fedora host driver. Dynamic /proc
           # detection would require impure IFD, and nixGL's auto regex does not
           # handle the NVIDIA Open Kernel Module version format.
-          version = "595.80";
-          # Hash of NVIDIA-Linux-x86_64-595.80.run. Update with the version.
-          hash = "sha256-PVTIP+B/01c/8M66hXTAYTLg9T2Hy9u1gq43K7TF1Hg=";
+          version = "610.57.04";
+          # Hash of NVIDIA-Linux-x86_64-610.57.04.run. Update with the version.
+          hash = "sha256-suk1xmuDuwDAyFe8jg7g/VLekoa0DJzB7sKafOfrEW0=";
         };
       fedoraNixglPkgs = import nixgl {
         pkgs = import nixpkgs {
@@ -127,6 +127,33 @@
           lib = pkgs.lib;
           openwhisprUinputUdevRule =
             ./host/fedora/udev/72-openwhispr-uinput.rules;
+          herdrConfigFile = ./dotfiles/herdr/config.toml;
+          herdrConfig = builtins.fromTOML (builtins.readFile herdrConfigFile);
+          expectedHerdrKeyBindings = {
+            previous_agent = "prefix+comma";
+            next_agent = "prefix+period";
+            previous_workspace = "prefix+shift+comma";
+            next_workspace = "prefix+shift+period";
+          };
+          herdrKeyBindingsAreExpected = lib.all
+            (name: (herdrConfig.keys or {}).${name} or null
+              == expectedHerdrKeyBindings.${name})
+            (builtins.attrNames expectedHerdrKeyBindings);
+          herdrKeyBindingsAreUnique = builtins.length
+            (builtins.attrValues expectedHerdrKeyBindings)
+            == builtins.length
+              (lib.unique (builtins.attrValues expectedHerdrKeyBindings));
+          herdrOnboardingIsDisabled = (herdrConfig.onboarding or null) == false;
+          herdrConfigIsHomeManagerManaged = lib.all
+            (homeConfiguration:
+              let
+                configFile =
+                  homeConfiguration.config.xdg.configFile."herdr/config.toml"
+                    or null;
+              in
+              configFile != null
+              && configFile.target == ".config/herdr/config.toml")
+            (builtins.attrValues homeConfigurations);
           codexGlobalRulesFile = ./dotfiles/codex/AGENTS.md;
           opencodeAgentDirectory = ./dotfiles/opencode/agents;
           opencodeSkillDirectory = ./dotfiles/opencode/skills;
@@ -373,6 +400,21 @@
             pkgs.runCommand "opencode-skill-definitions-medium" { } ''
               mkdir -p "$out"
               echo "OpenCodeのSkill定義とproject AGENTS.md連携は正常です" > "$out/result"
+            '';
+
+          # 複数のローカル設定を読む静的検査なので、テストサイズはMediumとする。
+          herdr-config-medium =
+            assert lib.assertMsg herdrKeyBindingsAreExpected
+              "Herdrのagentまたはworkspace移動キーが期待値と一致しません";
+            assert lib.assertMsg herdrKeyBindingsAreUnique
+              "Herdrのagentとworkspaceの移動キーが重複しています";
+            assert lib.assertMsg herdrOnboardingIsDisabled
+              "HerdrがHome Manager管理ファイルへ初回設定を書き込もうとします";
+            assert lib.assertMsg herdrConfigIsHomeManagerManaged
+              "Herdr設定が全Home Configurationで管理されていません";
+            pkgs.runCommand "herdr-config-medium" { } ''
+              mkdir -p "$out"
+              echo "Herdr設定とキーバインドは正常です" > "$out/result"
             '';
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {

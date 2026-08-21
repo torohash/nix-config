@@ -1,0 +1,9 @@
+# Home Manager管理の読み取り専用ファイルへ初回設定を書き込ませない。
+onboarding = false
+
+[keys]
+# Agentは句読点、workspaceはShift付き句読点で前後移動し、既定キーと衝突させない。
+previous_agent = "prefix+comma"
+next_agent = "prefix+period"
+previous_workspace = "prefix+shift+comma"
+next_workspace = "prefix+shift+period"

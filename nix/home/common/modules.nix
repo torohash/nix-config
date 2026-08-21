@@ -7,5 +7,6 @@
     ./editor/zed.nix
     ./git.nix
     ./dotfiles.nix
+    ./herdr.nix
   ];
 }

@@ -1,6 +1,11 @@
 { pkgs, config, lib, ... }:
 let
   stores = import ../../lib/stores.nix { inherit pkgs; };
+  piPackages = [
+    "npm:pi-web-access"
+    "npm:pi-lens"
+    "npm:@ff-labs/pi-fff"
+  ];
   yaziPlugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
@@ -144,30 +149,37 @@ in
     force = true;
   };
 
-  # Piが更新する設定を残したまま、自動圧縮を90万トークンで開始する余白を設定する。
-  home.activation.piCompactionSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  # Piが更新する設定を残したまま、導入するpackage一覧と自動圧縮の余白を設定する。
+  home.activation.piSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     settings_dir="$HOME/.pi/agent"
     settings_file="$settings_dir/settings.json"
+    pi_packages='${builtins.toJSON piPackages}'
     ${pkgs.coreutils}/bin/mkdir -p "$settings_dir"
     tmp_file="$(${pkgs.coreutils}/bin/mktemp "$settings_file.XXXXXX")"
+    trap '${pkgs.coreutils}/bin/rm -f "$tmp_file"' EXIT
 
     if [ -f "$settings_file" ]; then
       ${pkgs.jq}/bin/jq \
-        '.compaction = ((.compaction // {}) + {"enabled": true, "reserveTokens": 150000})' \
+        --argjson packages "$pi_packages" \
+        '.compaction = ((.compaction // {}) + {"enabled": true, "reserveTokens": 150000})
+          | .packages = $packages' \
         "$settings_file" > "$tmp_file"
     else
-      ${pkgs.coreutils}/bin/cat > "$tmp_file" <<'EOF'
-{
-  "compaction": {
-    "enabled": true,
-    "reserveTokens": 150000
-  }
-}
-EOF
+      ${pkgs.jq}/bin/jq \
+        --null-input \
+        --argjson packages "$pi_packages" \
+        '{
+          "compaction": {
+            "enabled": true,
+            "reserveTokens": 150000
+          },
+          "packages": $packages
+        }' > "$tmp_file"
     fi
 
     ${pkgs.coreutils}/bin/chmod 0644 "$tmp_file"
     ${pkgs.coreutils}/bin/mv "$tmp_file" "$settings_file"
+    trap - EXIT
   '';
 
   # OpenAIの一時障害・利用枠超過・ネットワーク障害・無効応答時だけ、APIキー不要の検索先へ順番に切り替える。

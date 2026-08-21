@@ -40,35 +40,15 @@ npm install -g @openai/codex
 
 公式ドキュメント: https://developers.openai.com/codex/cli/
 
-### Codexのカスタムサブエージェント
+### Codexのグローバル設定
 
-`dotfiles/codex/AGENTS.md`は委譲の不変条件、各delegate Skillは具体的な実行手順、この節はCodex CLIの仕様と設定を扱います。
+このリポジトリは`dotfiles/codex/config.toml`と`dotfiles/codex/AGENTS.md`を、Home Managerで`~/.codex/`へ強制配置します。Home Manager管理後のファイルは読み取り専用リンクになるため、以後の変更はリポジトリ側で行い、Home Managerを適用してください。変更を反映するには新しいCodexセッションを開始します。
 
-このリポジトリでは、`dotfiles/codex/agents/*.toml`をHome Managerで`~/.codex/agents/`へ配置します。各ファイルは独立したカスタムエージェント定義であり、`name`、`description`、`developer_instructions`を必須とします。Codexが役割を識別する名前はTOMLの`name`です。ファイル名は管理上`<name>.toml`へ一致させますが、表示nicknameや追跡用の`task_name`は役割選択には使いません。
-
-`dotfiles/codex/skills/delegate-*/SKILL.md`は、依頼の種類と判断の難しさからTOMLの`name`を1つ選び、利用中のネイティブな起動機能にカスタムエージェント名を指定する公開された入力がある場合だけ起動します。その入力がない場合は、built-inの`default`、`worker`、`explorer`や依頼文だけの汎用エージェントへ代替しません。起動機能ごとの公開された入力を使い、仕様にない`agent_role`などの引数は作りません。Skill内の「選択対象のCodex識別名」は、Codexが読む選択規則であると同時に、SkillとTOMLの対応を静的検査する機械判定可能な唯一の許可一覧です。
-
-カスタムエージェントを起動するときは、起動機能に会話履歴の引き継ぎ範囲を指定する公開された入力があれば`none`相当を選び、必要な文脈を委譲契約へ自己完結的に記載します。利用中の機能が全履歴の引き継ぎとカスタムエージェント指定の併用を明示的に保証する場合だけ例外とします。追跡用の`task_name`は役割名と独立した作業名です。
-
-調査担当とコードレビュー担当は、TOMLの`sandbox_mode = "read-only"`と担当指示の両方で読み取り専用にします。親turnのlive permission overrideが優先される場合に備え、ファイル変更、コミット、追加のサブエージェント起動を禁止する指示も維持します。コード変更の書き込み担当は常に1体だけ起動します。
-
-起動、タスクの経路選択、待機、終了処理はCodexのネイティブなサブエージェント機能に任せます。起動後は、返されたagentまたはthreadの識別子と担当を対応付け、完了通知または完了・失敗など実行が終わった状態まで待ちます。ただし、識別子をどの操作にも渡せるとは限りません。追加指示、状態照会、待機、中断ごとに公開された入力を確認し、対象を指定する入力がある操作にだけ識別子を渡します。
-
-待機機能が待機時間だけを受け取る場合は、対象識別子を渡さずに待ちます。待機区間の終了後に一覧・状態照会または`/agent`で対象状態を確認します。対象指定付き待機が公開されている場合だけ、その入力へ識別子を渡します。待機呼び出しが通知なしで終了しても、agentまたはthreadが起動準備中または実行中なら待機を続けます。通常の直接起動には一律の短い制限時間を設けません。推論レベルが`high`または`xhigh`の担当は長時間実行される場合があります。`agents.job_max_runtime_seconds`は`spawn_agents_on_csv`のjob専用で、通常の直接起動の待機時間ではありません。
-
-Codex CLIでは`/agent`を使って、実行中のthreadと状態を確認できます。長時間作業ではメインエージェントが利用者へ進捗を伝えます。通知が見えない場合や長期間状態が変わらない場合は、状態、thread、直近の活動、承認・tool・外部入力待ちの有無を確認し、同じ催促を繰り返しません。利用者の取消、依頼の置換、明示的な失敗、または承認・tool・外部入力待ちがなく進行が止まり、具体的な追加情報か1回の進行方向の修正でも再開しないことを確認した場合だけ中断または再選定します。経過時間だけでは失敗と判定しません。
-
-実行状態が`completed`相当でも、委譲契約が求める結果をメインエージェントが確認するまでは成功としません。結果の欠落、error、interrupted、not found相当は成功として扱いません。同じ担当へ情報を追加する場合は既存の識別子を使い、別の役割へ再選定する場合は旧担当の終了を確認してから起動します。
-
-このリポジトリは`dotfiles/codex/config.toml`をHome Managerで`~/.codex/config.toml`へ強制配置します。Home Manager管理後のファイルは読み取り専用リンクになるため、以後の変更はリポジトリ側で行い、Home Managerを適用してください。`[features.multi_agent_v2]`の`hide_spawn_agent_metadata = false`と`tool_namespace = "agents"`は、GPT-5.6 SolのMultiAgent V2で`spawn_agent`にカスタムエージェント選択用の`agent_type`を公開し、予約済みの`collaboration`名前空間とのスキーマ衝突を避ける回避設定です。変更を反映するには新しいCodexセッションを開始します。`[agents]`を利用環境で設定していない場合、Codexの既定値は`max_threads = 6`、`max_depth = 1`です。カスタムエージェントのモデルと推論レベルは各TOMLで管理し、起動時には上書きしません。
-
-定義とSkillの対応、およびMultiAgent V2の回避設定は次のMediumサイズの静的検査で確認できます。必須キー、`name`の一意性とファイル名一致、役割ごとのモデル・推論レベル・sandbox、読み取り専用担当の禁止指示、Skillの機械判定用役割一覧、`hide_spawn_agent_metadata`と`tool_namespace`を検査します。ローカルディスク上の複数ファイルを読むため、Smallサイズではありません。
+グローバル`AGENTS.md`の配置は次のMediumサイズの静的検査で確認できます。複数のHome Configurationを評価するため、Smallサイズではありません。
 
 ```bash
-nix build .#checks.x86_64-linux.codex-agent-definitions-medium
+nix build .#checks.x86_64-linux.codex-global-rules-medium
 ```
-
-公式仕様: https://learn.chatgpt.com/docs/agent-configuration/subagents.md
 
 ### OpenCode
 
@@ -90,12 +70,12 @@ curl -fsSL https://opencode.ai/install | bash
 - `code-review`: 実装差分のバグ、回帰、安全性、データ損失、テスト不足を確認する読み取り専用担当。
 - `web-research`: 公式文書と一次資料を優先して最新情報を調べる、Webアクセス専用の担当。
 
-subagentのモデルと推論強度は、対応するCodex agentの役割から次のように決めています。
+subagentのモデルと推論強度は、担当する作業に合わせて次のように決めています。
 
-- `coding`: 通常の機能追加・修正を担う `code-change-standard` 相当として `openai/gpt-5.6-terra`、`high`。
-- `project-research`: 複数ファイルを横断する `project-research-synthesis` 相当として `openai/gpt-5.6-terra`、`high`。
-- `code-review`: Codexの `code-review` と同じ `openai/gpt-5.6-sol`、`xhigh`。
-- `web-research`: 複数の一次資料を統合する `web-research-synthesis` 相当として `openai/gpt-5.6-terra`、`high`。
+- `coding`: 通常の機能追加・修正を担うため、`openai/gpt-5.6-terra`、`high`。
+- `project-research`: 複数ファイルを横断して調査するため、`openai/gpt-5.6-terra`、`high`。
+- `code-review`: 実装差分を詳しく確認するため、`openai/gpt-5.6-sol`、`xhigh`。
+- `web-research`: 複数の一次資料を統合するため、`openai/gpt-5.6-terra`、`high`。
 
 OpenCodeでは `variant` がOpenAIモデルの `reasoningEffort` に対応します。すべてのsubagentで追加のsubagent起動を禁止し、再帰的な委譲を防ぎます。
 

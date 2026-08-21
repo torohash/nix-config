@@ -1,7 +1,7 @@
 ---
 description: コード、テスト、設定、ビルド定義の実装・修正が必要なときに使う書き込み担当
 mode: subagent
-# Codexのcode-change-standardと同じモデル階層を使う。
+# 通常の実装作業に適したモデル階層を使う。
 model: openai/gpt-5.6-terra
 variant: high
 permission:

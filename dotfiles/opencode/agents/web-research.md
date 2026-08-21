@@ -1,7 +1,7 @@
 ---
 description: Web上の最新情報、公式仕様、一次資料を調査し、根拠URLと適用範囲を示すときに使う読み取り専用担当
 mode: subagent
-# Codexのweb-research-synthesisと同じモデル階層を使う。
+# 複数の一次資料を統合する調査に適したモデル階層を使う。
 model: openai/gpt-5.6-terra
 variant: high
 permission:

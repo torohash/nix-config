@@ -1,7 +1,7 @@
 ---
 description: プロジェクト内のコード、設定、テスト、文書を横断して設計、原因、影響範囲を調査するときに使う読み取り専用担当
 mode: subagent
-# Codexのproject-research-synthesisと同じモデル階層を使う。
+# 複数ファイルを横断する調査に適したモデル階層を使う。
 model: openai/gpt-5.6-terra
 variant: high
 permission:

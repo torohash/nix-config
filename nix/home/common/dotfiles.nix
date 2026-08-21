@@ -125,13 +125,6 @@ in
     force = true;
   };
 
-  # Codexのコード変更、調査、レビュー委譲用エージェントを配置する。
-  home.file.".codex/agents" = {
-    source = ../../../dotfiles/codex/agents;
-    recursive = true;
-    force = true;
-  };
-
   # OpenCodeの共通権限を配置する。個人用opencode.jsoncは上書きしない。
   xdg.configFile."opencode/opencode.json" = {
     source = ../../../dotfiles/opencode/opencode.json;
@@ -172,11 +165,7 @@ in
       test-sizes \
       domain-value-docs \
       bun-init \
-      uv-init \
-      design-table \
-      delegate-code-changes \
-      delegate-research \
-      delegate-code-review
+      uv-init
     do
       skill_dir="$HOME/.agents/skills/$skill_name"
 
@@ -258,26 +247,6 @@ in
 
   home.file.".agents/skills/uv-init" = {
     source = ../../../dotfiles/codex/skills/uv-init;
-    force = true;
-  };
-
-  home.file.".agents/skills/design-table" = {
-    source = ../../../dotfiles/codex/skills/design-table;
-    force = true;
-  };
-
-  home.file.".agents/skills/delegate-code-changes" = {
-    source = ../../../dotfiles/codex/skills/delegate-code-changes;
-    force = true;
-  };
-
-  home.file.".agents/skills/delegate-research" = {
-    source = ../../../dotfiles/codex/skills/delegate-research;
-    force = true;
-  };
-
-  home.file.".agents/skills/delegate-code-review" = {
-    source = ../../../dotfiles/codex/skills/delegate-code-review;
     force = true;
   };
 

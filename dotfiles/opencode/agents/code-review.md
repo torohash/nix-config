@@ -1,7 +1,7 @@
 ---
 description: 実装後の差分を独立した視点で確認し、バグ、回帰、安全性、データ損失、テスト不足を指摘するときに使う読み取り専用担当
 mode: subagent
-# Codexのcode-reviewと同じモデル階層を使う。
+# 精密な差分レビューに適したモデル階層を使う。
 model: openai/gpt-5.6-sol
 variant: xhigh
 permission:

@@ -120,7 +120,7 @@ sudo usermod -aG sudo alice
 
 一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
 
-`~/.codex/config.toml`、`~/.codex/AGENTS.md`、`~/.codex/agents/`、`~/.codex/skills/`は、リポジトリ内の対応ファイルからHome Managerで強制配置します。Piの個人指示は`dotfiles/pi/AGENTS.md`から`~/.pi/agent/AGENTS.md`へ配置します。Home Manager管理後は読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用し、各CLIを再起動してください。
+`~/.codex/config.toml`、`~/.codex/AGENTS.md`、`~/.codex/agents/`、`~/.codex/skills/`は、リポジトリ内の対応ファイルからHome Managerで強制配置します。Piの個人指示は`dotfiles/pi/AGENTS.md`から`~/.pi/agent/AGENTS.md`へ、Pi Web Accessの設定は`dotfiles/pi/web-search.json`から`~/.pi/web-search.json`へ配置します。Home Manager管理後は読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用し、各CLIを再起動してください。
 
 多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode/opencode.json`、`~/.config/opencode/AGENTS.md`、`~/.config/opencode/agents` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 

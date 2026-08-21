@@ -138,6 +138,12 @@ in
     force = true;
   };
 
+  # OpenAIの一時障害・利用枠超過・ネットワーク障害・無効応答時だけ、APIキー不要の検索先へ順番に切り替える。
+  home.file.".pi/web-search.json" = {
+    source = ../../../dotfiles/pi/web-search.json;
+    force = true;
+  };
+
   # OpenCodeの共通権限を配置する。個人用opencode.jsoncは上書きしない。
   xdg.configFile."opencode/opencode.json" = {
     source = ../../../dotfiles/opencode/opencode.json;

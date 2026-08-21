@@ -64,6 +64,8 @@ nix build .#checks.x86_64-linux.codex-global-rules-medium
 
 現在の汎用的な回答・文書・コード規則は`dotfiles/pi/AGENTS.md`へ分離し、Home Managerで`~/.pi/agent/AGENTS.md`へ配置します。
 
+Pi Web Access拡張機能本体はNix管理外とし、`pi install npm:pi-web-access`でPiのユーザー領域へ導入します。検索設定は`dotfiles/pi/web-search.json`で管理し、Home Managerで`~/.pi/web-search.json`へ配置します。検索はOpenAIを第一候補とし、一時障害、利用枠超過、ネットワーク障害、無効応答のときだけParallel MCP、Exaの順に切り替えます。
+
 ### OpenCode
 
 ```bash

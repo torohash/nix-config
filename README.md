@@ -113,13 +113,14 @@ sudo usermod -aG sudo alice
 - bash / zsh、`mise`、direnv / nix-direnv、Git
 - Neovim、Zed、tmux、Yazi、lazygit などのユーザー設定
 - Claude Code の settings・rules・skills・commands・agents・hooks
-- Codex のグローバル設定・個人指示・rules・skills
+- Codex のグローバル設定・個人指示・rules・skills・委譲用agents
+- Pi Coding Agent のグローバル個人指示
 - OpenCode の coding・プロジェクト内調査・コードレビュー・Web調査用subagent
 - Ubuntu / Fedora 固有の GUI アプリ、fcitx5、日本語フォント、GNOME 設定
 
 一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
 
-`~/.codex/config.toml`と`~/.codex/AGENTS.md`は、リポジトリ内の対応ファイルからHome Managerで強制配置します。Home Manager管理後は読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用し、新しいCodexセッションを開始してください。
+`~/.codex/config.toml`、`~/.codex/AGENTS.md`、`~/.codex/agents/`、`~/.codex/skills/`は、リポジトリ内の対応ファイルからHome Managerで強制配置します。Piの個人指示は`dotfiles/pi/AGENTS.md`から`~/.pi/agent/AGENTS.md`へ配置します。Home Manager管理後は読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用し、各CLIを再起動してください。
 
 多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode/opencode.json`、`~/.config/opencode/AGENTS.md`、`~/.config/opencode/agents` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 

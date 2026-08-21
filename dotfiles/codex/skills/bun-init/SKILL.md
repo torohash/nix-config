@@ -96,7 +96,7 @@ description: "miseでバージョン固定したBun、Biome、厳格なTypeScrip
            "hooks": [
              {
                "type": "command",
-               "command": "bash \"$HOME/.agents/skills/bun-init/scripts/verify.sh\"",
+               "command": "bash \"$HOME/.codex/skills/bun-init/scripts/verify.sh\"",
                "timeout": 600,
                "statusMessage": "Bunプロジェクトを検証しています"
              }

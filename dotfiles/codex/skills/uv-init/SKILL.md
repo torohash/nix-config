@@ -70,7 +70,7 @@ uvで管理した依存、決定的な検査、サンプルテスト、プロジ
            "hooks": [
              {
                "type": "command",
-               "command": "bash \"$HOME/.agents/skills/uv-init/scripts/verify.sh\"",
+               "command": "bash \"$HOME/.codex/skills/uv-init/scripts/verify.sh\"",
                "timeout": 600,
                "statusMessage": "Pythonプロジェクトを検証しています"
              }

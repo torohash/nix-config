@@ -1,6 +1,6 @@
 # AI CLI ツール
 
-このリポジトリでは、AI 開発支援 CLI ツール（Claude Code、Codex CLI、OpenCode、agent-browser）を以下のアプローチで導入します。
+このリポジトリでは、AI 開発支援 CLI ツール（Claude Code、Codex CLI、Pi Coding Agent、OpenCode、agent-browser）を以下のアプローチで導入します。
 
 ## アプローチの理由
 
@@ -42,13 +42,27 @@ npm install -g @openai/codex
 
 ### Codexのグローバル設定
 
-このリポジトリは`dotfiles/codex/config.toml`と`dotfiles/codex/AGENTS.md`を、Home Managerで`~/.codex/`へ強制配置します。Home Manager管理後のファイルは読み取り専用リンクになるため、以後の変更はリポジトリ側で行い、Home Managerを適用してください。変更を反映するには新しいCodexセッションを開始します。
+このリポジトリは、次のCodex専用リソースをHome Managerで`~/.codex/`へ強制配置します。
 
-グローバル`AGENTS.md`の配置は次のMediumサイズの静的検査で確認できます。複数のHome Configurationを評価するため、Smallサイズではありません。
+- `dotfiles/codex/config.toml` → `~/.codex/config.toml`
+- `dotfiles/codex/AGENTS.md` → `~/.codex/AGENTS.md`
+- `dotfiles/codex/agents/` → `~/.codex/agents/`
+- `dotfiles/codex/skills/`の各Skill → `~/.codex/skills/`
+- `typescript-conventions`、`test-sizes`、`domain-value-docs` → `~/.codex/skills/`の同名Skill
+
+CodexのSkillは`$CODEX_HOME/skills`（既定では`~/.codex/skills`）へ配置します。BunとPythonの初期化Skillが作成するStop Hookも、`~/.codex/skills/`内の検証scriptを参照します。
+
+`dotfiles/codex/AGENTS.md`は、コード変更、調査、レビューをdelegate SkillからCodexのカスタムサブエージェントへ委譲する規則と、`semantic-generation`および`design-table`の適用規則を含みます。`dotfiles/codex/config.toml`の`multi_agent_v2`設定と、`dotfiles/codex/agents/*.toml`のモデル、推論レベル、sandbox設定を合わせて使用します。
+
+Home Manager管理後のファイルは読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用し、新しいCodexセッションを開始してください。グローバル`AGENTS.md`の配置検査は次のコマンドで実行できます。
 
 ```bash
 nix build .#checks.x86_64-linux.codex-global-rules-medium
 ```
+
+### Pi Coding Agentのグローバル個人指示
+
+現在の汎用的な回答・文書・コード規則は`dotfiles/pi/AGENTS.md`へ分離し、Home Managerで`~/.pi/agent/AGENTS.md`へ配置します。
 
 ### OpenCode
 

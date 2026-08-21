@@ -4,6 +4,12 @@ sandbox_mode = "danger-full-access"
 approval_policy = { granular = { sandbox_approval = false, rules = true, mcp_elicitations = false, request_permissions = false, skill_approval = false } }
 plan_mode_reasoning_effort = "xhigh"
 
+[features.multi_agent_v2]
+# spawn_agentへagent_typeなどの経路情報を公開し、カスタムエージェントを選択可能にする。
+hide_spawn_agent_metadata = false
+# 予約済みのcollaboration名前空間とのスキーマ衝突を避けるため、agents名前空間を使う。
+tool_namespace = "agents"
+
 [projects."/home/torohash/nix-config"]
 trust_level = "trusted"
 

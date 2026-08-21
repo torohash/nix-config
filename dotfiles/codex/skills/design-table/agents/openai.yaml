@@ -1,0 +1,4 @@
+interface:
+  display_name: "表の設計"
+  short_description: "問いとデータ関係から、誤解のない表の行と列を設計します"
+  default_prompt: "$design-table を使って、目的とデータ関係に合う表または別の表現を設計してください。"

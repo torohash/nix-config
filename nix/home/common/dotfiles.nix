@@ -138,6 +138,38 @@ in
     force = true;
   };
 
+  # GPT-5.6 Solの長いコンテキストを有効にするモデル設定を配置する。
+  home.file.".pi/agent/models.json" = {
+    source = ../../../dotfiles/pi/models.json;
+    force = true;
+  };
+
+  # Piが更新する設定を残したまま、自動圧縮を90万トークンで開始する余白を設定する。
+  home.activation.piCompactionSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    settings_dir="$HOME/.pi/agent"
+    settings_file="$settings_dir/settings.json"
+    ${pkgs.coreutils}/bin/mkdir -p "$settings_dir"
+    tmp_file="$(${pkgs.coreutils}/bin/mktemp "$settings_file.XXXXXX")"
+
+    if [ -f "$settings_file" ]; then
+      ${pkgs.jq}/bin/jq \
+        '.compaction = ((.compaction // {}) + {"enabled": true, "reserveTokens": 150000})' \
+        "$settings_file" > "$tmp_file"
+    else
+      ${pkgs.coreutils}/bin/cat > "$tmp_file" <<'EOF'
+{
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 150000
+  }
+}
+EOF
+    fi
+
+    ${pkgs.coreutils}/bin/chmod 0644 "$tmp_file"
+    ${pkgs.coreutils}/bin/mv "$tmp_file" "$settings_file"
+  '';
+
   # OpenAIの一時障害・利用枠超過・ネットワーク障害・無効応答時だけ、APIキー不要の検索先へ順番に切り替える。
   home.file.".pi/web-search.json" = {
     source = ../../../dotfiles/pi/web-search.json;

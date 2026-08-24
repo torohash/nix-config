@@ -5,6 +5,7 @@ let
     "npm:pi-web-access"
     "npm:pi-lens"
     "npm:@ff-labs/pi-fff"
+    "npm:@ogulcancelik/pi-session-recall"
   ];
   yaziPlugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";

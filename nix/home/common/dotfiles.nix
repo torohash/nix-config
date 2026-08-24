@@ -149,6 +149,13 @@ in
     force = true;
   };
 
+  # Piが必要な作業で読み込むグローバルSkillを配置する。
+  home.file.".pi/agent/skills" = {
+    source = ../../../dotfiles/pi/skills;
+    recursive = true;
+    force = true;
+  };
+
   # Piが更新する設定を残したまま、導入するpackage一覧と自動圧縮の余白を設定する。
   home.activation.piSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     settings_dir="$HOME/.pi/agent"

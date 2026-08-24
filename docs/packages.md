@@ -34,6 +34,8 @@
 - nixd: Nix の LSP サーバ。
 - marksman: Markdown 向けの LSP サーバ。
 - lua-language-server: Lua の LSP サーバ。
+- dotnet-sdk_10: C# のビルドとツール実行に使用する .NET 10 SDK。
+- csharp-ls: C# の型検査やシンボル参照を提供する LSP サーバ。
 
 ## home-manager (platform)
 

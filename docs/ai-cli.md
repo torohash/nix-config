@@ -69,7 +69,7 @@ nix build .#checks.x86_64-linux.codex-global-rules-medium
 
 `dotfiles/pi/skills/`はPi専用のグローバルSkillを管理し、Home Managerで`~/.pi/agent/skills/`へ配置します。Skillの名前と説明はPiの起動時に提示され、詳しい手順は該当する作業でだけ読み込まれます。現在は、UnityのScene、Prefab、Asset、Editor、テスト、ビルドをローカルのUnity CLIから操作・検証する`unity-cli`を配置します。
 
-`dotfiles/pi/models.json`は、`openai-codex/gpt-5.6-sol`のコンテキストを1,050,000トークンに拡張します。Piの自動圧縮は`contextWindow - reserveTokens`を超えたときに始まるため、Home Managerのactivationで`~/.pi/agent/settings.json`の`compaction.reserveTokens`を150,000に設定し、900,000トークンを超えた付近で圧縮を始めます。
+`dotfiles/pi/models.json`は、`openai-codex/gpt-5.6-sol`と`openai-codex/gpt-6-astra`のコンテキストを1,050,000トークンに拡張します。Piの自動圧縮は`contextWindow - reserveTokens`を超えたときに始まるため、Home Managerのactivationで`~/.pi/agent/settings.json`の`compaction.reserveTokens`を150,000に設定し、900,000トークンを超えた付近で圧縮を始めます。
 
 同じactivationで、Piが読み込むユーザーpackageを次の一覧に設定します。
 

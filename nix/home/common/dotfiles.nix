@@ -144,7 +144,7 @@ in
     force = true;
   };
 
-  # GPT-5.6 Solの長いコンテキストを有効にするモデル設定を配置する。
+  # Piモデルの長いコンテキストを有効にする設定を配置する。
   home.file.".pi/agent/models.json" = {
     source = ../../../dotfiles/pi/models.json;
     force = true;

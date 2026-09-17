@@ -1,9 +1,9 @@
 {
   "searchRouting": {
     "providers": [
+      "exa",
       "openai",
-      "parallel-mcp",
-      "exa"
+      "parallel-mcp"
     ],
     "fallbackOn": [
       "transient",

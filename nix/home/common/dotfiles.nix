@@ -3,7 +3,6 @@ let
   stores = import ../../lib/stores.nix { inherit pkgs; };
   piPackages = [
     "npm:pi-web-access"
-    "npm:pi-lens"
     "npm:@ff-labs/pi-fff"
     "npm:@ogulcancelik/pi-session-recall"
     "npm:pi-token-speed"

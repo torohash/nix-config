@@ -74,9 +74,11 @@ nix build .#checks.x86_64-linux.codex-global-rules-medium
 同じactivationで、Piが読み込むユーザーpackageを次の一覧に設定します。
 
 - `npm:pi-web-access`
-- `npm:pi-lens`
 - `npm:@ff-labs/pi-fff`
 - `npm:@ogulcancelik/pi-session-recall`
+- `npm:pi-token-speed`
+- `../../dev/photo-sync`
+- `../../dev/pi-extensions`
 
 Home Managerはpackageの導入対象だけを管理し、versionは固定しません。package本体はNix storeへ配置せず、Piが`~/.pi/agent/npm/`へ導入します。未導入のpackageはPiの次回起動時に導入され、既存packageは`pi update --extensions`を明示的に実行した環境だけで更新されます。`settings.json`は、一覧と自動圧縮以外の設定を維持し、Piが引き続き更新できる通常ファイルとして残します。
 

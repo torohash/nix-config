@@ -6,6 +6,9 @@ let
     "npm:pi-lens"
     "npm:@ff-labs/pi-fff"
     "npm:@ogulcancelik/pi-session-recall"
+    "npm:pi-token-speed"
+    "../../dev/photo-sync"
+    "../../dev/pi-extensions"
   ];
   yaziPlugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
@@ -183,7 +186,7 @@ in
     trap - EXIT
   '';
 
-  # OpenAIの一時障害・利用枠超過・ネットワーク障害・無効応答時だけ、APIキー不要の検索先へ順番に切り替える。
+  # Exaを第一候補とし、一時障害・利用枠超過・ネットワーク障害・無効応答時だけOpenAI、Parallel MCPへ順番に切り替える。
   home.file.".pi/web-search.json" = {
     source = ../../../dotfiles/pi/web-search.json;
     force = true;

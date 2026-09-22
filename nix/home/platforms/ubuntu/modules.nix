@@ -104,8 +104,7 @@ in
   xdg.configFile."fcitx5/config" = {
     text = ''
       [Hotkey/TriggerKeys]
-      0=Shift_L
-      1=Control+space
+      0=Control+space
     '';
   };
 

@@ -33,7 +33,14 @@
           # Hash of NVIDIA-Linux-x86_64-610.57.04.run. Update with the version.
           hash = "sha256-suk1xmuDuwDAyFe8jg7g/VLekoa0DJzB7sKafOfrEW0=";
         };
-      fedoraNixglPkgs = import nixgl {
+      # nixGL は固定した版のままだと現在の nixpkgs でビルドできないため、
+      # 入力のソースへ互換修正を当てて読み込む。
+      fedoraNixglSrc = nixpkgs.legacyPackages.${homeSystem}.applyPatches {
+        name = "nixGL-patched";
+        src = nixgl.outPath;
+        patches = [ ./nix/patches/nixgl-latest-nixpkgs.patch ];
+      };
+      fedoraNixglPkgs = import fedoraNixglSrc {
         pkgs = import nixpkgs {
           system = homeSystem;
           config.allowUnfreePredicate = pkg:

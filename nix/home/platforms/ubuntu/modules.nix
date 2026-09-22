@@ -103,10 +103,19 @@ in
 
   xdg.configFile."fcitx5/config" = {
     text = ''
+      # fcitx5 の既定値は AltTriggerKeys=Shift_L で、Shift 単独でも切り替わる。
+      # 切り替えは Control+space だけにするため、空にして既定値を打ち消す。
+      [Hotkey]
+      AltTriggerKeys=
       [Hotkey/TriggerKeys]
       0=Control+space
     '';
   };
+
+  # 設定ファイルを差し替えたときに fcitx5 が読み直すようにする。
+  systemd.user.services.fcitx5-daemon.Unit.X-Restart-Triggers = [
+    config.xdg.configFile."fcitx5/config".source
+  ];
 
   xdg.configFile."zellij/config.kdl" = {
     text = ''

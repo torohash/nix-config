@@ -16,6 +16,11 @@ GNOMEは `org.gnome.desktop.input-sources` で入力ソースを管理する。
 fcitx5は独自のホットキーと状態管理を持つ。
 切替はfcitx5側の設定（`~/.config/fcitx5/config` など）で行う。
 
+`~/.config/fcitx5/config` はHome Managerが管理する。
+切替キーは `Hotkey/TriggerKeys` だけでは決まらない。
+fcitx5の既定値は `AltTriggerKeys=Shift_L` で、Shiftの単独押しでもIMが切り替わる。
+Shiftで切り替えたくない場合は、`AltTriggerKeys` を空にして既定値を打ち消す。
+
 ## GNOME + Wayland + fcitx5の挙動
 
 - GNOMEはWayland上でIBusのDBusプロトコルを使用。

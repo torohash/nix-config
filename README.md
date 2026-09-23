@@ -140,39 +140,34 @@ Home Manager の案内: <https://nix-community.github.io/home-manager/>
 初回は以下のコマンドを実行してください：
 
 ```bash
-nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>
+nix run github:nix-community/home-manager -- switch --impure --flake nixcfg#<host>
 ```
 
 `<host>` は `<username>_<platform>` という命名になっています（例: `torohash_fedora`）。
 `platform` 単体（例: `fedora`）ではないので注意してください。指定できる値は
 `torohash_ubuntu` / `torohash_fedora` / `torohash_wsl` です。
 
+`--impure` は `torohash_fedora` で必須です。nixGL が NVIDIA ドライバー版を
+`/proc/driver/nvidia/version` から読み取る派生を含むため、省くと評価の途中で
+失敗します。`torohash_ubuntu` と `torohash_wsl` では付けなくても動きます。
+
 ```bash
 # 例: Fedora の場合
 nix run github:nix-community/home-manager -- switch --impure --flake nixcfg#torohash_fedora
 ```
 
-`torohash_fedora` は nixGL が NVIDIA ドライバー版を `/proc/driver/nvidia/version` から
-読み取るため、`--impure` を必ず付けます。付けない場合は評価の途中で失敗します。
-
 初回の適用が完了すると、`programs.home-manager.enable = true` の設定により
 `home-manager` コマンドが使用可能になります。
 
 必要に応じて新しいシェルを開くか、`source ~/.profile` を実行してください。
-`home-manager` が見つからない場合は、初回と同じ `nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>` を使用できます。
+`home-manager` が見つからない場合は、初回と同じ `nix run github:nix-community/home-manager -- switch --impure --flake nixcfg#<host>` を使用できます。
 
 #### 2回目以降
 
 2回目以降は以下のコマンドを使用してください：
 
 ```bash
-home-manager switch --flake nixcfg#<host>
-```
-
-`torohash_fedora` だけは次のように `--impure` を付けます。
-
-```bash
-home-manager switch --impure --flake nixcfg#torohash_fedora
+home-manager switch --impure --flake nixcfg#<host>
 ```
 
 ### zsh をデフォルトシェルにする（Ubuntu/Fedora）

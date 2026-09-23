@@ -128,4 +128,7 @@ nix run github:nix-community/home-manager -- switch --flake nixcfg#torohash_ubun
 
 # 2回目以降
 home-manager switch --flake nixcfg#torohash_ubuntu
+
+# torohash_fedora は nixGL が /proc からドライバー版を読むため --impure を付ける
+home-manager switch --impure --flake nixcfg#torohash_fedora
 ```

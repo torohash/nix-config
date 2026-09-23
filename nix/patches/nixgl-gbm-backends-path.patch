@@ -1,0 +1,33 @@
+nixGL の NVIDIA wrapper に GBM backend の探索先を足す。
+nixGL が使う Mesa の libgbm は GBM backend を NixOS 既定の
+/run/opengl-driver/lib/gbm から探す。nixGL を使う環境にこのディレクトリは
+無いため、NVIDIA ドライバーの backend (nvidia-drm_gbm.so) を指す
+GBM_BACKENDS_PATH を渡す。指定しないと Chromium の Wayland 実装は DRM
+render node を初期化できず、GPU compositing と WebGL がソフトウェアへ
+落ちる。
+
+--- a/nixGL.nix
++++ b/nixGL.nix
+@@ -127,6 +127,14 @@
+                 egl-wayland2
+                 egl-x11
+               ]);
++          # Mesa の libgbm は GBM backend を既定で /run/opengl-driver/lib/gbm
++          # から探す。これは NixOS のドライバー集約ディレクトリで、nixGL を
++          # 使う環境には無い。NVIDIA ドライバーの backend を指定しないと
++          # Chromium の Wayland 実装は DRM render node を初期化できない。
++          gbmBackendsPath = lib.concatMapStringsSep ":"
++            (drv: "${drv}/lib/gbm")
++            ([ nvidiaLibsOnly ]
++              ++ lib.optionals enable32bits [ nvidiaLibsOnly.lib32 ]);
+         in
+         writeExecutable {
+           name = "nix${api}Nvidia-${version}";
+@@ -135,6 +143,7 @@
+             ${lib.optionalString (api == "Vulkan")
+             "export VK_LAYER_PATH=${vulkan-validation-layers}/share/vulkan/explicit_layer.d"}
+             export __EGL_EXTERNAL_PLATFORM_CONFIG_DIRS=${eglExternalPlatformDirs}"''${__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS:+:$__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS}"
++            export GBM_BACKENDS_PATH=${gbmBackendsPath}"''${GBM_BACKENDS_PATH:+:$GBM_BACKENDS_PATH}"
+             NVIDIA_JSON=(${nvidiaLibsOnly}/share/glvnd/egl_vendor.d/*nvidia.json)
+             ${lib.optionalString enable32bits "NVIDIA_JSON32=(${nvidiaLibsOnly.lib32}/share/glvnd/egl_vendor.d/*nvidia.json)"}
+ 

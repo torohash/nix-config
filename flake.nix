@@ -32,6 +32,7 @@
         patches = [
           ./nix/patches/nixgl-latest-nixpkgs.patch
           ./nix/patches/nixgl-egl-external-platforms.patch
+          ./nix/patches/nixgl-gbm-backends-path.patch
           ./nix/patches/nixgl-nvidia-version-autodetect.patch
         ];
       };

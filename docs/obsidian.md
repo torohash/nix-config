@@ -28,7 +28,7 @@
 適用コマンド例:
 
 ```bash
-home-manager switch --flake /home/torohash/nix-config#torohash_fedora
+home-manager switch --impure --flake /home/torohash/nix-config#torohash_fedora
 ```
 
 ## Vault 側の必須設定

@@ -1,0 +1,16 @@
+nixGL が /proc/driver/nvidia/version からドライバー版を読めるようにする。
+Fedora のオープンカーネルモジュールは "Open Kernel Module for x86_64  615.71.09" と
+表示されるため、既存の正規表現 ".*Module  ([0-9.]+)  .*" では一致せず、
+自動検出が失敗して Mesa 扱いになる。
+
+--- a/nixGL.nix
++++ b/nixGL.nix
+@@ -250,7 +250,7 @@
+       # Get if from the nvidiaVersionFile
+         let
+           data = builtins.readFile _nvidiaVersionFile;
+-          versionMatch = builtins.match ".*Module  ([0-9.]+)  .*" data;
++          versionMatch = builtins.match ".*Module.*  ([0-9.]+)  .*" data;
+         in if versionMatch != null then builtins.head versionMatch else null;
+ 
+       autoNvidia = nvidiaPackages {version = nvidiaVersionAuto; };

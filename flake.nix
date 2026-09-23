@@ -24,22 +24,20 @@
         "wsl"
       ];
       isIntelX86Platform = homeSystem == "x86_64-linux";
-      fedoraNvidiaDriver =
-        {
-          # Keep these in sync with the Fedora host driver. Dynamic /proc
-          # detection would require impure IFD, and nixGL's auto regex does not
-          # handle the NVIDIA Open Kernel Module version format.
-          version = "610.57.04";
-          # Hash of NVIDIA-Linux-x86_64-610.57.04.run. Update with the version.
-          hash = "sha256-suk1xmuDuwDAyFe8jg7g/VLekoa0DJzB7sKafOfrEW0=";
-        };
       # nixGL は固定した版のままだと現在の nixpkgs でビルドできないため、
       # 入力のソースへ互換修正を当てて読み込む。
       fedoraNixglSrc = nixpkgs.legacyPackages.${homeSystem}.applyPatches {
         name = "nixGL-patched";
         src = nixgl.outPath;
-        patches = [ ./nix/patches/nixgl-latest-nixpkgs.patch ];
+        patches = [
+          ./nix/patches/nixgl-latest-nixpkgs.patch
+          ./nix/patches/nixgl-egl-external-platforms.patch
+          ./nix/patches/nixgl-nvidia-version-autodetect.patch
+        ];
       };
+      # NVIDIA ドライバー版は nixGL が /proc/driver/nvidia/version から読む。
+      # そのビルドは builtins.currentTime を使うため、Fedora の構成は
+      # --impure を付けて評価する。
       fedoraNixglPkgs = import fedoraNixglSrc {
         pkgs = import nixpkgs {
           system = homeSystem;
@@ -49,15 +47,13 @@
               "nvidia-x11"
             ];
         };
-        nvidiaVersion = fedoraNvidiaDriver.version;
-        nvidiaHash = fedoraNvidiaDriver.hash;
         enable32bits = isIntelX86Platform;
         enableIntelX86Extensions = isIntelX86Platform;
       };
       fedoraNixglPackages = nixgl.packages // {
         ${homeSystem} = nixgl.packages.${homeSystem} // {
-          nixGLNvidia = fedoraNixglPkgs.nixGLNvidia;
-          nixVulkanNvidia = fedoraNixglPkgs.nixVulkanNvidia;
+          nixGLNvidia = fedoraNixglPkgs.auto.nixGLNvidia;
+          nixVulkanNvidia = fedoraNixglPkgs.auto.nixVulkanNvidia;
         };
       };
       nixglPackagesFor = platform:

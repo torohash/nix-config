@@ -149,8 +149,11 @@ nix run github:nix-community/home-manager -- switch --flake nixcfg#<host>
 
 ```bash
 # 例: Fedora の場合
-nix run github:nix-community/home-manager -- switch --flake nixcfg#torohash_fedora
+nix run github:nix-community/home-manager -- switch --impure --flake nixcfg#torohash_fedora
 ```
+
+`torohash_fedora` は nixGL が NVIDIA ドライバー版を `/proc/driver/nvidia/version` から
+読み取るため、`--impure` を必ず付けます。付けない場合は評価の途中で失敗します。
 
 初回の適用が完了すると、`programs.home-manager.enable = true` の設定により
 `home-manager` コマンドが使用可能になります。
@@ -164,6 +167,12 @@ nix run github:nix-community/home-manager -- switch --flake nixcfg#torohash_fedo
 
 ```bash
 home-manager switch --flake nixcfg#<host>
+```
+
+`torohash_fedora` だけは次のように `--impure` を付けます。
+
+```bash
+home-manager switch --impure --flake nixcfg#torohash_fedora
 ```
 
 ### zsh をデフォルトシェルにする（Ubuntu/Fedora）

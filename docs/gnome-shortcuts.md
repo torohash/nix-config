@@ -52,8 +52,8 @@ Ubuntu/Fedora の `programs.ghostty` を有効化。
 
 ```bash
 home-manager switch --flake nixcfg#torohash_ubuntu
-# または
-home-manager switch --flake nixcfg#torohash_fedora
+# または（Fedora は --impure が必要）
+home-manager switch --impure --flake nixcfg#torohash_fedora
 ```
 
 ショートカット設定確認:

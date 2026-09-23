@@ -1,0 +1,45 @@
+nixGL の NVIDIA wrapper に EGL の external platform 設定を足す。
+NVIDIA の libEGL は Wayland/X11 対応の実装を別パッケージ（egl-wayland など）が
+置く JSON から読み込む。nixGL はそのディレクトリを指定しないため、GTK4 のような
+EGL クライアントは EGL ディスプレイを作れず、OpenGL コンテキストを取得できない。
+
+--- a/nixGL.nix
++++ b/nixGL.nix
+@@ -16,7 +16,8 @@
+ , stdenv, writeTextFile, shellcheck, pcre, runCommand, linuxPackages
+ , fetchurl, lib, runtimeShell, bumblebee, libglvnd, vulkan-validation-layers
+ , mesa, libvdpau-va-gl, intel-media-driver, pkgsi686Linux, driversi686Linux
+-, zlib, libdrm, xorg, wayland, gcc, zstd }:
++, zlib, libdrm, xorg, wayland, gcc, zstd, egl-wayland, egl-wayland2, egl-gbm
++, egl-x11 }:
+ 
+ let
+   writeExecutable = { name, text }:
+@@ -114,12 +115,27 @@
+ 
+       # TODO: 32bit version? Not tested.
+       nixNvidiaWrapper = api:
++        let
++          # NVIDIA の libEGL は Wayland/X11 向けの実装を JSON 経由で読み込む。
++          # 実装はドライバーのライブラリに含まれないため、このディレクトリを
++          # 指定しないと GTK4 などの EGL クライアントは EGL ディスプレイを
++          # 作成できない。
++          eglExternalPlatformDirs = lib.concatMapStringsSep ":"
++            (pkg: "${pkg}/share/egl/egl_external_platform.d")
++            ([ egl-wayland ]
++              ++ lib.optionals (lib.versionAtLeast version "495") [ egl-gbm ]
++              ++ lib.optionals (lib.versionAtLeast version "560") [
++                egl-wayland2
++                egl-x11
++              ]);
++        in
+         writeExecutable {
+           name = "nix${api}Nvidia-${version}";
+           text = ''
+             #!${runtimeShell}
+             ${lib.optionalString (api == "Vulkan")
+             "export VK_LAYER_PATH=${vulkan-validation-layers}/share/vulkan/explicit_layer.d"}
++            export __EGL_EXTERNAL_PLATFORM_CONFIG_DIRS=${eglExternalPlatformDirs}"''${__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS:+:$__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS}"
+             NVIDIA_JSON=(${nvidiaLibsOnly}/share/glvnd/egl_vendor.d/*nvidia.json)
+             ${lib.optionalString enable32bits "NVIDIA_JSON32=(${nvidiaLibsOnly.lib32}/share/glvnd/egl_vendor.d/*nvidia.json)"}
+ 

@@ -135,10 +135,12 @@
           herdrConfigFile = ./dotfiles/herdr/config.toml;
           herdrConfig = builtins.fromTOML (builtins.readFile herdrConfigFile);
           expectedHerdrKeyBindings = {
-            previous_agent = "prefix+comma";
-            next_agent = "prefix+period";
-            previous_workspace = "prefix+shift+comma";
-            next_workspace = "prefix+shift+period";
+            prefix = "alt+s";
+            previous_workspace = "prefix+a";
+            next_workspace = "prefix+d";
+            previous_agent = "prefix+shift+a";
+            next_agent = "prefix+shift+d";
+            close_workspace = "prefix+shift+q";
           };
           herdrKeyBindingsAreExpected = lib.all
             (name: (herdrConfig.keys or {}).${name} or null
@@ -224,9 +226,9 @@
           # 複数のローカル設定を読む静的検査なので、テストサイズはMediumとする。
           herdr-config-medium =
             assert lib.assertMsg herdrKeyBindingsAreExpected
-              "Herdrのagentまたはworkspace移動キーが期待値と一致しません";
+              "Herdrのprefix・移動キー・workspaceを閉じるキーが期待値と一致しません";
             assert lib.assertMsg herdrKeyBindingsAreUnique
-              "Herdrのagentとworkspaceの移動キーが重複しています";
+              "Herdrのprefix・移動キー・workspaceを閉じるキーが重複しています";
             assert lib.assertMsg herdrOnboardingIsDisabled
               "HerdrがHome Manager管理ファイルへ初回設定を書き込もうとします";
             assert lib.assertMsg herdrConfigIsHomeManagerManaged

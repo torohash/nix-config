@@ -2,8 +2,16 @@
 onboarding = false
 
 [keys]
-# Agentは句読点、workspaceはShift付き句読点で前後移動し、既定キーと衝突させない。
-previous_agent = "prefix+comma"
-next_agent = "prefix+period"
-previous_workspace = "prefix+shift+comma"
-next_workspace = "prefix+shift+period"
+# 左手だけで操作する。prefixはPi・Claude Code・bash・Hyprlandと衝突しないalt+s。
+prefix = "alt+s"
+
+# workspaceはWASDと同じ並びでA=前、D=次に移動する。
+previous_workspace = "prefix+a"
+next_workspace = "prefix+d"
+
+# agentはShift付きの同じ並びで移動する。
+previous_agent = "prefix+shift+a"
+next_agent = "prefix+shift+d"
+
+# 既定のprefix+shift+d(workspaceを閉じる)はagent移動に使うため、prefix+shift+qへ移す。
+close_workspace = "prefix+shift+q"

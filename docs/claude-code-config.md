@@ -250,23 +250,3 @@ Claude が会話を通じて学んだパターンやプロジェクト固有の�
 | `DISABLE_TELEMETRY` | テレメトリの無効化 |
 | `DISABLE_AUTOUPDATER` | 自動更新の無効化 |
 | `MCP_TIMEOUT` | MCP サーバー起動タイムアウト |
-
-## このプロジェクトで管理対象とするファイル
-
-Nix/Home Manager で dotfiles として管理する候補は以下の通りです。
-
-| ファイル | Git 共有 | 管理方針 |
-|----------|----------|----------|
-| `.claude/settings.json` | する | プロジェクトごとに配置 |
-| `.claude/settings.local.json` | しない | gitignore 対象、手動管理 |
-| `~/.claude/settings.json` | - | Home Manager で配置 |
-| `CLAUDE.md` / `.claude/CLAUDE.md` | する | プロジェクトごとに配置 |
-| `.claude/CLAUDE.local.md` | しない | gitignore 対象、手動管理 |
-| `~/.claude/CLAUDE.md` | - | Home Manager で配置 |
-| `.claude/rules/*.md` | する | プロジェクトごとに配置 |
-| `~/.claude/rules/*.md` | - | Home Manager で配置 |
-| `~/.claude/keybindings.json` | - | Home Manager で配置 |
-| `.mcp.json` | する | プロジェクトごとに配置 |
-| `.claudeignore` | する | プロジェクトごとに配置 |
-| `.claude/agents/*.md` | する | プロジェクトごとに配置 |
-| `.claude/skills/*.md` | する | プロジェクトごとに配置 |

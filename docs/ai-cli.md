@@ -43,46 +43,16 @@ npm install -g @openai/codex
 
 公式ドキュメント: <https://developers.openai.com/codex/cli/>
 
-### Codexのグローバル設定
+### Pi Coding Agentの設定
 
-このリポジトリは、次のCodex専用リソースをHome Managerで`~/.codex/`へ強制配置します。
+Home Managerは次の2ファイルを配置し、`settings.json`の`compaction`だけを書き込む。それ以外のPi設定(skills、`AGENTS.md`など)は管理しない。
 
-- `dotfiles/codex/config.toml` → `~/.codex/config.toml`
-- `dotfiles/codex/AGENTS.md` → `~/.codex/AGENTS.md`
-- `dotfiles/codex/agents/` → `~/.codex/agents/`
-- `dotfiles/codex/skills/`の各Skill → `~/.codex/skills/`
-- `typescript-conventions`、`test-sizes`、`domain-value-docs` → `~/.codex/skills/`の同名Skill
+- `dotfiles/pi/models.json` → `~/.pi/agent/models.json`: `openai-codex/gpt-5.6-sol`、`openai-codex/gpt-6-astra`、`openai-codex/gpt-6-sol`、`openai-codex/gpt-6-luna`のコンテキストを1,050,000トークンに拡張する。
+- `dotfiles/pi/web-search.json` → `~/.pi/web-search.json`: Pi Web Access(`npm:pi-web-access`)の検索設定。OpenAIを第一候補とし、一時障害、利用枠超過、ネットワーク障害、無効応答のときだけParallel MCP、Exaの順に切り替える。Pi Web Access自体は各ホストでPiに導入する。
 
-CodexのSkillは`$CODEX_HOME/skills`（既定では`~/.codex/skills`）へ配置します。BunとPythonの初期化Skillが作成するStop Hookも、`~/.codex/skills/`内の検証scriptを参照します。
+`~/.pi/agent/settings.json`は、Piとテーマ切替(Omarchyなど)も書き込む通常ファイルのまま残す。Home Managerのactivationで`compaction`(`enabled = true`、`reserveTokens = 150000`)だけを書き換え、他のキーは維持する。Piの自動圧縮は`contextWindow - reserveTokens`を超えたときに始まるため、`models.json`の1,050,000トークンと合わせて900,000トークン付近で圧縮を始める。
 
-`dotfiles/codex/AGENTS.md`は、コード変更、調査、レビューをdelegate SkillからCodexのカスタムサブエージェントへ委譲する規則と、`semantic-generation`および`design-table`の適用規則を含みます。`dotfiles/codex/config.toml`の`multi_agent_v2`設定と、`dotfiles/codex/agents/*.toml`のモデル、推論レベル、sandbox設定を合わせて使用します。
-
-Home Manager管理後のファイルは読み取り専用リンクになるため、変更はリポジトリ側で行ってからHome Managerを適用し、新しいCodexセッションを開始してください。グローバル`AGENTS.md`の配置検査は次のコマンドで実行できます。
-
-```bash
-nix build .#checks.x86_64-linux.codex-global-rules-medium
-```
-
-### Pi Coding Agentのグローバル設定
-
-現在の汎用的な回答・文書・コード規則は`dotfiles/pi/AGENTS.md`へ分離し、Home Managerで`~/.pi/agent/AGENTS.md`へ配置します。
-
-`dotfiles/pi/skills/`はPi専用のグローバルSkillを管理し、Home Managerで`~/.pi/agent/skills/`へ配置します。Skillの名前と説明はPiの起動時に提示され、詳しい手順は該当する作業でだけ読み込まれます。現在は、UnityのScene、Prefab、Asset、Editor、テスト、ビルドをローカルのUnity CLIから操作・検証する`unity-cli`を配置します。
-
-`dotfiles/pi/models.json`は、`openai-codex/gpt-5.6-sol`、`openai-codex/gpt-6-astra`、`openai-codex/gpt-6-sol`、`openai-codex/gpt-6-luna`のコンテキストを1,050,000トークンに拡張します。Piの自動圧縮は`contextWindow - reserveTokens`を超えたときに始まるため、Home Managerのactivationで`~/.pi/agent/settings.json`の`compaction.reserveTokens`を150,000に設定し、900,000トークンを超えた付近で圧縮を始めます。
-
-同じactivationで、Piが読み込むユーザーpackageを次の一覧に設定します。
-
-- `npm:pi-web-access`
-- `npm:@ff-labs/pi-fff`
-- `npm:@ogulcancelik/pi-session-recall`
-- `npm:pi-token-speed`
-- `../../dev/photo-sync`
-- `../../dev/pi-extensions`
-
-Home Managerはpackageの導入対象だけを管理し、versionは固定しません。package本体はNix storeへ配置せず、Piが`~/.pi/agent/npm/`へ導入します。未導入のpackageはPiの次回起動時に導入され、既存packageは`pi update --extensions`を明示的に実行した環境だけで更新されます。`settings.json`は、一覧と自動圧縮以外の設定を維持し、Piが引き続き更新できる通常ファイルとして残します。
-
-Pi Web Accessの検索設定は`dotfiles/pi/web-search.json`で管理し、Home Managerで`~/.pi/web-search.json`へ配置します。検索はOpenAIを第一候補とし、一時障害、利用枠超過、ネットワーク障害、無効応答のときだけParallel MCP、Exaの順に切り替えます。
+Piのpackageは管理しない。`pi install`で入れ、入れるものは`docs/pi-packages.md`の手順書で管理する。
 
 ### OpenCode
 
@@ -94,98 +64,6 @@ curl -fsSL https://opencode.ai/install | bash
 公式ドキュメント: <https://opencode.ai/docs/>
 
 インストール先の変更方法は公式ドキュメントに記載がないため、既定の配置先に従ってください。
-
-### OpenCodeのsubagent
-
-このリポジトリは、OpenCodeネイティブのMarkdown形式で定義した次のsubagentをHome Managerから `~/.config/opencode/agents/` へ配置します。
-
-- `coding`: コード、テスト、設定、ビルド定義を変更する唯一の書き込み担当。
-- `project-research`: プロジェクト内のコード、設定、テスト、文書を調べる読み取り専用担当。
-- `code-review`: 実装差分のバグ、回帰、安全性、データ損失、テスト不足を確認する読み取り専用担当。
-- `web-research`: 公式文書と一次資料を優先して最新情報を調べる、Webアクセス専用の担当。
-
-subagentのモデルと推論強度は、担当する作業に合わせて次のように決めています。
-
-- `coding`: 通常の機能追加・修正を担うため、`openai/gpt-5.6-terra`、`high`。
-- `project-research`: 複数ファイルを横断して調査するため、`openai/gpt-5.6-terra`、`high`。
-- `code-review`: 実装差分を詳しく確認するため、`openai/gpt-5.6-sol`、`xhigh`。
-- `web-research`: 複数の一次資料を統合するため、`openai/gpt-5.6-terra`、`high`。
-
-OpenCodeでは `variant` がOpenAIモデルの `reasoningEffort` に対応します。すべてのsubagentで追加のsubagent起動を禁止し、再帰的な委譲を防ぎます。
-
-primary agentはdescriptionを基に自動でsubagentを選択できます。明示的に指定する場合は `@` メンションを使います。
-
-```text
-@coding この不具合を修正してテストしてください
-@project-research 認証処理の流れを調べてください
-@code-review 現在の変更差分をレビューしてください
-@web-research OpenCodeの最新のpermission仕様を調べてください
-```
-
-定義の確認には次のコマンドを使います。
-
-```bash
-opencode agent list
-opencode debug agent coding
-nix build .#checks.x86_64-linux.opencode-agent-definitions-medium
-```
-
-agentファイルはOpenCode起動時に読み込まれます。Home Manager適用後は、実行中のOpenCodeを終了してから起動し直してください。
-
-### OpenCodeのグローバルルール
-
-`dotfiles/opencode/AGENTS.md`を `~/.config/opencode/AGENTS.md` へ配置し、すべてのOpenCodeセッションへ適用します。初期状態は空です。内容を変更するときは、Home Managerの配置先ではなくリポジトリ側のファイルを編集し、`home-manager switch`を再実行してからOpenCodeを再起動します。
-
-### OpenCodeのプロジェクト初期化Skill
-
-`dotfiles/opencode/skills/bun-init`と`uv-init`を `~/.config/opencode/skills/` へ個別配置します。外部skillsの走査を無効にしていても、このOpenCode native Skillは利用できます。
-
-両SkillはCodex hookやPluginを作成しません。プロジェクトの`AGENTS.md`を作成または既存内容へ統合し、対象コードや設定を変更した場合だけ整形、lint、型検査、テストを実行して、すべて成功するまで修正を繰り返す指示を追加します。
-
-```text
-bun-initで素のBun／TypeScriptプロジェクトを初期化してください
-uv-initで素のPythonプロジェクトを初期化してください
-```
-
-定義の確認には`opencode debug skill`と`nix build .#checks.x86_64-linux.opencode-skill-definitions-medium`を使います。
-
-### OpenCodeの基本権限
-
-`dotfiles/opencode/opencode.json`を `~/.config/opencode/opencode.json` へ配置します。main agentであるbuilt-in `build` は、作業ツリー外へのアクセス、`.env`を含むファイル読み取り、同一ツールの再実行を許可します。この緩和は `build` だけに適用し、Planと各subagentは既存の制限を維持します。
-
-top-levelにはprimary agentとsubagent共通のrm基底ルールを設定します。直接実行する `rm` は確認を要求し、既知の形式で `/`、絶対パス、`~`、`$HOME`を対象にした再帰削除は拒否します。agent固有のbash denyはこの基底ルールより優先されます。OpenCodeを `--auto` で起動した場合も、明示的な `deny` は維持されます。
-
-個人用の `~/.config/opencode/opencode.jsonc` は管理対象外です。OpenCodeは `opencode.json` と `opencode.jsonc` をマージするため、provider、モデル、TUIなどの個人設定を `opencode.jsonc` に保持できます。
-
-### OpenCodeの分離方針
-
-このリポジトリはOpenCodeのグローバルルール、native Skill、共通rm権限、main agentの承認不要な基本権限を管理し、個人用 `opencode.jsonc`、provider、認証情報は管理しません。Home ManagerはClaude Code互換設定と外部skillsだけをOpenCodeから隔離します。
-
-- `OPENCODE_DISABLE_CLAUDE_CODE=true`: `~/.claude/CLAUDE.md`、プロジェクトと親ディレクトリの `CLAUDE.md`、プロジェクトとグローバル（`~/.claude/skills`）の `.claude/skills` の読み込みを無効にします。
-- `OPENCODE_DISABLE_EXTERNAL_SKILLS=true`: `~/.claude/`、`~/.agents/`、プロジェクトと親ディレクトリの `.claude/skills`、`.agents/skills` 配下の外部 skills の走査を無効にします。
-
-projectの`AGENTS.md`に追加した継続検証指示を自動読込するため、project configは有効です。これに伴い、projectの`opencode.json`、`.opencode/`、project Pluginも読込対象になるため、信頼できるprojectで利用してください。
-
-旧設定を読み込んだshellやデスクトップセッションには`OPENCODE_DISABLE_PROJECT_CONFIG=true`が残ります。Home Manager適用後は、現在のshellで`unset OPENCODE_DISABLE_PROJECT_CONFIG`してOpenCodeを起動するか、ログアウトしてから再ログインしてください。`OPENCODE_DISABLE_EXTERNAL_SKILLS`は公式文書に記載された回避設定です。`OPENCODE_DISABLE_CLAUDE_CODE`は現行実装に依存するため、OpenCodeのアップデート時に挙動を再確認してください。
-
-Home Manager は `~/.opencode/bin` を PATH に追加します。
-
-### OpenCode agent設計の方針
-
-- 複雑なpromptは `opencode.json` へ埋め込まず、役割ごとのMarkdownファイルへ分離します。
-- descriptionには「何をするか」と「いつ使うか」を書き、自動選択の誤りを減らします。
-- 書き込み権限は `coding` だけに与え、調査・レビュー担当では `edit: deny` を明示します。
-- `permission.task: deny` によりsubagentからの再委譲を禁止し、作業経路と責任を明確にします。
-- agentごとのモデルとvariantは、対応するCodex agentの役割・判断難度に合わせて固定します。
-- subagentのpromptでも、projectの`AGENTS.md`とREADMEを明示的に確認させます。
-
-公式仕様:
-
-- <https://opencode.ai/docs/agents/>
-- <https://opencode.ai/docs/skills/>
-- <https://opencode.ai/docs/rules/>
-- <https://opencode.ai/docs/permissions/>
-- <https://opencode.ai/docs/config/>
 
 ### agent-browser
 

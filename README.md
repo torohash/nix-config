@@ -4,11 +4,11 @@
 
 ## 概要
 
-このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Claude Code・Codex・OpenCode subagent のユーザー共通設定を管理します。
+このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Pi のモデル設定・検索設定と、`settings.json` の自動圧縮を管理します。Pi の package は手順書 (`docs/pi-packages.md`) で管理します。Claude Code・Codex・OpenCode の設定は管理しません。
 
 日常的な言語ランタイムとプロジェクト単位のツールチェーンには `mise` を優先し、Nix の devShell は GUI アプリ、SDK、一時的な開発環境の補助手段として使用します。AI 開発支援 CLI 本体は Nix で固定せず、公式インストーラーまたは npm で導入します。
 
-OpenCode CLI は公式インストーラーなどで別途導入します。Home Manager は `~/.opencode/bin` を PATH に追加し、基本権限を `~/.config/opencode/opencode.json`、グローバルルールを `~/.config/opencode/AGENTS.md`、ネイティブsubagentを `~/.config/opencode/agents/`、`bun-init`と`uv-init`を `~/.config/opencode/skills/` へ配置します。個人用 `opencode.jsonc`は管理せず、Claude Code互換設定と外部skillsの読込だけを無効化します。projectの`AGENTS.md`、`opencode.json`、`.opencode/`は有効です。
+OpenCode CLI は公式インストーラーなどで別途導入します。Home Manager は `~/.opencode/bin` を PATH に追加するだけで、設定は管理しません。
 
 ## ドキュメント
 
@@ -26,6 +26,7 @@ OpenCode CLI は公式インストーラーなどで別途導入します。Home
 - `docs/yazi.md`: Yazi のキー操作。
 - `docs/dotfiles.md`: Bash aliases と tmux キーバインド。
 - `docs/gnome-fcitx5.md`: GNOME と fcitx5 の入力切替の関係。
+- `docs/pi-packages.md`: Pi の package の導入・追加・削除の手順書 (エージェントが実行できる)。
 - `docs/gnome-shortcuts.md`: GNOME のスクリーンショット系ショートカットと関連設定のメモ。
 
 ## セットアップ
@@ -112,17 +113,14 @@ sudo usermod -aG sudo alice
 - `common-store` と `lsp-store` に含まれる共通 CLI・LSP
 - bash / zsh、`mise`、direnv / nix-direnv、Git
 - Neovim、Zed、tmux、Yazi、lazygit などのユーザー設定
-- Claude Code の settings・rules・skills・commands・agents・hooks
-- Codex のグローバル設定・個人指示・rules・skills・委譲用agents
-- Pi Coding Agent のグローバル個人指示・Skill・モデル・package一覧・自動圧縮設定
-- OpenCode の coding・プロジェクト内調査・コードレビュー・Web調査用subagent
+- Pi Coding Agent のモデル設定・Web検索設定・自動圧縮設定
 - Ubuntu / Fedora 固有の GUI アプリ、fcitx5、日本語フォント、GNOME 設定
 
-一方、AI 開発支援 CLI 本体、認証情報・会話履歴などの実行時状態、`~/.claude/statusline-command.sh` は管理しません。必要に応じて各環境で別途導入・設定してください。
+一方、AI 開発支援 CLI 本体、Claude Code・Codex・OpenCode の設定、認証情報・会話履歴などの実行時状態は管理しません。必要に応じて各環境で別途導入・設定してください。
 
-`~/.codex/config.toml`、`~/.codex/AGENTS.md`、`~/.codex/agents/`、`~/.codex/skills/`は、リポジトリ内の対応ファイルからHome Managerで強制配置します。Piの個人指示は`dotfiles/pi/AGENTS.md`から`~/.pi/agent/AGENTS.md`へ、グローバルSkillは`dotfiles/pi/skills/`から`~/.pi/agent/skills/`へ、モデル設定は`dotfiles/pi/models.json`から`~/.pi/agent/models.json`へ、Pi Web Accessの設定は`dotfiles/pi/web-search.json`から`~/.pi/web-search.json`へ配置します。Piのpackage一覧と自動圧縮設定は、その他の設定とPiの実行時更新を維持するため、Home Managerのactivationで書き込み可能な`~/.pi/agent/settings.json`へ統合します。packageのversionは固定せず、実体の導入と明示的な更新はPiへ任せます。Home Manager管理後のリンクは読み取り専用になるため、変更はリポジトリ側で行ってからHome Managerを適用し、各CLIを再起動してください。
+Piのモデル設定は`dotfiles/pi/models.json`から`~/.pi/agent/models.json`へ、Pi Web Accessの設定は`dotfiles/pi/web-search.json`から`~/.pi/web-search.json`へ配置します。Piの自動圧縮設定は、その他の設定とPiの実行時更新を維持するため、Home Managerのactivationで書き込み可能な`~/.pi/agent/settings.json`へ統合します。Piのpackageは`pi install`で導入し、`docs/pi-packages.md`の手順書で管理します。Home Manager管理後のリンクは読み取り専用になるため、変更はリポジトリ側で行ってからHome Managerを適用し、Piを再起動してください。
 
-多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.claude`、`~/.codex`、`~/.config/opencode/opencode.json`、`~/.config/opencode/AGENTS.md`、`~/.config/opencode/agents` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
+多くの設定ファイルは Home Manager の管理対象として強制配置されるため、既存の同名ファイルは `home-manager switch` 時に置き換えられます。初回適用前に、現在の `~/.pi/agent/models.json`、`~/.pi/web-search.json`、`~/.tmux.conf`、`~/.bashrc` などを確認し、必要な設定をバックアップするか、本リポジトリへ取り込んでください。
 
 Home Manager の案内: <https://nix-community.github.io/home-manager/>
 

@@ -8,5 +8,6 @@
     ./git.nix
     ./dotfiles.nix
     ./herdr.nix
+    ./agents.nix
   ];
 }

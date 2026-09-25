@@ -140,6 +140,7 @@
             next_workspace = "prefix+d";
             previous_agent = "prefix+shift+a";
             next_agent = "prefix+shift+d";
+            new_workspace = "prefix+shift+c";
             close_workspace = "prefix+shift+q";
           };
           herdrKeyBindingsAreExpected = lib.all

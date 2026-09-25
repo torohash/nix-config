@@ -13,5 +13,8 @@ next_workspace = "prefix+d"
 previous_agent = "prefix+shift+a"
 next_agent = "prefix+shift+d"
 
+# 新しいworkspaceは、新しいtab(prefix+c)にShiftを足したprefix+shift+cにする(既定のprefix+shift+nは左手から遠い)。
+new_workspace = "prefix+shift+c"
+
 # 既定のprefix+shift+d(workspaceを閉じる)はagent移動に使うため、prefix+shift+qへ移す。
 close_workspace = "prefix+shift+q"

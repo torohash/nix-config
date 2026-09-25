@@ -107,6 +107,7 @@ nix/home/
 - OSに依存しないものは `common/` に置く
 - プラットフォーム固有の差分だけを `platforms/<platform>/` に置く
 - 差分がない機能は `platforms/<platform>/` にファイルを作らず、`modules.nix` にも追加しない
+- 例外: `omarchy` は `common/modules.nix` を読み込まず、`platforms/omarchy/modules.nix` が必要な common モジュール (`common/agents.nix`) だけを import する。Omarchy がシェル・エディタ・git・端末を管理しているため (`docs/omarchy.md`)
 
 ## 追加方法
 

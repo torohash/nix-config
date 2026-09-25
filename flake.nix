@@ -22,6 +22,7 @@
         "ubuntu"
         "fedora"
         "wsl"
+        "omarchy"
       ];
       isIntelX86Platform = homeSystem == "x86_64-linux";
       # nixGL は固定した版のままだと現在の nixpkgs でビルドできないため、
@@ -148,6 +149,10 @@
             == builtins.length
               (lib.unique (builtins.attrValues expectedHerdrKeyBindings));
           herdrOnboardingIsDisabled = (herdrConfig.onboarding or null) == false;
+          # OmarchyはHerdr設定を自前で配置するため、Home Managerの管理対象から外す。
+          herdrHomeConfigurations = builtins.attrValues (lib.filterAttrs
+            (name: _: name != "${homeUsername}_omarchy")
+            homeConfigurations);
           herdrConfigIsHomeManagerManaged = lib.all
             (homeConfiguration:
               let
@@ -157,7 +162,63 @@
               in
               configFile != null
               && configFile.target == ".config/herdr/config.toml")
-            (builtins.attrValues homeConfigurations);
+            herdrHomeConfigurations;
+          omarchyHomeConfiguration =
+            homeConfigurations."${homeUsername}_omarchy";
+          omarchyManagedFiles = builtins.attrValues
+            omarchyHomeConfiguration.config.home.file;
+          # Omarchyが配置・テーマ追従・refreshするファイル。
+          # Home Managerが持つと互いに上書きし合う。
+          omarchyOwnedTargets = [
+            ".bashrc"
+            ".bash_profile"
+            ".profile"
+            ".tmux.conf"
+            ".gitconfig"
+            ".config/git/config"
+            ".config/ghostty/config"
+            ".config/alacritty/alacritty.toml"
+            ".config/btop/btop.conf"
+            ".config/lazygit/config.yml"
+            ".config/starship.toml"
+            ".config/tmux/tmux.conf"
+            ".config/herdr/config.toml"
+            ".config/fcitx5/config"
+            ".config/fcitx5/profile"
+            ".config/mise/config.toml"
+            # ツールとOmarchyも書き込むため、Home Managerでは持たない。
+            ".claude/settings.json"
+            ".config/opencode/opencode.json"
+            ".pi/agent/settings.json"
+          ];
+          omarchyOwnedDirectories = [
+            ".config/hypr"
+            ".config/omarchy"
+            ".config/nvim"
+          ];
+          omarchyDoesNotManageOwnedFiles = lib.all
+            (file:
+              !(builtins.elem file.target omarchyOwnedTargets)
+              && !(lib.any
+                (directory: file.target == directory
+                  || lib.hasPrefix "${directory}/" file.target)
+                omarchyOwnedDirectories))
+            omarchyManagedFiles;
+          # Omarchyはこれらのskillsディレクトリに自前のskillをsymlinkする。
+          # ディレクトリごとsymlinkにするとOmarchyのskillが見えなくなる。
+          omarchySkillDirectories = [
+            ".agents/skills"
+            ".claude/skills"
+            ".codex/skills"
+            ".pi/agent/skills"
+          ];
+          omarchyKeepsSkillDirectories = lib.all
+            (file:
+              !(builtins.elem file.target omarchySkillDirectories)
+              || file.recursive)
+            omarchyManagedFiles;
+          omarchyDoesNotManageInputMethod =
+            !omarchyHomeConfiguration.config.i18n.inputMethod.enable;
         in
         {
           # 複数のローカル設定を読む静的検査なので、テストサイズはMediumとする。
@@ -173,6 +234,19 @@
             pkgs.runCommand "herdr-config-medium" { } ''
               mkdir -p "$out"
               echo "Herdr設定とキーバインドは正常です" > "$out/result"
+            '';
+
+          # Home Configurationを評価する静的検査なので、テストサイズはMediumとする。
+          omarchy-ownership-medium =
+            assert lib.assertMsg omarchyDoesNotManageOwnedFiles
+              "Omarchyが管理するファイルをHome Managerが管理しています";
+            assert lib.assertMsg omarchyKeepsSkillDirectories
+              "OmarchyのskillsディレクトリをHome Managerがディレクトリごと置き換えます";
+            assert lib.assertMsg omarchyDoesNotManageInputMethod
+              "Omarchyのfcitx5とは別にHome Managerが入力メソッドを起動します";
+            pkgs.runCommand "omarchy-ownership-medium" { } ''
+              mkdir -p "$out"
+              echo "Omarchyとの所有範囲の分担は正常です" > "$out/result"
             '';
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {

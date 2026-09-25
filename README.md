@@ -4,7 +4,7 @@
 
 ## 概要
 
-このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Pi のモデル設定・検索設定と、`settings.json` の自動圧縮を管理します。Pi の package は手順書 (`docs/pi-packages.md`) で管理します。Claude Code・Codex・OpenCode の設定は管理しません。
+このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL、Omarchy で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Pi のモデル設定・検索設定と、`settings.json` の自動圧縮を管理します。Pi の package は手順書 (`docs/pi-packages.md`) で管理します。Claude Code・Codex・OpenCode の設定は管理しません。
 
 日常的な言語ランタイムとプロジェクト単位のツールチェーンには `mise` を優先し、Nix の devShell は GUI アプリ、SDK、一時的な開発環境の補助手段として使用します。AI 開発支援 CLI 本体は Nix で固定せず、公式インストーラーまたは npm で導入します。
 
@@ -27,6 +27,7 @@ OpenCode CLI は公式インストーラーなどで別途導入します。Home
 - `docs/dotfiles.md`: Bash aliases と tmux キーバインド。
 - `docs/gnome-fcitx5.md`: GNOME と fcitx5 の入力切替の関係。
 - `docs/pi-packages.md`: Pi の package の導入・追加・削除の手順書 (エージェントが実行できる)。
+- `docs/omarchy.md`: Omarchy との分担 (Omarchy 優先。Home Manager は Pi の設定だけを扱う) と適用手順。
 - `docs/gnome-shortcuts.md`: GNOME のスクリーンショット系ショートカットと関連設定のメモ。
 
 ## セットアップ

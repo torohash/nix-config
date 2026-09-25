@@ -6,7 +6,7 @@ Home Manager は Omarchy が扱わないものだけを受け持つ。
 - 構成: `homeConfigurations.torohash_omarchy`
 - 入口: `nix/home/hosts/torohash_omarchy.nix` → `nix/home/platforms/omarchy/modules.nix`
 - `common/modules.nix` は読み込まない。シェル・エディタ・git・端末が Omarchy の管理と競合するため。
-- Home Manager が扱うのは Pi の `models.json` と `web-search.json`、`settings.json` の `compaction` だけ(`common/agents.nix`)。
+- Home Manager が扱うのは Claude Code の `CLAUDE.md`、Pi の `models.json` と `web-search.json`、`settings.json` の `compaction` だけ(`common/agents.nix`)。
 
 ## 所有者
 
@@ -26,7 +26,8 @@ Home Manager は Omarchy が扱わないものだけを受け持つ。
 | AI CLI 本体 (claude / codex / pi / opencode) | Omarchy | `omarchy-mise-install` が `~/.local/bin/` に mise の wrapper を置く |
 | `~/.pi/agent/models.json`, `~/.pi/web-search.json` | **Nix** | `common/agents.nix` |
 | `~/.pi/agent/settings.json` | **Nix + Omarchy + Pi** | `piSettings` activation が `compaction` だけを書き換える。package は `pi install` で入れる (`docs/pi-packages.md`)。`theme` は Omarchy が書き、Pi 自身も書く |
-| その他のエージェント設定 (`~/.claude/`, `~/.codex/`, `~/.config/opencode/` など) | 管理しない | Nix では持たない。Omarchy がテーマ・skills の symlink を書き、ツール自身も書き込む |
+| `~/.claude/CLAUDE.md` | **Nix** | `common/agents.nix`。Omarchy も Claude Code も自動では書かない |
+| その他のエージェント設定 (`~/.claude/settings.json`, `~/.codex/`, `~/.config/opencode/` など) | 管理しない | Nix では持たない。Omarchy がテーマ・skills の symlink を書き、ツール自身も書き込む |
 | 既定エージェント | Omarchy | `omarchy default agent <name>` |
 
 `nix flake check` の `omarchy-ownership-medium` は、この表の Omarchy 側のファイルを Home Manager が管理していないことを検査する。

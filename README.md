@@ -4,7 +4,7 @@
 
 ## 概要
 
-このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL、Omarchy で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Pi のモデル設定・検索設定と、`settings.json` の自動圧縮を管理します。Pi の package は手順書 (`docs/pi-packages.md`) で管理します。Claude Code・Codex・OpenCode の設定は管理しません。
+このリポジトリは、Nix flake と Home Manager を使い、Ubuntu、Fedora、WSL、Omarchy で利用する開発ツールとユーザー設定を宣言的に一元管理するための個人用環境構成です。共通 CLI と LSP、シェル、Git、エディタ、端末ツール、プラットフォーム固有の GUI・日本語入力設定、Claude Code のグローバル指示 (`CLAUDE.md`)、Pi のモデル設定・検索設定と、`settings.json` の自動圧縮を管理します。Pi の package は手順書 (`docs/pi-packages.md`) で管理します。Claude Code の `CLAUDE.md` 以外の設定と、Codex・OpenCode の設定は管理しません。
 
 日常的な言語ランタイムとプロジェクト単位のツールチェーンには `mise` を優先し、Nix の devShell は GUI アプリ、SDK、一時的な開発環境の補助手段として使用します。AI 開発支援 CLI 本体は Nix で固定せず、公式インストーラーまたは npm で導入します。
 
@@ -27,7 +27,7 @@ OpenCode CLI は公式インストーラーなどで別途導入します。Home
 - `docs/dotfiles.md`: Bash aliases と tmux キーバインド。
 - `docs/gnome-fcitx5.md`: GNOME と fcitx5 の入力切替の関係。
 - `docs/pi-packages.md`: Pi の package の導入・追加・削除の手順書 (エージェントが実行できる)。
-- `docs/omarchy.md`: Omarchy との分担 (Omarchy 優先。Home Manager は Pi の設定だけを扱う) と適用手順。
+- `docs/omarchy.md`: Omarchy との分担 (Omarchy 優先。Home Manager は Claude Code の `CLAUDE.md` と Pi の設定だけを扱う) と適用手順。
 - `docs/gnome-shortcuts.md`: GNOME のスクリーンショット系ショートカットと関連設定のメモ。
 
 ## セットアップ
@@ -114,10 +114,11 @@ sudo usermod -aG sudo alice
 - `common-store` と `lsp-store` に含まれる共通 CLI・LSP
 - bash / zsh、`mise`、direnv / nix-direnv、Git
 - Neovim、Zed、tmux、Yazi、lazygit などのユーザー設定
+- Claude Code のグローバル指示 (`~/.claude/CLAUDE.md`: 回答の言語、コミットの署名)
 - Pi Coding Agent のモデル設定・Web検索設定・自動圧縮設定
 - Ubuntu / Fedora 固有の GUI アプリ、fcitx5、日本語フォント、GNOME 設定
 
-一方、AI 開発支援 CLI 本体、Claude Code・Codex・OpenCode の設定、認証情報・会話履歴などの実行時状態は管理しません。必要に応じて各環境で別途導入・設定してください。
+一方、AI 開発支援 CLI 本体、Claude Code の `CLAUDE.md` 以外の設定と Codex・OpenCode の設定、認証情報・会話履歴などの実行時状態は管理しません。必要に応じて各環境で別途導入・設定してください。
 
 Piのモデル設定は`dotfiles/pi/models.json`から`~/.pi/agent/models.json`へ、Pi Web Accessの設定は`dotfiles/pi/web-search.json`から`~/.pi/web-search.json`へ配置します。Piの自動圧縮設定は、その他の設定とPiの実行時更新を維持するため、Home Managerのactivationで書き込み可能な`~/.pi/agent/settings.json`へ統合します。Piのpackageは`pi install`で導入し、`docs/pi-packages.md`の手順書で管理します。Home Manager管理後のリンクは読み取り専用になるため、変更はリポジトリ側で行ってからHome Managerを適用し、Piを再起動してください。
 

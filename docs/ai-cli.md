@@ -34,6 +34,11 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 インストール先の変更方法は公式ドキュメントに記載がないため、既定の配置先に従ってください。
 
+### Claude Code のグローバル指示
+
+`dotfiles/claude/CLAUDE.md` を Home Manager で `~/.claude/CLAUDE.md` へ配置する。中身は、回答を日本語で行うことと、
+コミット・PR に Claude の署名を入れないことだけ。`~/.claude/settings.json` は Omarchy と Claude Code 自身も書くため管理しない。
+
 ### Codex CLI
 
 ```bash

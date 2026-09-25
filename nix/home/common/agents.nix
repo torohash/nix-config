@@ -1,7 +1,14 @@
 # AIエージェントの設定。
-# 一度すべて外し、残す価値のあるPiの設定だけを配置する。
+# 一度すべて外し、残す価値のあるものだけを配置する。
 { pkgs, lib, ... }:
 {
+  # Claude Codeのグローバル指示(回答の言語・コミットの署名)を配置する。
+  # settings.jsonはOmarchyとClaude Code自身も書くため、ここでは扱わない。
+  home.file.".claude/CLAUDE.md" = {
+    source = ../../../dotfiles/claude/CLAUDE.md;
+    force = true;
+  };
+
   # Piモデルの長いコンテキストを有効にする設定を配置する。
   home.file.".pi/agent/models.json" = {
     source = ../../../dotfiles/pi/models.json;
